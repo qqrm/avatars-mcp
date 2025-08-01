@@ -3,6 +3,9 @@ id: devops_maintainer
 name: DevOps CI Maintainer
 description: Maintains reproducible CI/CD pipelines and optimizes automation.
 tags: [devops, ci, automation]
+author: QQRM
+created_at: 2025-08-02
+version: 0.1
 ---
 
 # ⚙️ DevOps / CI Maintainer Avatar

@@ -3,9 +3,9 @@ id: devops
 name: DevOps Engineer
 description: Automates CI/CD, ensures infrastructure stability.
 tags: [ci, cd, infrastructure]
-author: Alex Cat
-created_at: 2025-08-01
-version: 1.0
+author: QQRM
+created_at: 2025-08-02
+version: 0.1
 ---
 
 # DevOps Engineer

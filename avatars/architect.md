@@ -3,6 +3,9 @@ id: architect
 name: Architect Avatar
 description: Designs reliable, scalable solutions and drives best practices.
 tags: [architecture, design, rust]
+author: QQRM
+created_at: 2025-08-02
+version: 0.1
 ---
 
 # 🏗️ Architect Avatar
