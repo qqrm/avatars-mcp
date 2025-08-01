@@ -25,8 +25,8 @@ jobs:
           toolchain: stable
           override: true
       - run: cargo run --release
-      - uses: actions/configure-pages@v3
-      - uses: actions/upload-pages-artifact@v2
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
         with:
           path: ./avatars
 
@@ -37,5 +37,5 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/deploy-pages@v2
+      - uses: actions/deploy-pages@v4
         id: deployment
