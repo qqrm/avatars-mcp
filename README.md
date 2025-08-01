@@ -63,4 +63,8 @@ An index can be built by parsing the front matter of all `.md` files in `/avatar
 ### Generator (Rust)
 
 This repository includes a small Rust CLI in `src/` that parses avatar files and generates `avatars/index.json`. Run `cargo run --release` to build the index.
+
+### GitHub Pages Deployment
+
+A workflow in `.github/workflows/pages.yml` rebuilds `avatars/index.json` and publishes the `avatars/` directory as a GitHub Pages site. It runs on pushes to `main` or release tags, installs the stable Rust toolchain, runs `cargo run --release`, then uploads the directory for deployment.
 ---
