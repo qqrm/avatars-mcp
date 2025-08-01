@@ -64,3 +64,22 @@ An index can be built by parsing the front matter of all `.md` files in `/avatar
 
 This repository includes a small Rust CLI in `src/` that parses avatar files and generates `avatars/index.json`. Run `cargo run --release` to build the index.
 ---
+
+### GitHub Pages Workflow
+
+- When avatars are added or updated in the `avatars/` directory, pushes to `main` run the CI workflow which builds `avatars/index.json`.
+- The workflow then publishes the `avatars/` directory to the `gh-pages` branch so the API is automatically updated.
+
+### Published API
+
+The latest version of the avatar API is served from GitHub Pages at:
+
+```
+https://<github-user>.github.io/avatars-mcp/
+```
+
+You can browse individual avatar files or fetch `avatars/index.json` from that URL.
+
+### Release Versioning
+
+Releases are tagged using semantic versioning: `v<major>.<minor>.<patch>`. Tags correspond to stable snapshots of the avatar collection.
