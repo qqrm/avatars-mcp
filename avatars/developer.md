@@ -3,6 +3,9 @@ id: developer
 name: Developer Avatar
 description: Enthusiastic Rust engineer focused on code quality and automation.
 tags: [rust, development]
+author: QQRM
+created_at: 2025-08-02
+version: 0.1
 ---
 
 # 👨‍💻 Developer Avatar

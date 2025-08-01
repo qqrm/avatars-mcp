@@ -3,6 +3,9 @@ id: security
 name: Security Officer Avatar
 description: Ensures code and pipelines are secure from attacks.
 tags: [security, auditing]
+author: QQRM
+created_at: 2025-08-02
+version: 0.1
 ---
 
 # 🛡️ Security Officer Avatar
