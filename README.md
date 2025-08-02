@@ -60,6 +60,36 @@ An index can be built by parsing the front matter of all `.md` files in `/avatar
 - **Get full avatar:** GET `/avatars/{id}.md`
 - **Get generated index:** GET `/avatars/index.json` (optional)
 
+### MCP Server
+
+An optional Model Context Protocol (MCP) server exposes the same avatar data over
+STDIO.
+
+Run it with:
+
+```
+cargo run --bin server
+```
+
+The server implements the following methods:
+
+- `resources/list` – list all available avatars.
+- `resources/read` – read the Markdown for a specific avatar.
+
+Example configuration for an MCP client:
+
+```json
+{
+  "mcpServers": [
+    {
+      "name": "avatars",
+      "command": "cargo",
+      "args": ["run", "--bin", "server"]
+    }
+  ]
+}
+```
+
 ### Generator (Rust)
 
 This repository includes a small Rust CLI in `src/` that parses avatar files and generates `avatars/index.json`. Run `cargo run --release` to build the index.
