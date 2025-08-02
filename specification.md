@@ -90,6 +90,12 @@ You are a DevOps engineer. Your job is to:
 * (Optionally) **Get generated index:**
   GET `/avatars/index.json` (if generator is used)
 
+An MCP server exposes the same data via the Model Context Protocol. It
+supports the following protocol messages:
+
+- `resources/list` – list all available avatars.
+- `resources/read` – read the content of an avatar.
+
 ---
 
 ## 7. Machine and human readable
