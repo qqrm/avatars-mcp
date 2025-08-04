@@ -1,47 +1,38 @@
 # Universal Agent Instructions
 
-## Communication
-- Final responses, code comments, commit messages, and documentation must be in **English**.
-- The user may speak Russian; you may interpret Russian requests but always answer in English.
+## Strategy
+- Review `AGENTS.md` files in the current scope before making changes.
+- Consult repository documentation such as `ARCHITECTURE.md` or `SPECIFICATION.md` if available.
+- Adapt these guidelines to the context of each project.
 
-## Documentation and Design
-- Every feature or fix must start with an explicit specification in `SPECIFICATION.md` (or another dedicated Markdown file).
-- Keep the system architecture documented in `ARCHITECTURE.md` and update it whenever the design changes.
-- Maintain a clear `README.md` for getting started and usage.
-- All Markdown should follow common conventions: use `#` for headers and specify languages for code blocks.
+## Communication
+- Replies to users should be short and in **Russian**.
+- Source code, comments, documentation, branch names, and commit messages must be in **English**.
+- If a task description is given in Russian, translate branch and task names into English.
+- Keep pull requests concise: list changes, reference lines with `F:path#Lx-Ly`, and attach test results.
 
 ## Development Workflow
-- Treat user requests as complete tasks and prefer delivering full pull‑request solutions.
-- Remove dead code instead of suppressing warnings.
-- Branch names, file names, and commit messages must be in English.
-- Do not mention build commands in commit messages.
+- Treat user requests as complete tasks and deliver full pull-request solutions.
+- Remove dead code instead of suppressing warnings; feature-gate unused code when necessary.
+- Write tests for new functionality and resolve any reported problems.
+- Clone repositories from their official source, work on the `main` branch, and keep `origin` configured for rebasing.
 
-### Rust Projects
-For Rust codebases, ensure the required tools are installed:
+## Pre-commit Checks
+Install tools if needed:
 ```bash
 rustup component add clippy rustfmt
 ```
-Run the following before committing:
+Run sequentially before committing (skip build checks when only Markdown files change):
 ```bash
 cargo fmt --all
+cargo check --tests --benches
 cargo clippy --all-targets --all-features -- -D warnings
 cargo test
-cargo machete    # if available
+cargo machete            # if available
 ```
-Fix all issues reported by these commands.
+- Do not mention these commands in commit messages.
+- Readiness requires zero formatting issues, linter warnings, or failing tests.
 
-### Other Languages
-Run equivalent formatting, linting, testing, and dependency checks.
-
-## Testing and CI
-- Write tests for new functionality.
-- Keep CI pipelines (e.g., `.github/workflows`) up to date so formatting, linting, tests, and other checks run automatically.
-- Reference changed files in summaries using `F:path#Lx-Ly` and include test output.
-
-## Releases
-- Applications must have automated release pipelines; each change to application code should produce a new release artifact.
-- Use the application from published releases when demonstrating or testing behavior.
-
-## Additional Notes
-- Consult existing documentation in `DOCS/` before making changes.
-- Investigate and resolve any reported problems before finishing a task.
+## Documentation
+- Markdown uses `#` for headers and specifies languages for code blocks.
+- Comments and documentation are always in English.
