@@ -25,10 +25,13 @@ jobs:
           toolchain: stable
           override: true
       - run: cargo run --release
+      - run: |
+          mkdir -p public/avatars
+          cp -r avatars/* public/avatars/
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: ./avatars
+          path: ./public
 
   deploy:
     needs: build

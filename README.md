@@ -96,7 +96,7 @@ This repository includes a small Rust CLI in `src/` that parses avatar files and
 
 ### GitHub Pages Deployment
 
-A workflow in `.github/workflows/pages.yml` rebuilds `avatars/index.json` and publishes the `avatars/` directory as a GitHub Pages site. It runs on pushes to `main` or release tags, installs the stable Rust toolchain, runs `cargo run --release`, then uploads the directory for deployment.
+ A workflow in `.github/workflows/pages.yml` rebuilds `avatars/index.json` and publishes it under the `avatars/` path on GitHub Pages. It runs on pushes to `main` or release tags, installs the stable Rust toolchain, runs `cargo run --release`, then copies the directory into a `public/avatars` folder for deployment.
 ---
 
 ### GitHub Pages Workflow
@@ -109,10 +109,14 @@ A workflow in `.github/workflows/pages.yml` rebuilds `avatars/index.json` and pu
 The latest version of the avatar API is served from GitHub Pages at:
 
 ```
-https://<github-user>.github.io/avatars-mcp/
+https://qqrm.github.io/avatars-mcp/
 ```
 
-You can browse individual avatar files or fetch `avatars/index.json` from that URL.
+You can browse individual avatar files or fetch `avatars/index.json` from that URL, for example:
+
+```
+https://qqrm.github.io/avatars-mcp/avatars/index.json
+```
 
 ### Release Versioning
 
