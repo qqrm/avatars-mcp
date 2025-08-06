@@ -7,10 +7,7 @@ edition = "2024"
 serde = { version = "1.0", features = ["derive"] }
 serde_yaml = "0.9"
 serde_json = "1.0"
-walkdir = "2"
-leptos = { version = "0.5", optional = true }
 tokio = { version = "1", features = ["full"] }
-rust-mcp-schema = "0.7"
 
 [[bin]]
 name = "mcp_server"
