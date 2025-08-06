@@ -1,4 +1,4 @@
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 use std::fs;
 use std::path::Path;
 use tokio::io::{self, AsyncBufReadExt, AsyncWriteExt, BufReader};
@@ -32,7 +32,31 @@ async fn handle_resources_list() -> Value {
 }
 
 async fn handle_resources_read(uri: &str) -> Value {
-    match fs::read_to_string(uri) {
+    let avatars_dir = match fs::canonicalize("avatars") {
+        Ok(dir) => dir,
+        Err(e) => {
+            return json!({
+                "error": {"code": -32000, "message": e.to_string()}
+            });
+        }
+    };
+
+    let normalized = match fs::canonicalize(uri) {
+        Ok(path) => path,
+        Err(e) => {
+            return json!({
+                "error": {"code": -32000, "message": e.to_string()}
+            });
+        }
+    };
+
+    if !normalized.starts_with(&avatars_dir) {
+        return json!({
+            "error": {"code": -32000, "message": "Access denied"}
+        });
+    }
+
+    match fs::read_to_string(normalized) {
         Ok(content) => json!({"contents": content}),
         Err(e) => json!({"error": {"code": -32000, "message": e.to_string()}}),
     }
@@ -64,7 +88,11 @@ async fn main() -> io::Result<()> {
             "initialize" => handle_initialize().await,
             "resources/list" => handle_resources_list().await,
             "resources/read" => {
-                if let Some(uri) = req.get("params").and_then(|p| p.get("uri")).and_then(|u| u.as_str()) {
+                if let Some(uri) = req
+                    .get("params")
+                    .and_then(|p| p.get("uri"))
+                    .and_then(|u| u.as_str())
+                {
                     handle_resources_read(uri).await
                 } else {
                     json!({"error": {"code": -32602, "message": "Missing uri"}})
@@ -83,4 +111,21 @@ async fn main() -> io::Result<()> {
     }
 
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[tokio::test]
+    async fn reads_avatar_inside_directory() {
+        let result = handle_resources_read("avatars/analyst.md").await;
+        assert!(result.get("contents").is_some());
+    }
+
+    #[tokio::test]
+    async fn blocks_traversal_outside_avatars() {
+        let result = handle_resources_read("avatars/../Cargo.toml").await;
+        assert!(result.get("error").is_some());
+    }
 }
