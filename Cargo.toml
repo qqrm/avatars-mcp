@@ -12,3 +12,6 @@ tokio = { version = "1", features = ["full"] }
 [[bin]]
 name = "mcp_server"
 path = "src/server.rs"
+
+[dev-dependencies]
+tempfile = "3"

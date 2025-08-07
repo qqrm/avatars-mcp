@@ -3,7 +3,7 @@ use std::error::Error;
 use std::fs;
 use std::path::Path;
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
 struct AvatarMeta {
     id: String,
     name: String,
@@ -52,8 +52,7 @@ fn parse_front_matter(content: &str) -> Result<(&str, &str), FrontMatterError> {
     Err(FrontMatterError::Malformed)
 }
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let avatars_dir = Path::new("avatars");
+fn generate_index(avatars_dir: &Path) -> Result<Vec<AvatarMeta>, Box<dyn Error>> {
     let mut index: Vec<AvatarMeta> = Vec::new();
     for entry in fs::read_dir(avatars_dir)? {
         let entry = entry?;
@@ -66,6 +65,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
     let json = serde_json::to_string_pretty(&index)?;
     fs::write(avatars_dir.join("index.json"), json + "\n")?;
+    Ok(index)
+}
+
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let avatars_dir = Path::new("avatars");
+    let index = generate_index(avatars_dir)?;
     println!("Index generated with {} avatars", index.len());
     Ok(())
 }
@@ -94,5 +99,38 @@ mod tests {
         let content = "---\nid: 1\nbody\n";
         let err = parse_front_matter(content).unwrap_err();
         assert_eq!(err, FrontMatterError::Malformed);
+    }
+}
+
+#[cfg(test)]
+mod index_generation_tests {
+    use super::*;
+    use std::error::Error;
+    use std::fs;
+    use tempfile::tempdir;
+
+    #[test]
+    fn generates_index_with_expected_fields() -> Result<(), Box<dyn Error>> {
+        let tmp = tempdir()?;
+        let dir = tmp.path();
+
+        fs::write(
+            dir.join("one.md"),
+            "---\nid: one\nname: One\ndescription: First\n---\nbody\n",
+        )?;
+        fs::write(dir.join("two.md"), "---\nid: two\nname: Two\n---\nbody\n")?;
+
+        let index = generate_index(dir)?;
+        assert_eq!(index.len(), 2);
+
+        let first = index.iter().find(|m| m.id == "one").unwrap();
+        assert_eq!(first.name, "One");
+        assert_eq!(first.description.as_deref(), Some("First"));
+
+        let json = fs::read_to_string(dir.join("index.json"))?;
+        let parsed: Vec<AvatarMeta> = serde_json::from_str(&json)?;
+        assert_eq!(parsed, index);
+
+        Ok(())
     }
 }
