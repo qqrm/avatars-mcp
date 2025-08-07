@@ -10,12 +10,12 @@ The repository stores behavioral **avatars** for AI agents. Each avatar is a Mar
 
 ```
 /avatars/
-  devops.md
-  qa.md
-  analyst.md
+  DEVOPS.md
+  QA.md
+  ANALYST.md
   ...
 README.md
-(specification.md)
+(SPECIFICATION.md)
 (optional: generator.rs)
 ```
 
@@ -25,7 +25,7 @@ README.md
 
 Each avatar is a `.md` file in `/avatars/`, and must start with a YAML front-matter block.
 
-**Example: `/avatars/devops.md`**
+**Example: `/avatars/DEVOPS.md`**
 
 ```markdown
 ---

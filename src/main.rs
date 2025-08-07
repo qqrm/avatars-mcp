@@ -115,10 +115,10 @@ mod index_generation_tests {
         let dir = tmp.path();
 
         fs::write(
-            dir.join("one.md"),
+            dir.join("ONE.md"),
             "---\nid: one\nname: One\ndescription: First\n---\nbody\n",
         )?;
-        fs::write(dir.join("two.md"), "---\nid: two\nname: Two\n---\nbody\n")?;
+        fs::write(dir.join("TWO.md"), "---\nid: two\nname: Two\n---\nbody\n")?;
 
         let index = generate_index(dir)?;
         assert_eq!(index.len(), 2);

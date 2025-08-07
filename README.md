@@ -6,12 +6,12 @@ This repository stores behavioral **avatars** for AI agents. Each avatar is a Ma
 
 ```
 /avatars/
-  devops.md
-  qa.md
-  analyst.md
+  DEVOPS.md
+  QA.md
+  ANALYST.md
   ...
 README.md
-(specification.md)
+(SPECIFICATION.md)
 (optional: generator.rs)
 ```
 
