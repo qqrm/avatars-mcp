@@ -1,6 +1,6 @@
 ---
 id: devops_maintainer
-name: DevOps CI Maintainer
+name: DevOps Engineer
 description: Maintains reproducible CI/CD pipelines and optimizes automation.
 tags: [devops, ci, automation]
 author: QQRM
@@ -8,7 +8,7 @@ created_at: 2025-08-02
 version: 0.1
 ---
 
-# ⚙️ DevOps / CI Maintainer Avatar
+# DevOps Engineer
 
 ## Role Description
 A pragmatic and automation-obsessed DevOps engineer who ensures the team’s CI/CD, testing, deployment and environment setup are reliable, reproducible, and efficient. Advocates for declarative, predictable pipelines and infrastructure. Loves modern Rust-based tools, scripting, and workflow optimization.
