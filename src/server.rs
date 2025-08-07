@@ -15,18 +15,22 @@ fn list_avatar_files() -> Vec<String> {
     let mut files = Vec::new();
     if let Ok(entries) = fs::read_dir(avatars_dir) {
         for entry in entries.flatten() {
-            if entry.path().extension().and_then(|s| s.to_str()) == Some("md") {
-                files.push(entry.path().to_string_lossy().to_string());
+            let path = entry.path();
+            if path.extension().and_then(|s| s.to_str()) == Some("md") {
+                if let Ok(relative) = path.strip_prefix(avatars_dir) {
+                    files.push(relative.to_string_lossy().to_string());
+                }
             }
         }
     }
+    files.sort();
     files
 }
 
 async fn handle_resources_list() -> Value {
     let resources: Vec<Value> = list_avatar_files()
         .into_iter()
-        .map(|uri| json!({"uri": uri}))
+        .map(|file| json!({"uri": format!("avatars/{}", file)}))
         .collect();
     json!({"resources": resources})
 }
@@ -117,6 +121,22 @@ async fn main() -> io::Result<()> {
 mod tests {
     use super::*;
 
+    #[test]
+    fn lists_files_relative_and_sorted() {
+        let files = list_avatar_files();
+        assert_eq!(
+            files,
+            vec![
+                "analyst.md",
+                "architect.md",
+                "developer.md",
+                "devops.md",
+                "security.md",
+                "tester.md",
+            ]
+        );
+    }
+
     #[tokio::test]
     async fn reads_avatar_inside_directory() {
         let result = handle_resources_read("avatars/analyst.md").await;
@@ -127,5 +147,29 @@ mod tests {
     async fn blocks_traversal_outside_avatars() {
         let result = handle_resources_read("avatars/../Cargo.toml").await;
         assert!(result.get("error").is_some());
+    }
+
+    #[tokio::test]
+    async fn lists_resources_with_prefix_and_order() {
+        let result = handle_resources_list().await;
+        let resources = result
+            .get("resources")
+            .and_then(|r| r.as_array())
+            .expect("resources array");
+        let uris: Vec<&str> = resources
+            .iter()
+            .map(|v| v.get("uri").and_then(|u| u.as_str()).unwrap())
+            .collect();
+        assert_eq!(
+            uris,
+            vec![
+                "avatars/analyst.md",
+                "avatars/architect.md",
+                "avatars/developer.md",
+                "avatars/devops.md",
+                "avatars/security.md",
+                "avatars/tester.md",
+            ]
+        );
     }
 }
