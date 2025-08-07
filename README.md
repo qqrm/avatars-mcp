@@ -94,6 +94,16 @@ Example configuration for an MCP client:
 
 This repository includes a small Rust CLI in `src/` that parses avatar files and generates `avatars/index.json`. Run `cargo run --release` to build the index.
 
+### CI Workflow
+
+The workflow in `.github/workflows/ci.yml` ensures that code is formatted, linted, and tested:
+
+```bash
+cargo fmt --all -- --check
+cargo clippy --all-targets --all-features -D warnings
+cargo test
+```
+
 ### GitHub Pages Deployment
 
  A workflow in `.github/workflows/pages.yml` rebuilds `avatars/index.json` and publishes it under the `avatars/` path on GitHub Pages. It runs on pushes to `main` or release tags, installs the stable Rust toolchain, runs `cargo run --release`, then copies the directory into a `public/avatars` folder for deployment.
