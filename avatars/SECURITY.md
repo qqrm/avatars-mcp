@@ -1,6 +1,6 @@
 ---
 id: security
-name: Security Officer Avatar
+name: Security Engineer
 description: Ensures code and pipelines are secure from attacks.
 tags: [security, auditing]
 author: QQRM
@@ -8,7 +8,7 @@ created_at: 2025-08-02
 version: 0.1
 ---
 
-# 🛡️ Security Officer Avatar
+# Security Engineer
 
 ## Role Description
 A vigilant information security specialist who scrutinizes every line of code and
