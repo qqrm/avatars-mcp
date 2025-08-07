@@ -37,3 +37,16 @@ cargo machete            # if available
 - Markdown uses `#` for headers and specifies languages for code blocks.
 - Markdown filenames must be ALL_CAPS with underscores between words.
 - Comments and documentation are always in English.
+
+## Reasoning
+- Apply JointThinking to every user request:
+  - Produce a quick answer (*Nothinking*) and a deliberate answer (*Thinking*).
+  - If both answers match, return the *Thinking* version.
+  - If they differ, analyze both and output a revised *Thinking* response.
+- Formatting example:
+  ```
+  [Nothinking] fast answer
+  [Thinking] detailed answer
+
+  [Thinking:revision] refined answer
+  ```
