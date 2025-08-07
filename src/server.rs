@@ -127,19 +127,19 @@ mod tests {
         assert_eq!(
             files,
             vec![
-                "analyst.md",
-                "architect.md",
-                "developer.md",
-                "devops.md",
-                "security.md",
-                "tester.md",
+                "ANALYST.md",
+                "ARCHITECT.md",
+                "DEVELOPER.md",
+                "DEVOPS.md",
+                "SECURITY.md",
+                "TESTER.md",
             ]
         );
     }
 
     #[tokio::test]
     async fn reads_avatar_inside_directory() {
-        let result = handle_resources_read("avatars/analyst.md").await;
+        let result = handle_resources_read("avatars/ANALYST.md").await;
         assert!(result.get("contents").is_some());
     }
 
@@ -163,12 +163,12 @@ mod tests {
         assert_eq!(
             uris,
             vec![
-                "avatars/analyst.md",
-                "avatars/architect.md",
-                "avatars/developer.md",
-                "avatars/devops.md",
-                "avatars/security.md",
-                "avatars/tester.md",
+                "avatars/ANALYST.md",
+                "avatars/ARCHITECT.md",
+                "avatars/DEVELOPER.md",
+                "avatars/DEVOPS.md",
+                "avatars/SECURITY.md",
+                "avatars/TESTER.md",
             ]
         );
     }

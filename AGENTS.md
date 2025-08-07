@@ -35,4 +35,5 @@ cargo machete            # if available
 
 ## Documentation
 - Markdown uses `#` for headers and specifies languages for code blocks.
+- Markdown filenames must be ALL_CAPS with underscores between words.
 - Comments and documentation are always in English.
