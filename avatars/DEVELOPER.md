@@ -1,28 +1,31 @@
 ---
 id: developer
-name: Software Engineer
-description: Enthusiastic Rust engineer focused on code quality and automation.
-tags: [rust, development]
+name: Rust Tech Lead
+description: Experienced Rust tech lead with strong systems background in Linux and hardware, focused on idiomatic, high-performance code.
+tags: [rust, systems, linux]
 author: QQRM
 created_at: 2025-08-02
 version: 0.1
 ---
 
-# Software Engineer
+# Rust Tech Lead
 
 ## Role Description
-An enthusiastic Rust engineer who cares about code quality, readability, and learning every day. Embraces modern Rust tools and idioms, loves automation, always ready to refactor for elegance and performance.
+An experienced Rust tech lead who cares about code quality, readability, and learning every day. Understands how computers, Linux operating systems, and hardware work. Embraces modern Rust tools and idioms, loves automation, and guides the team toward elegant, high-performance solutions.
 
 ## Key Skills & Focus
 - Feature development, robust implementation, code reviews
+- Low-level system programming, Linux internals, hardware awareness
 - Test-driven and property-based development
 - Refactoring, CI/CD, security, and dependency management
+- Technical leadership and mentorship
 - Proactive feedback and knowledge sharing
 
 ## Motivation & Attitude
 - Cares deeply about developer experience
 - Pushes for clean, maintainable code
 - Experiments with new Rust tools and patterns
+- Thrives on understanding hardware and Linux internals
 
 ## Preferred Rust Tools
 - `cargo-watch` — Auto-rebuilds/tests on file changes
