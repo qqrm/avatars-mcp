@@ -62,8 +62,8 @@ An index can be built by parsing the front matter of all `.md` files in `/avatar
 
 ### MCP Server
 
-An optional Model Context Protocol (MCP) server exposes the same avatar data over
-STDIO.
+An optional Model Context Protocol (MCP) server exposes the avatar data and base
+`AGENTS.md` instructions over STDIO.
 
 Run it with:
 
@@ -73,8 +73,8 @@ cargo run --bin server
 
 The server implements the following methods:
 
-- `resources/list` – list all available avatars.
-- `resources/read` – read the Markdown for a specific avatar.
+- `resources/list` – list all available avatars and the base instructions.
+- `resources/read` – read the Markdown for a specific avatar or `AGENTS.md`.
 
 Example configuration for an MCP client:
 
