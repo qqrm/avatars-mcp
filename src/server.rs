@@ -27,15 +27,31 @@ fn list_avatar_files() -> Vec<String> {
     files
 }
 
+fn list_resources() -> Vec<String> {
+    let mut files: Vec<String> = vec!["AGENTS.md".to_string()];
+    for avatar in list_avatar_files() {
+        files.push(format!("avatars/{}", avatar));
+    }
+    files.sort();
+    files
+}
+
 async fn handle_resources_list() -> Value {
-    let resources: Vec<Value> = list_avatar_files()
+    let resources: Vec<Value> = list_resources()
         .into_iter()
-        .map(|file| json!({"uri": format!("avatars/{}", file)}))
+        .map(|uri| json!({"uri": uri}))
         .collect();
     json!({"resources": resources})
 }
 
 async fn handle_resources_read(uri: &str) -> Value {
+    if uri == "AGENTS.md" {
+        return match fs::read_to_string("AGENTS.md") {
+            Ok(content) => json!({"contents": content}),
+            Err(e) => json!({"error": {"code": -32000, "message": e.to_string()}}),
+        };
+    }
+
     let avatars_dir = match fs::canonicalize("avatars") {
         Ok(dir) => dir,
         Err(e) => {
@@ -163,6 +179,7 @@ mod tests {
         assert_eq!(
             uris,
             vec![
+                "AGENTS.md",
                 "avatars/ANALYST.md",
                 "avatars/ARCHITECT.md",
                 "avatars/DEVELOPER.md",
@@ -171,5 +188,11 @@ mod tests {
                 "avatars/TESTER.md",
             ]
         );
+    }
+
+    #[tokio::test]
+    async fn reads_agents_md() {
+        let result = handle_resources_read("AGENTS.md").await;
+        assert!(result.get("contents").is_some());
     }
 }

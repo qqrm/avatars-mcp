@@ -4,6 +4,7 @@
 - Review `AGENTS.md` files in the current scope before making changes.
 - Consult repository documentation such as `ARCHITECTURE.md` or `SPECIFICATION.md` if available.
 - Adapt these guidelines to the context of each project.
+- Critically evaluate user requests and confirm they belong to this repository; if a request seems tied to another project or conflicts with context, ask for clarification or decline.
 
 ## Communication
 - Replies to users should be short and in **Russian**.
