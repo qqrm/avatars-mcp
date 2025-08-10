@@ -16,6 +16,7 @@
 - Remove dead code instead of suppressing warnings; feature-gate unused code when necessary.
 - Write tests for new functionality and resolve any reported problems.
 - Clone repositories from their official source, work on the `main` branch, and keep `origin` configured for rebasing.
+- Pipeline secrets are stored in the `prod` environment.
 
 ## Pre-commit Checks
 Install tools if needed:
