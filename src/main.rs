@@ -53,16 +53,19 @@ fn parse_front_matter(content: &str) -> Result<(&str, &str), FrontMatterError> {
 }
 
 fn generate_index(avatars_dir: &Path) -> Result<Vec<AvatarMeta>, Box<dyn Error>> {
-    let mut index: Vec<AvatarMeta> = Vec::new();
+    let mut files: Vec<(String, AvatarMeta)> = Vec::new();
     for entry in fs::read_dir(avatars_dir)? {
         let entry = entry?;
         if entry.path().extension().and_then(|s| s.to_str()) == Some("md") {
             let content = fs::read_to_string(entry.path())?;
             let (fm, _) = parse_front_matter(&content)?;
             let meta: AvatarMeta = serde_yaml::from_str(fm)?;
-            index.push(meta);
+            let name = entry.file_name().to_string_lossy().into_owned();
+            files.push((name, meta));
         }
     }
+    files.sort_by(|a, b| a.0.cmp(&b.0));
+    let index: Vec<AvatarMeta> = files.into_iter().map(|(_, meta)| meta).collect();
     let json = serde_json::to_string_pretty(&index)?;
     fs::write(avatars_dir.join("index.json"), json + "\n")?;
     Ok(index)
@@ -130,6 +133,21 @@ mod index_generation_tests {
         let json = fs::read_to_string(dir.join("index.json"))?;
         let parsed: Vec<AvatarMeta> = serde_json::from_str(&json)?;
         assert_eq!(parsed, index);
+
+        Ok(())
+    }
+
+    #[test]
+    fn index_is_sorted_by_filename() -> Result<(), Box<dyn Error>> {
+        let tmp = tempdir()?;
+        let dir = tmp.path();
+
+        fs::write(dir.join("B.md"), "---\nid: b\nname: B\n---\nbody\n")?;
+        fs::write(dir.join("A.md"), "---\nid: a\nname: A\n---\nbody\n")?;
+
+        let index = generate_index(dir)?;
+        let ids: Vec<&str> = index.iter().map(|m| m.id.as_str()).collect();
+        assert_eq!(ids, vec!["a", "b"]);
 
         Ok(())
     }
