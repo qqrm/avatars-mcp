@@ -2,6 +2,15 @@
 
 This repository stores behavioral **avatars** for AI agents. Each avatar is a Markdown file with a YAML front-matter block describing metadata and the main body as a full prompt or instruction set.
 
+## Remote Setup
+
+Configure the `origin` remote if it is missing:
+
+```bash
+git remote add origin https://github.com/qqrm/avatars-mcp.git
+git fetch origin
+```
+
 ## Specification
 
 ```
