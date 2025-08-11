@@ -10,27 +10,37 @@ async fn handle_initialize() -> Value {
     })
 }
 
-fn list_avatar_files() -> Vec<String> {
+fn list_avatar_files() -> std::io::Result<Vec<String>> {
     let avatars_dir = Path::new("avatars");
     let mut files = Vec::new();
-    if let Ok(entries) = fs::read_dir(avatars_dir) {
-        for entry in entries.flatten() {
-            let path = entry.path();
-            if path.extension().and_then(|s| s.to_str()) == Some("md") {
-                if let Ok(relative) = path.strip_prefix(avatars_dir) {
-                    files.push(relative.to_string_lossy().to_string());
+    let entries = fs::read_dir(avatars_dir)?;
+    for entry_result in entries {
+        match entry_result {
+            Ok(entry) => {
+                let path = entry.path();
+                if path.extension().and_then(|s| s.to_str()) == Some("md") {
+                    match path.strip_prefix(avatars_dir) {
+                        Ok(relative) => files.push(relative.to_string_lossy().to_string()),
+                        Err(e) => eprintln!("Failed to strip prefix for {:?}: {}", path, e),
+                    }
                 }
             }
+            Err(e) => eprintln!("Failed to read directory entry: {}", e),
         }
     }
     files.sort();
-    files
+    Ok(files)
 }
 
 fn list_resources() -> Vec<String> {
     let mut files: Vec<String> = vec!["AGENTS.md".to_string()];
-    for avatar in list_avatar_files() {
-        files.push(format!("avatars/{}", avatar));
+    match list_avatar_files() {
+        Ok(avatars) => {
+            for avatar in avatars {
+                files.push(format!("avatars/{}", avatar));
+            }
+        }
+        Err(e) => eprintln!("Failed to list avatar files: {}", e),
     }
     files.sort();
     files
@@ -139,7 +149,7 @@ mod tests {
 
     #[test]
     fn lists_files_relative_and_sorted() {
-        let files = list_avatar_files();
+        let files = list_avatar_files().expect("list avatar files");
         assert_eq!(
             files,
             vec![
