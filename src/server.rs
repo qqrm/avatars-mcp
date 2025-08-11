@@ -34,7 +34,7 @@ fn list_avatar_files() -> std::io::Result<Vec<String>> {
 }
 
 fn list_resources() -> Vec<String> {
-    let mut files: Vec<String> = vec!["AGENTS.md".to_string()];
+    let mut files: Vec<String> = vec!["BASE_AGENTS.md".to_string()];
     match list_avatar_files() {
         Ok(avatars) => {
             for avatar in avatars {
@@ -56,8 +56,8 @@ async fn handle_resources_list() -> Value {
 }
 
 async fn handle_resources_read(uri: &str) -> Value {
-    if uri == "AGENTS.md" {
-        return match task::spawn_blocking(|| fs::read_to_string("AGENTS.md")).await {
+    if uri == "BASE_AGENTS.md" {
+        return match task::spawn_blocking(|| fs::read_to_string("BASE_AGENTS.md")).await {
             Ok(Ok(content)) => json!({"contents": content}),
             Ok(Err(e)) => json!({"error": {"code": -32000, "message": e.to_string()}}),
             Err(e) => json!({"error": {"code": -32000, "message": e.to_string()}}),
@@ -203,7 +203,7 @@ mod tests {
         assert_eq!(
             uris,
             vec![
-                "AGENTS.md",
+                "BASE_AGENTS.md",
                 "avatars/ANALYST.md",
                 "avatars/ARCHITECT.md",
                 "avatars/DEVELOPER.md",
@@ -215,8 +215,8 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn reads_agents_md() {
-        let result = handle_resources_read("AGENTS.md").await;
+    async fn reads_base_agents_md() {
+        let result = handle_resources_read("BASE_AGENTS.md").await;
         assert!(result.get("contents").is_some());
     }
 }
