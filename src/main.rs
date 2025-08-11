@@ -31,23 +31,24 @@ impl std::fmt::Display for FrontMatterError {
 
 impl Error for FrontMatterError {}
 
-fn parse_front_matter(content: &str) -> Result<(&str, &str), FrontMatterError> {
+fn parse_front_matter(content: &str) -> Result<(String, String), FrontMatterError> {
+    let content = content.replace("\r\n", "\n");
     let after_first = content
         .strip_prefix("---\n")
         .ok_or(FrontMatterError::Missing)?;
     if let Some(rest) = after_first.strip_prefix("---\n") {
-        return Ok(("", rest));
+        return Ok((String::new(), rest.to_string()));
     }
     if after_first == "---" {
-        return Ok(("", ""));
+        return Ok((String::new(), String::new()));
     }
     if let Some(end) = after_first.find("\n---\n") {
         let fm = &after_first[..end];
         let rest = &after_first[end + 5..];
-        return Ok((fm.trim(), rest));
+        return Ok((fm.trim().to_string(), rest.to_string()));
     }
     if let Some(fm) = after_first.strip_suffix("\n---") {
-        return Ok((fm.trim(), ""));
+        return Ok((fm.trim().to_string(), String::new()));
     }
     Err(FrontMatterError::Malformed)
 }
@@ -59,7 +60,7 @@ fn generate_index(avatars_dir: &Path) -> Result<Vec<AvatarMeta>, Box<dyn Error>>
         if entry.path().extension().and_then(|s| s.to_str()) == Some("md") {
             let content = fs::read_to_string(entry.path())?;
             let (fm, _) = parse_front_matter(&content)?;
-            let meta: AvatarMeta = serde_yaml::from_str(fm)?;
+            let meta: AvatarMeta = serde_yaml::from_str(&fm)?;
             index.push(meta);
         }
     }
@@ -97,6 +98,21 @@ mod tests {
     #[test]
     fn errors_when_unclosed_front_matter() {
         let content = "---\nid: 1\nbody\n";
+        let err = parse_front_matter(content).unwrap_err();
+        assert_eq!(err, FrontMatterError::Malformed);
+    }
+
+    #[test]
+    fn parses_windows_line_endings() {
+        let content = "---\r\nid: 1\r\n---\r\nbody\r\n";
+        let (fm, rest) = parse_front_matter(content).expect("should parse");
+        assert_eq!(fm, "id: 1");
+        assert_eq!(rest, "body\n");
+    }
+
+    #[test]
+    fn errors_when_unclosed_front_matter_windows() {
+        let content = "---\r\nid: 1\r\nbody\r\n";
         let err = parse_front_matter(content).unwrap_err();
         assert_eq!(err, FrontMatterError::Malformed);
     }
