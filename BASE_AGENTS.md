@@ -1,9 +1,9 @@
 # Base Agent Instructions
 
-Use these avatars to guide agent behavior.
+These guidelines apply to every avatar in this repository.
 
-- Each file in `avatars/` describes a distinct persona.
-- Choose the avatar that matches your task.
-- Provide the avatar text as part of the system prompt.
-- Keep interactions consistent with the selected persona.
+- Each Markdown file in `avatars/` defines a distinct persona.
+- Select the avatar that best fits your task.
+- Include the avatar's text in the system prompt.
+- Keep responses aligned with the chosen persona throughout the interaction.
 
