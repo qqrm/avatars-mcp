@@ -2,6 +2,7 @@ use serde_json::{Value, json};
 use std::fs;
 use std::path::Path;
 use tokio::io::{self, AsyncBufReadExt, AsyncWriteExt, BufReader};
+use tokio::task;
 
 async fn handle_initialize() -> Value {
     json!({
@@ -46,14 +47,20 @@ async fn handle_resources_list() -> Value {
 
 async fn handle_resources_read(uri: &str) -> Value {
     if uri == "AGENTS.md" {
-        return match fs::read_to_string("AGENTS.md") {
-            Ok(content) => json!({"contents": content}),
+        return match task::spawn_blocking(|| fs::read_to_string("AGENTS.md")).await {
+            Ok(Ok(content)) => json!({"contents": content}),
+            Ok(Err(e)) => json!({"error": {"code": -32000, "message": e.to_string()}}),
             Err(e) => json!({"error": {"code": -32000, "message": e.to_string()}}),
         };
     }
 
-    let avatars_dir = match fs::canonicalize("avatars") {
-        Ok(dir) => dir,
+    let avatars_dir = match task::spawn_blocking(|| fs::canonicalize("avatars")).await {
+        Ok(Ok(dir)) => dir,
+        Ok(Err(e)) => {
+            return json!({
+                "error": {"code": -32000, "message": e.to_string()}
+            });
+        }
         Err(e) => {
             return json!({
                 "error": {"code": -32000, "message": e.to_string()}
@@ -61,8 +68,14 @@ async fn handle_resources_read(uri: &str) -> Value {
         }
     };
 
-    let normalized = match fs::canonicalize(uri) {
-        Ok(path) => path,
+    let uri_owned = uri.to_owned();
+    let normalized = match task::spawn_blocking(move || fs::canonicalize(uri_owned)).await {
+        Ok(Ok(path)) => path,
+        Ok(Err(e)) => {
+            return json!({
+                "error": {"code": -32000, "message": e.to_string()}
+            });
+        }
         Err(e) => {
             return json!({
                 "error": {"code": -32000, "message": e.to_string()}
@@ -76,8 +89,9 @@ async fn handle_resources_read(uri: &str) -> Value {
         });
     }
 
-    match fs::read_to_string(normalized) {
-        Ok(content) => json!({"contents": content}),
+    match task::spawn_blocking(move || fs::read_to_string(normalized)).await {
+        Ok(Ok(content)) => json!({"contents": content}),
+        Ok(Err(e)) => json!({"error": {"code": -32000, "message": e.to_string()}}),
         Err(e) => json!({"error": {"code": -32000, "message": e.to_string()}}),
     }
 }
