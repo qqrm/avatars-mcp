@@ -68,7 +68,7 @@ An optional Model Context Protocol (MCP) server exposes the avatar data and base
 Run it with:
 
 ```
-cargo run --bin server
+cargo run --bin mcp_server
 ```
 
 The server implements the following methods:
@@ -84,7 +84,7 @@ Example configuration for an MCP client:
     {
       "name": "avatars",
       "command": "cargo",
-      "args": ["run", "--bin", "server"]
+      "args": ["run", "--bin", "mcp_server"]
     }
   ]
 }
