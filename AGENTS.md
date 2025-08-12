@@ -1,5 +1,8 @@
 # Universal Agent Instructions
 
+## Avatars
+- Retrieve avatars from `https://qqrm.github.io/avatars-mcp/`.
+
 ## Strategy
 - Review `AGENTS.md` files in the current scope before making changes.
 - Consult repository documentation such as `ARCHITECTURE.md` or `SPECIFICATION.md` if available.
