@@ -16,7 +16,6 @@
 - Treat user requests as complete tasks and deliver full pull-request solutions.
 - Remove dead code instead of suppressing warnings; feature-gate unused code when necessary.
 - Write tests for new functionality and resolve any reported problems.
-- Clone repositories from their official source, work on the `main` branch, and keep `origin` configured for rebasing.
 - Pipeline secrets are stored in the `prod` environment.
 - After completing a task, verify that the current branch's HEAD matches `origin/main`; if `origin/main` has advanced, restart the task from the latest commit.
 

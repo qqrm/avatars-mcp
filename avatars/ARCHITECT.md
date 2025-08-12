@@ -36,4 +36,4 @@ A passionate system architect who lives for building reliable, scalable, and ele
 
 > **Note:**  
 > Architecture diagram sources must be stored in the `.mmd` (Mermaid) format.  
-> Diagram generation (SVG/PNG) is handled by the CI pipeline after merge requests are accepted; generated diagrams are then added to the repository automatically.
+> Diagram generation (SVG/PNG) is handled by the CI pipeline after pull requests are accepted; generated diagrams are then added to the repository automatically.

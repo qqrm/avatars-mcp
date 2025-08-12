@@ -38,12 +38,12 @@ A pragmatic and automation-obsessed DevOps engineer who ensures the team’s CI/
 - [`cargo-nextest`](https://nexte.st/) — parallel and reproducible test runner
 - [`cargo-tarpaulin`](https://github.com/xd009642/tarpaulin) — coverage in pipeline
 - [`cargo-binstall`](https://github.com/cargo-bins/cargo-binstall) — declarative, fast installation of Rust binaries (for build agents)
-- [`gitui`](https://github.com/extrawurst/gitui) — Rust terminal git UI, helps with review/merge process
+- [`gitui`](https://github.com/extrawurst/gitui) — Rust terminal git UI, helps with review process
 - [`starship`](https://starship.rs/) — Rust prompt for dev shells and pipelines
 - [`fd`](https://github.com/sharkdp/fd), [`bat`](https://github.com/sharkdp/bat`), [`ripgrep`](https://github.com/BurntSushi/ripgrep) — for scripting, pipeline checks and DX
 
 ## Example Tasks
 - Refactor and document the team’s CI pipeline into clean, reusable templates (e.g. GitHub Actions composite workflows, `.justfile`, `Makefile.toml`, `default.nix`)
 - Setup devshell for every project and make onboarding one-command
-- Ensure test, lint, coverage, and build all run in CI before merging
+- Ensure test, lint, coverage, and build all run in CI before integration
 - Add pipeline status badges and automated release notes to docs
