@@ -3,7 +3,7 @@ use std::error::Error;
 use std::fs;
 use std::path::Path;
 
-#[derive(Serialize, Deserialize, Debug, PartialEq)]
+#[derive(Clone, Serialize, Deserialize, Debug, PartialEq)]
 struct AvatarMeta {
     id: String,
     name: String,
@@ -12,6 +12,13 @@ struct AvatarMeta {
     author: Option<String>,
     created_at: Option<String>,
     version: Option<String>,
+}
+
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
+struct RootIndex {
+    base_instructions: String,
+    avatars: Vec<AvatarMeta>,
+    avatar_selection: String,
 }
 
 #[derive(Debug, PartialEq)]
@@ -69,9 +76,28 @@ fn generate_index(avatars_dir: &Path) -> Result<Vec<AvatarMeta>, Box<dyn Error>>
     Ok(index)
 }
 
+fn generate_root_index(
+    avatars: &[AvatarMeta],
+    agents_path: &Path,
+    output: &Path,
+) -> Result<(), Box<dyn Error>> {
+    let base = fs::read_to_string(agents_path)?;
+    let root = RootIndex {
+        base_instructions: base,
+        avatars: avatars.to_vec(),
+        avatar_selection:
+            "Select an avatar that fits your task and fetch /avatars/{id}.md for details."
+                .to_string(),
+    };
+    let json = serde_json::to_string_pretty(&root)?;
+    fs::write(output, json + "\n")?;
+    Ok(())
+}
+
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let avatars_dir = Path::new("avatars");
     let index = generate_index(avatars_dir)?;
+    generate_root_index(&index, Path::new("AGENTS.md"), Path::new("index.json"))?;
     println!("Index generated with {} avatars", index.len());
     Ok(())
 }
@@ -146,6 +172,31 @@ mod index_generation_tests {
         let json = fs::read_to_string(dir.join("index.json"))?;
         let parsed: Vec<AvatarMeta> = serde_json::from_str(&json)?;
         assert_eq!(parsed, index);
+
+        Ok(())
+    }
+
+    #[test]
+    fn generates_root_index_with_base_and_avatars() -> Result<(), Box<dyn Error>> {
+        let tmp = tempdir()?;
+        let dir = tmp.path();
+
+        fs::write(dir.join("AGENTS.md"), "base instructions")?;
+        let avatars_dir = dir.join("avatars");
+        fs::create_dir(&avatars_dir)?;
+        fs::write(
+            avatars_dir.join("ONE.md"),
+            "---\nid: one\nname: One\ndescription: First\n---\nbody\n",
+        )?;
+
+        let avatars = generate_index(&avatars_dir)?;
+        generate_root_index(&avatars, &dir.join("AGENTS.md"), &dir.join("index.json"))?;
+
+        let json = fs::read_to_string(dir.join("index.json"))?;
+        let parsed: RootIndex = serde_json::from_str(&json)?;
+        assert_eq!(parsed.base_instructions, "base instructions");
+        assert_eq!(parsed.avatars.len(), 1);
+        assert_eq!(parsed.avatars[0].id, "one");
 
         Ok(())
     }
