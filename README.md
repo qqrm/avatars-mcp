@@ -61,18 +61,17 @@ The main content begins after the front-matter block.
 
 ### Listing Generation
 
-An index can be built by parsing the front matter of all `.md` files in `/avatars/`.
+An index can be built by parsing the front matter of all `.md` files in `/avatars/` and bundling it with `BASE_AGENTS.md`.
 
 ### API Access
 
-- **List all avatars:** GET `/avatars/`
+- **Get catalog and base instructions:** GET `/avatars/index.json`
 - **Get full avatar:** GET `/avatars/{id}.md`
-- **Get generated index:** GET `/avatars/index.json` (optional)
 
 ### MCP Server
 
-An optional Model Context Protocol (MCP) server exposes the avatar data and base
-`BASE_AGENTS.md` instructions over STDIO.
+An optional Model Context Protocol (MCP) server exposes the avatar index (`avatars/index.json`)
+and avatar Markdown files over STDIO.
 
 Run it with:
 
@@ -82,8 +81,8 @@ cargo run --bin mcp_server
 
 The server implements the following methods:
 
-- `resources/list` – list all available avatars and the base instructions.
-- `resources/read` – read the Markdown for a specific avatar or `BASE_AGENTS.md`.
+- `resources/list` – advertise `avatars/index.json` containing base instructions and avatar metadata.
+- `resources/read` – read the index or the Markdown for a specific avatar.
 
 Example configuration for an MCP client:
 
