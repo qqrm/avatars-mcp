@@ -31,7 +31,19 @@ jobs:
           mkdir -p public/avatars
           cp -r avatars/* public/avatars/
           cp BASE_AGENTS.md INSTRUCTIONS.md public/
-          cp INSTRUCTIONS.md public/index.md
+          cp avatars/index.json public/index.json
+          {
+            cat BASE_AGENTS.md
+            echo
+            echo "## Avatars"
+            for f in avatars/*.md; do
+              name=$(basename "$f")
+              echo "- [${name%.*}](avatars/$name)"
+            done
+            echo
+            cat INSTRUCTIONS.md
+          } > public/index.md
+          touch public/.nojekyll
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
