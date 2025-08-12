@@ -53,17 +53,43 @@ fn parse_front_matter(content: &str) -> Result<(String, String), FrontMatterErro
     Err(FrontMatterError::Malformed)
 }
 
-fn generate_index(avatars_dir: &Path) -> Result<Vec<AvatarMeta>, Box<dyn Error>> {
-    let mut index: Vec<AvatarMeta> = Vec::new();
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
+struct AvatarEntry {
+    #[serde(flatten)]
+    meta: AvatarMeta,
+    uri: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
+struct Index {
+    base_instructions: String,
+    avatars: Vec<AvatarEntry>,
+}
+
+fn generate_index(avatars_dir: &Path, base_path: &Path) -> Result<Index, Box<dyn Error>> {
+    let base_instructions = fs::read_to_string(base_path)?;
+    let mut avatars: Vec<AvatarEntry> = Vec::new();
     for entry in fs::read_dir(avatars_dir)? {
         let entry = entry?;
         if entry.path().extension().and_then(|s| s.to_str()) == Some("md") {
             let content = fs::read_to_string(entry.path())?;
             let (fm, _) = parse_front_matter(&content)?;
             let meta: AvatarMeta = serde_yaml::from_str(&fm)?;
-            index.push(meta);
+            let uri = format!(
+                "avatars/{}",
+                entry
+                    .path()
+                    .file_name()
+                    .and_then(|s| s.to_str())
+                    .unwrap_or_default()
+            );
+            avatars.push(AvatarEntry { meta, uri });
         }
     }
+    let index = Index {
+        base_instructions,
+        avatars,
+    };
     let json = serde_json::to_string_pretty(&index)?;
     fs::write(avatars_dir.join("index.json"), json + "\n")?;
     Ok(index)
@@ -71,8 +97,9 @@ fn generate_index(avatars_dir: &Path) -> Result<Vec<AvatarMeta>, Box<dyn Error>>
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let avatars_dir = Path::new("avatars");
-    let index = generate_index(avatars_dir)?;
-    println!("Index generated with {} avatars", index.len());
+    let base_path = Path::new("BASE_AGENTS.md");
+    let index = generate_index(avatars_dir, base_path)?;
+    println!("Index generated with {} avatars", index.avatars.len());
     Ok(())
 }
 
@@ -128,23 +155,31 @@ mod index_generation_tests {
     #[test]
     fn generates_index_with_expected_fields() -> Result<(), Box<dyn Error>> {
         let tmp = tempdir()?;
-        let dir = tmp.path();
+        let root = tmp.path();
+        let avatars = root.join("avatars");
+        fs::create_dir(&avatars)?;
 
         fs::write(
-            dir.join("ONE.md"),
+            avatars.join("ONE.md"),
             "---\nid: one\nname: One\ndescription: First\n---\nbody\n",
         )?;
-        fs::write(dir.join("TWO.md"), "---\nid: two\nname: Two\n---\nbody\n")?;
+        fs::write(
+            avatars.join("TWO.md"),
+            "---\nid: two\nname: Two\n---\nbody\n",
+        )?;
+        fs::write(root.join("BASE_AGENTS.md"), "Base instructions\n")?;
 
-        let index = generate_index(dir)?;
-        assert_eq!(index.len(), 2);
+        let index = generate_index(&avatars, &root.join("BASE_AGENTS.md"))?;
+        assert_eq!(index.avatars.len(), 2);
+        assert_eq!(index.base_instructions, "Base instructions\n");
 
-        let first = index.iter().find(|m| m.id == "one").unwrap();
-        assert_eq!(first.name, "One");
-        assert_eq!(first.description.as_deref(), Some("First"));
+        let first = index.avatars.iter().find(|m| m.meta.id == "one").unwrap();
+        assert_eq!(first.meta.name, "One");
+        assert_eq!(first.meta.description.as_deref(), Some("First"));
+        assert_eq!(first.uri, "avatars/ONE.md");
 
-        let json = fs::read_to_string(dir.join("index.json"))?;
-        let parsed: Vec<AvatarMeta> = serde_json::from_str(&json)?;
+        let json = fs::read_to_string(avatars.join("index.json"))?;
+        let parsed: Index = serde_json::from_str(&json)?;
         assert_eq!(parsed, index);
 
         Ok(())

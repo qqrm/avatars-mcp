@@ -1,6 +1,5 @@
 use serde_json::{Value, json};
 use std::fs;
-use std::path::Path;
 use tokio::io::{self, AsyncBufReadExt, AsyncWriteExt, BufReader};
 use tokio::task;
 
@@ -11,7 +10,9 @@ async fn handle_initialize() -> Value {
     })
 }
 
+#[cfg(test)]
 fn list_avatar_files() -> std::io::Result<Vec<String>> {
+    use std::path::Path;
     let avatars_dir = Path::new("avatars");
     let mut files = Vec::new();
     let entries = fs::read_dir(avatars_dir)?;
@@ -34,17 +35,7 @@ fn list_avatar_files() -> std::io::Result<Vec<String>> {
 }
 
 fn list_resources() -> Vec<String> {
-    let mut files: Vec<String> = vec!["BASE_AGENTS.md".to_string()];
-    match list_avatar_files() {
-        Ok(avatars) => {
-            for avatar in avatars {
-                files.push(format!("avatars/{}", avatar));
-            }
-        }
-        Err(e) => eprintln!("Failed to list avatar files: {}", e),
-    }
-    files.sort();
-    files
+    vec!["avatars/index.json".to_string()]
 }
 
 async fn handle_resources_list() -> Value {
@@ -56,14 +47,6 @@ async fn handle_resources_list() -> Value {
 }
 
 async fn handle_resources_read(uri: &str) -> Value {
-    if uri == "BASE_AGENTS.md" {
-        return match task::spawn_blocking(|| fs::read_to_string("BASE_AGENTS.md")).await {
-            Ok(Ok(content)) => json!({"contents": content}),
-            Ok(Err(e)) => json!({"error": {"code": -32000, "message": e.to_string()}}),
-            Err(e) => json!({"error": {"code": -32000, "message": e.to_string()}}),
-        };
-    }
-
     let avatars_dir = match task::spawn_blocking(|| fs::canonicalize("avatars")).await {
         Ok(Ok(dir)) => dir,
         Ok(Err(e)) => {
@@ -190,7 +173,7 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn lists_resources_with_prefix_and_order() {
+    async fn lists_resources_returns_index() {
         let result = handle_resources_list().await;
         let resources = result
             .get("resources")
@@ -200,23 +183,13 @@ mod tests {
             .iter()
             .map(|v| v.get("uri").and_then(|u| u.as_str()).unwrap())
             .collect();
-        assert_eq!(
-            uris,
-            vec![
-                "BASE_AGENTS.md",
-                "avatars/ANALYST.md",
-                "avatars/ARCHITECT.md",
-                "avatars/DEVELOPER.md",
-                "avatars/DEVOPS.md",
-                "avatars/SECURITY.md",
-                "avatars/TESTER.md",
-            ]
-        );
+        assert_eq!(uris, vec!["avatars/index.json"]);
     }
 
     #[tokio::test]
-    async fn reads_base_agents_md() {
-        let result = handle_resources_read("BASE_AGENTS.md").await;
+    async fn reads_index_json() {
+        std::fs::write("avatars/index.json", "{}").expect("create index");
+        let result = handle_resources_read("avatars/index.json").await;
         assert!(result.get("contents").is_some());
     }
 }
