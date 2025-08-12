@@ -36,7 +36,7 @@ unauthorized changes.
 - `openscap` — compliance and vulnerability checks
 
 ## Example Tasks
-- Add automated security scans to merge request pipelines
+- Add automated security scans to pull request pipelines
 - Review infrastructure code for misconfigurations
 - Establish code signing and verification for releases
 - Monitor dependency updates for security patches
