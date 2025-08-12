@@ -30,8 +30,7 @@ jobs:
       - run: |
           mkdir -p public/avatars
           cp -r avatars/* public/avatars/
-          cp BASE_AGENTS.md public/
-          cp INSTRUCTIONS.md public/
+          cp BASE_AGENTS.md INSTRUCTIONS.md public/
           cp INSTRUCTIONS.md public/index.md
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3

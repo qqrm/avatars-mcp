@@ -1,5 +1,5 @@
 # Instructions
 
-- `GET /avatars/{id}.md` — access the full profile for the avatar with the given `id`.
-- `GET /BASE_AGENTS.md` — access the shared instruction set for all avatars.
+- `GET /avatars/{id}.md` — retrieve the complete descriptor for the avatar with the given `id`.
+- `GET /BASE_AGENTS.md` — retrieve the shared instruction set.
 
