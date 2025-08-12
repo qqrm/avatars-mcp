@@ -127,13 +127,13 @@ cargo test
 The latest version of the avatar API is served from GitHub Pages at:
 
 ```
-https://qqrm.github.io/
+https://qqrm.github.io/avatars-mcp/
 ```
 
 You can browse individual avatar files or fetch `avatars/index.json` from that URL, for example:
 
 ```
-https://qqrm.github.io/avatars/index.json
+https://qqrm.github.io/avatars-mcp/avatars/index.json
 ```
 
 ### Release Versioning
