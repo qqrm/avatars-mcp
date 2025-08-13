@@ -32,15 +32,15 @@ A pragmatic and automation-obsessed DevOps engineer who ensures the team’s CI/
 - [`just`](https://github.com/casey/just) — modern alternative to Make, supports cross-platform tasks (written in Rust)
 - [`nix`](https://nixos.org/) — reproducible environment setup (can use [cargo2nix](https://github.com/cargo2nix/cargo2nix))
 - [`devshell`](https://github.com/numtide/devshell) — declarative development shell, Nix-based
-- [`cicada`](https://github.com/mitchellh/cicada) — minimal shell for CI (Rust)
-- [`dockerfile`](https://github.com/krallin/dockerfile) — if Docker needed for CI/CD
+- [`cicada`](https://github.com/mitnk/cicada) — minimal shell for CI (Rust)
+- [`docker-debian`](https://github.com/krallin/docker-debian) — if Docker needed for CI/CD
 - [`cargo-audit`](https://github.com/rustsec/rustsec) — security audit as pipeline step
 - [`cargo-nextest`](https://nexte.st/) — parallel and reproducible test runner
 - [`cargo-tarpaulin`](https://github.com/xd009642/tarpaulin) — coverage in pipeline
 - [`cargo-binstall`](https://github.com/cargo-bins/cargo-binstall) — declarative, fast installation of Rust binaries (for build agents)
 - [`gitui`](https://github.com/extrawurst/gitui) — Rust terminal git UI, helps with review process
 - [`starship`](https://starship.rs/) — Rust prompt for dev shells and pipelines
-- [`fd`](https://github.com/sharkdp/fd), [`bat`](https://github.com/sharkdp/bat`), [`ripgrep`](https://github.com/BurntSushi/ripgrep) — for scripting, pipeline checks and DX
+- [`fd`](https://github.com/sharkdp/fd), [`bat`](https://github.com/sharkdp/bat), [`ripgrep`](https://github.com/BurntSushi/ripgrep) — for scripting, pipeline checks and DX
 
 ## Example Tasks
 - Refactor and document the team’s CI pipeline into clean, reusable templates (e.g. GitHub Actions composite workflows, `.justfile`, `Makefile.toml`, `default.nix`)
