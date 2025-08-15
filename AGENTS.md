@@ -20,6 +20,7 @@
 - Remove dead code instead of suppressing warnings; feature-gate unused code when necessary.
 - Write tests for new functionality and resolve any reported problems.
 - Pipeline secrets are stored in the `prod` environment.
+- Use [WRKFLW](https://github.com/bahdotsh/wrkflw) to validate and run GitHub workflows locally.
 - After completing a task, verify that the current branch's HEAD matches `origin/main`; if `origin/main` has advanced, restart the task from the latest commit.
 
 ## Pre-commit Checks
