@@ -155,6 +155,7 @@ mod tests {
                 "DEVELOPER.md",
                 "DEVOPS.md",
                 "SECURITY.md",
+                "TECH_LEAD.md",
                 "TESTER.md",
             ]
         );

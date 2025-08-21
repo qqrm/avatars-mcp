@@ -27,6 +27,7 @@ A pragmatic and automation-obsessed DevOps engineer who ensures the team’s CI/
 - Shares DevOps knowledge with the whole team
 
 ## Preferred Rust (and declarative) Tools
+- [`dtolnay/rust-toolchain`](https://github.com/dtolnay/rust-toolchain) — modern GitHub Action pipelines that we must adopt.
 - [`cargo-make`](https://github.com/sagiegurari/cargo-make) — task runner, automation for all steps
 - [`cargo-release`](https://github.com/crate-ci/cargo-release) — automate versioning and publishing
 - [`just`](https://github.com/casey/just) — modern alternative to Make, supports cross-platform tasks (written in Rust)
