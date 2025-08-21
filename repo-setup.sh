@@ -13,12 +13,12 @@ trap 'rc=$?; echo -e "\n!! setup failed at line $LINENO while running: $BASH_COM
 # вход
 : "${GH_TOKEN:?GH_TOKEN is missing}"
 GH_HOST="${GH_HOST:-github.com}"
-CHECK_REPO="${CHECK_REPO:-}"   # опционально owner/repo для проверки доступа
+CHECK_REPO="${CHECK_REPO:-}"   # optional owner/repo to verify access
 
-# базовая среда
+# basic environment
 export HOME="${HOME:-/root}"
-mkdir -p "$HOME" "$HOME/.local/bin"
-export PATH="$HOME/.local/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
+mkdir -p "$HOME" "$HOME/.local/bin" "$HOME/.cargo/bin"
+export PATH="$HOME/.cargo/bin:$HOME/.local/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
 export GH_NO_UPDATE_NOTIFIER=1
 export GH_PAGER=cat
 export PAGER=cat
@@ -27,8 +27,26 @@ export GIT_TERMINAL_PROMPT=0
 log() { printf '>> %s\n' "$*"; }
 die() { printf '❌ %s\n' "$*" >&2; exit 1; }
 
-# установка gh если нет
+# gh installation if missing
 gh_ok() { gh --version >/dev/null 2>&1; }
+
+# cargo-binstall installation if missing
+cargo_binstall_ok() { command -v cargo-binstall >/dev/null 2>&1; }
+
+install_cargo_binstall() {
+  local arch target url tmp
+  arch="$(uname -m)"
+  case "$arch" in
+    x86_64) target="x86_64-unknown-linux-gnu" ;;
+    aarch64) target="aarch64-unknown-linux-gnu" ;;
+    *) die "Unsupported arch: $arch" ;;
+  esac
+  url="https://github.com/cargo-bins/cargo-binstall/releases/latest/download/cargo-binstall-${target}.tgz"
+  tmp="$(mktemp -t cargo-binstall.tgz.XXXXXX)"
+  curl -fsSL "$url" -o "$tmp"
+  tar -C "$HOME/.cargo/bin" -xzf "$tmp" cargo-binstall
+  rm -f "$tmp"
+}
 
 install_gh_tarball() {
   local arch tarch ver url tmp sudo_cmd
@@ -59,6 +77,19 @@ fi
 gh_ok || die "gh is not operational"
 
 log "gh version: $(gh --version | head -n1)"
+
+# install cargo-machete using cargo-binstall
+if ! cargo_binstall_ok; then
+  log "Installing cargo-binstall"
+  install_cargo_binstall
+fi
+cargo_binstall_ok || die "cargo-binstall is not operational"
+
+if ! command -v cargo-machete >/dev/null 2>&1; then
+  log "Installing cargo-machete via cargo-binstall"
+  cargo binstall cargo-machete -y
+fi
+command -v cargo-machete >/dev/null 2>&1 || die "cargo-machete installation failed"
 
 # пробуем узнать login, если токен разрешает, иначе оставим unknown
 user_login="unknown"
