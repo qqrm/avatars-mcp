@@ -1,7 +1,7 @@
 # Universal Agent Instructions
 
 ## Avatars
-- Retrieve avatars from `https://qqrm.github.io/avatars-mcp/`.
+- Use the MCP server at `https://qqrm.github.io/avatars-mcp/` to fetch avatars and base instructions.
 
 ## Strategy
 - Review `AGENTS.md` files in the current scope before making changes.
