@@ -21,6 +21,7 @@
 - Write tests for new functionality and resolve any reported problems.
 - Pipeline secrets are stored in the `prod` environment.
 - Interact with pipelines locally using the [WRKFLW](https://github.com/bahdotsh/wrkflw) utility to validate and run GitHub workflows.
+- Use the [`dtolnay/rust-toolchain`](https://github.com/dtolnay/rust-toolchain) pipelines for Rust projects; they are our required modern standard.
 - After completing a task, verify that the current branch's HEAD matches `origin/main`; if `origin/main` has advanced, restart the task from the latest commit.
 
 ## Pre-commit Checks
