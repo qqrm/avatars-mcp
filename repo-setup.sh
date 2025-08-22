@@ -91,6 +91,25 @@ if ! command -v cargo-machete >/dev/null 2>&1; then
 fi
 command -v cargo-machete >/dev/null 2>&1 || die "cargo-machete installation failed"
 
+# install wrkflw using cargo-binstall with tarball fallback
+if ! command -v wrkflw >/dev/null 2>&1; then
+  log "Installing wrkflw via cargo-binstall"
+  if ! cargo binstall wrkflw@0.7.0 -y; then
+    log "Falling back to wrkflw tarball"
+    arch="$(uname -m)"
+    case "$arch" in
+      x86_64) tarch="x86_64" ;;
+      *) die "Unsupported arch for wrkflw tarball: $arch" ;;
+    esac
+    tmp="$(mktemp -d)"
+    curl -fsSL "https://github.com/bahdotsh/wrkflw/releases/download/v0.7.0/wrkflw-v0.7.0-linux-${tarch}.tar.gz" \
+      | tar -xz -C "$tmp"
+    install -m 755 "$tmp/wrkflw" "$HOME/.cargo/bin/"
+    rm -rf "$tmp"
+  fi
+fi
+command -v wrkflw >/dev/null 2>&1 || die "wrkflw installation failed"
+
 # пробуем узнать login, если токен разрешает, иначе оставим unknown
 user_login="unknown"
 if GH_TOKEN="$GH_TOKEN" gh api /user -q .login >/dev/null 2>&1; then
