@@ -13,7 +13,7 @@ git fetch origin
 
 ## Specification
 
-```
+```text
 /avatars/
   DEVOPS.md
   QA.md
@@ -26,7 +26,7 @@ README.md
 
 Each avatar is a `.md` file in `/avatars/`, beginning with a YAML front-matter block:
 
-```markdown
+```yaml
 ---
 id: devops
 name: DevOps Engineer
@@ -36,7 +36,9 @@ author: QQRM
 created_at: 2025-08-02
 version: 0.1
 ---
+```
 
+```markdown
 # DevOps Engineer
 
 You are a DevOps engineer. Your job is to:
@@ -75,7 +77,7 @@ and avatar Markdown files over STDIO.
 
 Run it with:
 
-```
+```bash
 cargo run --bin mcp_server
 ```
 
@@ -126,13 +128,13 @@ cargo test
 
 The latest version of the avatar API is served from GitHub Pages at:
 
-```
+```text
 https://qqrm.github.io/avatars-mcp/
 ```
 
 You can browse individual avatar files or fetch `avatars/index.json` from that URL, for example:
 
-```
+```text
 https://qqrm.github.io/avatars-mcp/avatars/index.json
 ```
 
