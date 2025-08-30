@@ -27,6 +27,15 @@ export GIT_TERMINAL_PROMPT=0
 log() { printf '>> %s\n' "$*"; }
 die() { printf '❌ %s\n' "$*" >&2; exit 1; }
 
+# ensure AGENTS.md exists
+if [ ! -f AGENTS.md ]; then
+  curl -fsSL https://qqrm.github.io/avatars-mcp/BASE_AGENTS.md -o AGENTS.md \
+    || cp BASE_AGENTS.md AGENTS.md
+  log "AGENTS.md created"
+else
+  log "AGENTS.md already exists"
+fi
+
 # gh installation if missing
 gh_ok() { gh --version >/dev/null 2>&1; }
 
