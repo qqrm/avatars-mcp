@@ -96,14 +96,14 @@ cargo_binstall_ok || die "cargo-binstall is not operational"
 
 if ! command -v cargo-machete >/dev/null 2>&1; then
   log "Installing cargo-machete via cargo-binstall"
-  cargo binstall cargo-machete -y
+  cargo binstall cargo-machete -y --quiet --disable-strategies compile
 fi
 command -v cargo-machete >/dev/null 2>&1 || die "cargo-machete installation failed"
 
 # install wrkflw using cargo-binstall with tarball fallback
 if ! command -v wrkflw >/dev/null 2>&1; then
   log "Installing wrkflw via cargo-binstall"
-  if ! cargo binstall wrkflw@0.7.0 -y; then
+  if ! cargo binstall wrkflw@0.7.0 -y --quiet --disable-strategies compile; then
     log "Falling back to wrkflw tarball"
     arch="$(uname -m)"
     case "$arch" in
