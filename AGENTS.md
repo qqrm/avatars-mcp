@@ -3,6 +3,9 @@
 ## Avatars
 - Use the MCP server at `https://qqrm.github.io/avatars-mcp/` to fetch avatars and base instructions.
 
+## Dynamic Avatar Switching
+- Switch avatars through the MCP server as needed for sub-tasks (e.g., Senior, Architect, Tester, Analyst).
+
 ## Strategy
 - Review `AGENTS.md` files in the current scope before making changes.
 - Consult repository documentation such as `ARCHITECTURE.md` or `SPECIFICATION.md` if available.
@@ -20,6 +23,7 @@
 - Source code, comments, documentation, branch names, and commit messages must be in **English**.
 - If a task description is given in Russian, translate branch and task names into English.
 - Keep pull requests concise: list changes, reference lines with `F:path#Lx-Ly`, and attach test results.
+- In the final summary, list all avatars used to solve the task.
 
 ## Development Workflow
 - Treat user requests as complete tasks and deliver full pull-request solutions.
