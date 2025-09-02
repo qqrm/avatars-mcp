@@ -13,9 +13,8 @@
 - Critically evaluate user requests and confirm they belong to this repository; if a request seems tied to another project or conflicts with context, ask for clarification or decline.
 
 ## Instruction Management
-- Ensure an `AGENTS.md` file exists in the repository root and relevant subdirectories; create one if missing.
-- Record new guidance in the nearest `AGENTS.md` without duplicating existing points; update wording when necessary.
-- Commit `AGENTS.md` alongside related changes so future agents retrieving instructions via the MCP server receive them.
+- This root `AGENTS.md` is fetched from a remote server during container initialization. After initialization, do not edit or commit this file.
+- Additional `AGENTS.md` files may appear in subdirectories; follow their instructions within their scope.
 - Keep `AGENTS.md` entries in English.
 
 ## Communication
