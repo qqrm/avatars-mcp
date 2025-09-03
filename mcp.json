@@ -1,12 +1,9 @@
 {
   "mcpServers": [
     {
-      "name": "cargo",
-      "command": "cargo-mcp"
-    },
-    {
       "name": "crates",
       "command": "crates-mcp"
     }
   ]
 }
+

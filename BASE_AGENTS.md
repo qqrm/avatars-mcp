@@ -6,15 +6,10 @@ These guidelines apply to every avatar in this repository.
 - Use the MCP server at `https://qqrm.github.io/avatars-mcp/` to fetch avatars and base instructions.
 
 ## Rust Documentation Servers
-- `repo-setup.sh` installs the `cargo-mcp` and `crates-mcp` servers via `cargo-binstall` with a source fallback.
-- A default `mcp.json` enables these servers automatically.
+- `setup.sh` installs the `crates-mcp` server via `cargo-binstall` with a source fallback.
+- A default `mcp.json` enables this server automatically.
 
 ## Local MCP servers
-- **cargo** – command `cargo-mcp`.
-  Example request:
-  ```json
-  { "tool": "workspace_crates", "directory": "." }
-  ```
 - **crates** – command `crates-mcp`.
   Example request:
   ```json
