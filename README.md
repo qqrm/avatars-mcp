@@ -100,7 +100,7 @@ Example configuration for an MCP client:
 }
 ```
 
-The repository also publishes a default `mcp.json` that enables the `cargo-mcp` and `crates-mcp` servers for Rust documentation.
+The repository also publishes a default `mcp.json` that enables the `crates-mcp` server for Rust documentation.
 
 ### Generator (Rust)
 

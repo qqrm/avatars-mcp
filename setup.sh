@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# scripts/repo-setup.sh
+# scripts/setup.sh
 # Persistent auth для GitHub CLI в init-окне с секретом. Не зависит от gh auth status.
 # Делает:
 # - ставит gh при необходимости
