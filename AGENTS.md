@@ -30,6 +30,7 @@
 - In the final summary, list all avatars used to solve the task.
 
 ## Development Workflow
+- If a `local_setup.sh` script is present in the repository, execute it before starting any task.
 - Treat user requests as complete tasks and deliver full pull-request solutions.
 - Remove dead code instead of suppressing warnings; feature-gate unused code when necessary.
 - Write tests for new functionality and resolve any reported problems.
