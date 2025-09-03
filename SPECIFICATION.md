@@ -2,7 +2,11 @@
 
 ## 1. Purpose
 
-The repository stores behavioral **avatars** for AI agents. Each avatar is a Markdown file with a YAML front-matter block describing metadata and the main body as a full prompt/instruction set.
+The repository distributes behavioral **avatars**, a small setup script, and a default `mcp.json` for AI agents. It is served read-only via GitHub Pages and contains no runtime source code.
+
+The repository is **not** a general project workspace. Avoid adding user-facing guides or unrelated assets.
+
+Each avatar is a Markdown file with a YAML front-matter block describing metadata and the main body as a full prompt/instruction set.
 
 ---
 
@@ -16,6 +20,7 @@ The repository stores behavioral **avatars** for AI agents. Each avatar is a Mar
   ...
 README.md
 (SPECIFICATION.md)
+(mcp.json)
 (optional: generator.rs)
 ```
 

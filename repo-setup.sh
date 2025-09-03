@@ -36,6 +36,17 @@ else
   log "AGENTS.md already exists"
 fi
 
+# ensure mcp.json exists
+if [ ! -f mcp.json ]; then
+  if curl -fsSL https://qqrm.github.io/avatars-mcp/mcp.json -o mcp.json; then
+    log "mcp.json created"
+  else
+    log "mcp.json unavailable"
+  fi
+else
+  log "mcp.json already exists"
+fi
+
 # gh installation if missing
 gh_ok() { gh --version >/dev/null 2>&1; }
 
@@ -118,6 +129,15 @@ if ! command -v wrkflw >/dev/null 2>&1; then
   fi
 fi
 command -v wrkflw >/dev/null 2>&1 || die "wrkflw installation failed"
+
+# install Rust documentation MCP servers
+for mcp_pkg in cargo-mcp crates-mcp; do
+  if ! command -v "$mcp_pkg" >/dev/null 2>&1; then
+    log "Installing $mcp_pkg via cargo-binstall"
+    cargo binstall "$mcp_pkg" -y --quiet --disable-strategies compile
+  fi
+  command -v "$mcp_pkg" >/dev/null 2>&1 || die "$mcp_pkg installation failed"
+done
 
 # пробуем узнать login, если токен разрешает, иначе оставим unknown
 user_login="unknown"

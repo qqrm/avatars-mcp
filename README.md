@@ -100,6 +100,8 @@ Example configuration for an MCP client:
 }
 ```
 
+The repository also publishes a default `mcp.json` that enables the `cargo-mcp` and `crates-mcp` servers for Rust documentation.
+
 ### Generator (Rust)
 
 This repository includes a small Rust CLI in `src/` that parses avatar files and generates `avatars/index.json`. Run `cargo run --release` to build the index.
