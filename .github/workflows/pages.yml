@@ -30,7 +30,7 @@ jobs:
       - run: |
           mkdir -p public/avatars
           cp -r avatars/* public/avatars/
-          cp BASE_AGENTS.md INSTRUCTIONS.md public/
+          cp BASE_AGENTS.md INSTRUCTIONS.md mcp.json public/
           cp avatars/index.json public/index.json
           {
             cat BASE_AGENTS.md
