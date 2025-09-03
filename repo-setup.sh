@@ -134,7 +134,7 @@ command -v wrkflw >/dev/null 2>&1 || die "wrkflw installation failed"
 for mcp_pkg in cargo-mcp crates-mcp; do
   if ! command -v "$mcp_pkg" >/dev/null 2>&1; then
     log "Installing $mcp_pkg via cargo-binstall"
-    cargo binstall "$mcp_pkg" -y --quiet --disable-strategies compile
+    cargo binstall "$mcp_pkg" -y --quiet
   fi
   command -v "$mcp_pkg" >/dev/null 2>&1 || die "$mcp_pkg installation failed"
 done
