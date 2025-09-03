@@ -3,12 +3,17 @@
 ## Avatars
 - Use the MCP server at `https://qqrm.github.io/avatars-mcp/` to fetch avatars and base instructions.
 
+## Rust Documentation Servers
+- `repo-setup.sh` installs the `cargo-mcp` and `crates-mcp` servers.
+- A default `mcp.json` enables these servers automatically.
+
 ## Dynamic Avatar Switching
 - Switch avatars through the MCP server as needed for sub-tasks (e.g., Senior, Architect, Tester, Analyst).
 
 ## Strategy
 - Review `AGENTS.md` files in the current scope before making changes.
 - Consult repository documentation such as `ARCHITECTURE.md` or `SPECIFICATION.md` if available.
+- Recall from `SPECIFICATION.md` that this repository only hosts avatars, `repo-setup.sh`, and a default `mcp.json`. Do not add user-facing guides or unrelated assets.
 - Adapt these guidelines to the context of each project.
 - Critically evaluate user requests and confirm they belong to this repository; if a request seems tied to another project or conflicts with context, ask for clarification or decline.
 
