@@ -131,7 +131,7 @@ fi
 command -v wrkflw >/dev/null 2>&1 || die "wrkflw installation failed"
 
 # install Rust documentation MCP servers
-for mcp_pkg in cargo-mcp crates-mcp; do
+for mcp_pkg in crates-mcp; do
   if ! command -v "$mcp_pkg" >/dev/null 2>&1; then
     log "Installing $mcp_pkg via cargo-binstall"
     cargo binstall "$mcp_pkg" -y --quiet
