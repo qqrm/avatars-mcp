@@ -195,4 +195,11 @@ fi
 log "Auth persisted. Example checks without GH_TOKEN:"
 log "  env -u GH_TOKEN gh repo view cli/cli --json name,description | jq"
 log "  env -u GH_TOKEN gh run list -R ${CHECK_REPO:-owner/repo} -L 5 || true"
+
+# run repository-specific setup if available
+if [ -f repo_setup.sh ]; then
+  log "Executing repo_setup.sh"
+  bash repo_setup.sh
+fi
+
 log "setup completed"
