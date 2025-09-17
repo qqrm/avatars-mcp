@@ -11,11 +11,13 @@ set -Eeuo pipefail
 trap 'rc=$?; echo -e "\n!! setup failed at line $LINENO while running: $BASH_COMMAND (exit $rc)" >&2; exit $rc' ERR
 
 SCRIPT_PATH="${BASH_SOURCE[0]-}"
+SCRIPT_SOURCE_IS_STDIN=0
 if [[ -n "$SCRIPT_PATH" && "$SCRIPT_PATH" != "-" ]]; then
   SCRIPT_DIR="$(cd "$(dirname "$SCRIPT_PATH")" && pwd)"
   cd "$SCRIPT_DIR"
 else
   SCRIPT_DIR="$(pwd)"
+  SCRIPT_SOURCE_IS_STDIN=1
 fi
 
 # вход
@@ -62,9 +64,12 @@ ensure_rust_script() {
 sync_mcp_resources() {
   command -v cargo >/dev/null 2>&1 || die "cargo is required to sync MCP resources"
   ensure_rust_script
-  local script_path="$SCRIPT_DIR/scripts/sync_mcp.rs"
+  local candidate_path="$SCRIPT_DIR/scripts/sync_mcp.rs"
+  local script_path=""
   local temp_script=""
-  if [ ! -f "$script_path" ]; then
+  if [[ "$SCRIPT_SOURCE_IS_STDIN" -eq 0 && -f "$candidate_path" ]]; then
+    script_path="$candidate_path"
+  else
     temp_script="$(mktemp -t sync_mcp.rs.XXXXXX)"
     if ! curl -fsSL "$SYNC_MCP_SCRIPT_URL" -o "$temp_script"; then
       rm -f "$temp_script"
