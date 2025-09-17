@@ -9,6 +9,10 @@ These guidelines apply to every avatar in this repository.
 - `setup.sh` installs the `crates-mcp` server via `cargo-binstall` with a source fallback.
 - A default `mcp.json` enables this server automatically.
 
+## Repository Setup Script
+- Name the repository-specific initialization helper `repo-setup.sh` in every project.
+- The shared `setup.sh` bootstrapper discovers and runs `repo-setup.sh`, so keep project automation inside that file.
+
 ## Local MCP servers
 - **crates** – command `crates-mcp`.
   Example request:
@@ -41,7 +45,6 @@ These guidelines apply to every avatar in this repository.
 
 ## Development Workflow
 - If a `local_setup.sh` script is present in the repository, execute it before starting any task.
-- Ensure git remotes are configured; `repo_setup.sh` must set up the remote automatically.
 - Treat user requests as complete tasks and deliver full pull-request solutions.
 - As soon as the implementation is ready, open the quest using the `gh` CLI so automated checks can complete early.
 - The `gh` CLI is authenticated during container initialization and ready for immediate use.

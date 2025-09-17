@@ -17,13 +17,35 @@ git remote add origin https://github.com/qqrm/avatars-mcp.git
 git fetch origin
 ```
 
-Run `./setup.sh` (or `repo-setup.sh` when present) to install the optional MCP servers referenced by `mcp.json`.
+Run `./setup.sh` to install the optional MCP servers referenced by `mcp.json`; it automatically invokes a repository-specific `repo-setup.sh` when present.
 
 ## Documentation
 
 - **Specification:** See [`SPECIFICATION.md`](SPECIFICATION.md) for the canonical directory layout, avatar schema, and API details.
 - **Avatars:** Individual prompts live in [`/avatars/`](avatars/); each file targets a single role.
 - **Base instructions:** Shared guidance for all avatars resides in [`BASE_AGENTS.md`](BASE_AGENTS.md).
+- **HTTP quick reference:** [`INSTRUCTIONS.md`](INSTRUCTIONS.md) summarizes the published endpoints external clients call.
+
+## Shared Files for External Consumers
+
+External clients rely on a small set of shared files published alongside the avatars:
+
+- [`BASE_AGENTS.md`](BASE_AGENTS.md) — the baseline instructions served to external agents and bundled into `avatars/index.json`.
+- [`INSTRUCTIONS.md`](INSTRUCTIONS.md) — a condensed description of the HTTP API exposed via GitHub Pages.
+- [`mcp.json`](mcp.json) — the default Model Context Protocol manifest that activates these resources in compatible clients.
+
+Repository tooling keeps these artifacts in sync for local use:
+
+- [`scripts/sync_mcp.sh`](scripts/sync_mcp.sh) — a Bash utility that mirrors the published baseline instructions and avatar index.
+- [`setup.sh`](setup.sh) — a POSIX shell bootstrapper that installs tooling before invoking the shell sync script.
+
+## Repository-Specific Setup Script
+
+Every repository in this ecosystem can ship its own local setup helper tailored to its automation requirements under the shared
+name `repo-setup.sh`. The [`setup.sh`](setup.sh) script in this repository provisions GitHub CLI authentication,
+installs required Rust tooling, refreshes the published MCP assets through `scripts/sync_mcp.sh`, and then runs `repo-setup.sh`
+if it exists. When working in other repositories, expect their `repo-setup.sh` contents to diverge—each project documents and
+automates only the dependencies it needs while keeping the filename consistent.
 
 ## Tooling
 
