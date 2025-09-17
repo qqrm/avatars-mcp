@@ -1,121 +1,31 @@
 # Avatar Repository
 
-This repository stores behavioral **avatars** for AI agents. Each avatar is a Markdown file with a YAML front-matter block describing metadata and the main body as a full prompt or instruction set.
+This repository hosts behavioral **avatars** for AI agents. Avatars are Markdown prompts with YAML metadata that describe specialized roles. The collection is published read-only through GitHub Pages for integration with Model Context Protocol (MCP) clients and other automation.
 
-## Remote Setup
+## Quick Start
 
-Configure the `origin` remote if it is missing:
+Configure the Git remote if it is missing:
 
 ```bash
 git remote add origin https://github.com/qqrm/avatars-mcp.git
 git fetch origin
 ```
 
-## Specification
+Run `./setup.sh` (or `repo-setup.sh` when present) to install the optional MCP servers referenced by `mcp.json`.
 
-```text
-/avatars/
-  DEVOPS.md
-  QA.md
-  ANALYST.md
-  ...
-README.md
-(SPECIFICATION.md)
-(optional: generator.rs)
-```
+## Documentation
 
-Each avatar is a `.md` file in `/avatars/`, beginning with a YAML front-matter block:
+- **Specification:** See [`SPECIFICATION.md`](SPECIFICATION.md) for the canonical directory layout, avatar schema, and API details.
+- **Avatars:** Individual prompts live in [`/avatars/`](avatars/); each file targets a single role.
+- **Base instructions:** Shared guidance for all avatars resides in [`BASE_AGENTS.md`](BASE_AGENTS.md).
 
-```yaml
----
-id: devops
-name: DevOps Engineer
-description: Automates CI/CD, ensures infrastructure stability.
-tags: [ci, cd, infrastructure]
-author: QQRM
-created_at: 2025-08-02
-version: 0.1
----
-```
+## Tooling
 
-```markdown
-# DevOps Engineer
-
-You are a DevOps engineer. Your job is to:
-- Automate CI/CD processes.
-- Ensure infrastructure security and stability.
-- Recommend best practices to the team.
-```
-
-### Required front-matter fields
-
-| Field         | Type   | Required | Description                          |
-| ------------- | ------ | -------- | ------------------------------------ |
-| `id`          | string | yes      | Unique identifier for the avatar     |
-| `name`        | string | yes      | Display name (human-readable)        |
-| `description` | string | yes      | Short description for listings       |
-| `tags`        | array  | no       | List of keywords/categories          |
-| `author`      | string | no       | Who created or maintains this avatar |
-| `created_at`  | date   | no       | Creation date (YYYY-MM-DD)           |
-| `version`     | string | no       | Version number for the avatar        |
-
-The main content begins after the front-matter block.
-
-### Listing Generation
-
-An index can be built by parsing the front matter of all `.md` files in `/avatars/` and bundling it with `BASE_AGENTS.md`.
-
-### API Access
-
-- **Get catalog and base instructions:** GET `/avatars/index.json`
-- **Get full avatar:** GET `/avatars/{id}.md`
-
-### MCP Server
-
-An optional Model Context Protocol (MCP) server exposes the avatar index (`avatars/index.json`)
-and avatar Markdown files over STDIO.
-
-Run it with:
+A Rust CLI located in [`src/`](src) regenerates `avatars/index.json` by parsing the avatar front matter and bundling `BASE_AGENTS.md`. Build the index with:
 
 ```bash
-cargo run --bin mcp_server
+cargo run --release
 ```
-
-The server implements the following methods:
-
-- `resources/list` – advertise `avatars/index.json` containing base instructions and avatar metadata.
-- `resources/read` – read the index or the Markdown for a specific avatar.
-
-Example configuration for an MCP client:
-
-```json
-{
-  "mcpServers": [
-    {
-      "name": "avatars",
-      "command": "cargo",
-      "args": ["run", "--bin", "mcp_server"]
-    }
-  ]
-}
-```
-
-The repository also publishes a default `mcp.json` that enables the `crates-mcp` server for Rust documentation.
-
-### Generator (Rust)
-
-This repository includes a small Rust CLI in `src/` that parses avatar files and generates `avatars/index.json`. Run `cargo run --release` to build the index.
-
-### CI Workflow
-
-The workflow in `.github/workflows/ci.yml` ensures that code is formatted, linted, and tested:
-
-```bash
-cargo fmt --all -- --check
-cargo clippy --all-targets --all-features -D warnings
-cargo test
-```
-
 ### GitHub Pages Publishing
 
 The [GitHub Pages workflow](.github/workflows/pages.yml) rebuilds `avatars/index.json` and publishes the `avatars/` directory to GitHub Pages whenever updates land on `main` or release tags. Refer to the workflow file for the complete automation steps.
@@ -134,6 +44,6 @@ You can browse individual avatar files or fetch `avatars/index.json` from that U
 https://qqrm.github.io/avatars-mcp/avatars/index.json
 ```
 
-### Release Versioning
+Continuous integration pipelines lint and test the Rust tooling (`cargo fmt`, `cargo clippy`, and `cargo test`). GitHub Pages deployments rebuild `avatars/index.json` from `main` and publish both the index and avatar Markdown files under `https://qqrm.github.io/avatars-mcp/`.
 
-Releases are tagged using semantic versioning: `v<major>.<minor>.<patch>`. Tags correspond to stable snapshots of the avatar collection.
+For detailed schemas, examples, and API usage, always defer to `SPECIFICATION.md`.
