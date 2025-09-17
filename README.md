@@ -26,10 +26,23 @@ A Rust CLI located in [`src/`](src) regenerates `avatars/index.json` by parsing 
 ```bash
 cargo run --release
 ```
+### GitHub Pages Publishing
 
-The repository also publishes a default `mcp.json` that enables the `avatars` MCP server alongside documentation helpers such as `crates-mcp`.
+The [GitHub Pages workflow](.github/workflows/pages.yml) rebuilds `avatars/index.json` and publishes the `avatars/` directory to GitHub Pages whenever updates land on `main` or release tags. Refer to the workflow file for the complete automation steps.
 
-## Workflows and Deployment
+### Published API
+
+The latest version of the avatar API is served from GitHub Pages at:
+
+```text
+https://qqrm.github.io/avatars-mcp/
+```
+
+You can browse individual avatar files or fetch `avatars/index.json` from that URL, for example:
+
+```text
+https://qqrm.github.io/avatars-mcp/avatars/index.json
+```
 
 Continuous integration pipelines lint and test the Rust tooling (`cargo fmt`, `cargo clippy`, and `cargo test`). GitHub Pages deployments rebuild `avatars/index.json` from `main` and publish both the index and avatar Markdown files under `https://qqrm.github.io/avatars-mcp/`.
 
