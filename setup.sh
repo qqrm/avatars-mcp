@@ -10,8 +10,13 @@
 set -Eeuo pipefail
 trap 'rc=$?; echo -e "\n!! setup failed at line $LINENO while running: $BASH_COMMAND (exit $rc)" >&2; exit $rc' ERR
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-cd "$SCRIPT_DIR"
+SCRIPT_PATH="${BASH_SOURCE[0]-}"
+if [[ -n "$SCRIPT_PATH" && "$SCRIPT_PATH" != "-" ]]; then
+  SCRIPT_DIR="$(cd "$(dirname "$SCRIPT_PATH")" && pwd)"
+  cd "$SCRIPT_DIR"
+else
+  SCRIPT_DIR="$(pwd)"
+fi
 
 # вход
 : "${GH_TOKEN:?GH_TOKEN is missing}"
@@ -34,7 +39,8 @@ MCP_BASE_URL="${MCP_BASE_URL:-https://qqrm.github.io/avatars-mcp}"
 AVATAR_DIR="${AVATAR_DIR:-avatars}"
 BASE_FILE="${BASE_FILE:-BASE_AGENTS.md}"
 INDEX_PATH="${INDEX_PATH:-$AVATAR_DIR/index.json}"
-export MCP_BASE_URL AVATAR_DIR BASE_FILE INDEX_PATH
+SYNC_MCP_SCRIPT_URL="${SYNC_MCP_SCRIPT_URL:-https://raw.githubusercontent.com/qqrm/avatars-mcp/refs/heads/main/scripts/sync_mcp.rs}"
+export MCP_BASE_URL AVATAR_DIR BASE_FILE INDEX_PATH SYNC_MCP_SCRIPT_URL
 
 ensure_rust_script() {
   if command -v rust-script >/dev/null 2>&1; then
@@ -56,10 +62,26 @@ ensure_rust_script() {
 sync_mcp_resources() {
   command -v cargo >/dev/null 2>&1 || die "cargo is required to sync MCP resources"
   ensure_rust_script
-  if rust-script scripts/sync_mcp.rs; then
+  local script_path="$SCRIPT_DIR/scripts/sync_mcp.rs"
+  local temp_script=""
+  if [ ! -f "$script_path" ]; then
+    temp_script="$(mktemp -t sync_mcp.rs.XXXXXX)"
+    if ! curl -fsSL "$SYNC_MCP_SCRIPT_URL" -o "$temp_script"; then
+      rm -f "$temp_script"
+      die "Unable to download sync_mcp.rs from $SYNC_MCP_SCRIPT_URL"
+    fi
+    script_path="$temp_script"
+  fi
+  if rust-script "$script_path"; then
     log "MCP resources refreshed from ${MCP_BASE_URL}"
   else
+    if [ -n "$temp_script" ]; then
+      rm -f "$temp_script"
+    fi
     die "Failed to sync MCP resources via rust-script"
+  fi
+  if [ -n "$temp_script" ]; then
+    rm -f "$temp_script"
   fi
 }
 
