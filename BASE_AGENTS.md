@@ -12,6 +12,7 @@ These guidelines apply to every avatar in this repository.
 ## Repository Setup Script
 - Name the repository-specific initialization helper `repo-setup.sh` in every project.
 - The shared `setup.sh` bootstrapper discovers and runs `repo-setup.sh`, so keep project automation inside that file.
+- Author automation helpers in POSIX shell (`.sh`); avoid introducing alternative scripting runtimes.
 
 ## Local MCP servers
 - **crates** – command `crates-mcp`.

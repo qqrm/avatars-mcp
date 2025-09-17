@@ -41,39 +41,13 @@ MCP_BASE_URL="${MCP_BASE_URL:-https://qqrm.github.io/avatars-mcp}"
 AVATAR_DIR="${AVATAR_DIR:-avatars}"
 BASE_FILE="${BASE_FILE:-BASE_AGENTS.md}"
 INDEX_PATH="${INDEX_PATH:-$AVATAR_DIR/index.json}"
-SYNC_MCP_SCRIPT_URL="${SYNC_MCP_SCRIPT_URL:-https://raw.githubusercontent.com/qqrm/avatars-mcp/refs/heads/main/scripts/sync_mcp.rs}"
-export MCP_BASE_URL AVATAR_DIR BASE_FILE INDEX_PATH SYNC_MCP_SCRIPT_URL
+export MCP_BASE_URL AVATAR_DIR BASE_FILE INDEX_PATH
 
 sync_mcp_resources() {
   if bash scripts/sync_mcp.sh; then
     log "MCP resources refreshed from ${MCP_BASE_URL}"
   else
-    die "Failed to sync MCP resources via shell script"
-  command -v cargo >/dev/null 2>&1 || die "cargo is required to sync MCP resources"
-  ensure_rust_script
-  local candidate_path="$SCRIPT_DIR/scripts/sync_mcp.rs"
-  local script_path=""
-  local temp_script=""
-  if [[ "$SCRIPT_SOURCE_IS_STDIN" -eq 0 && -f "$candidate_path" ]]; then
-    script_path="$candidate_path"
-  else
-    temp_script="$(mktemp -t sync_mcp.rs.XXXXXX)"
-    if ! curl -fsSL "$SYNC_MCP_SCRIPT_URL" -o "$temp_script"; then
-      rm -f "$temp_script"
-      die "Unable to download sync_mcp.rs from $SYNC_MCP_SCRIPT_URL"
-    fi
-    script_path="$temp_script"
-  fi
-  if rust-script "$script_path"; then
-    log "MCP resources refreshed from ${MCP_BASE_URL}"
-  else
-    if [ -n "$temp_script" ]; then
-      rm -f "$temp_script"
-    fi
-    die "Failed to sync MCP resources via rust-script"
-  fi
-  if [ -n "$temp_script" ]; then
-    rm -f "$temp_script"
+    die "Failed to sync MCP resources via scripts/sync_mcp.sh"
   fi
 }
 
