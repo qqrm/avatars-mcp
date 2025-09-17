@@ -2,6 +2,12 @@
 
 This repository stores behavioral **avatars** for AI agents. Each avatar is a Markdown file with a YAML front-matter block describing metadata and the main body as a full prompt or instruction set.
 
+## Avatar Usage Guidelines
+
+- Always select an avatar before starting work on a task so the agent operates from a clear perspective.
+- Switch avatars explicitly when the task changes focus and document the active persona in status updates.
+- Align tooling and communication with the currently selected avatar to keep expectations consistent for collaborators.
+
 ## Remote Setup
 
 Configure the `origin` remote if it is missing:
