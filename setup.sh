@@ -10,6 +10,9 @@
 set -Eeuo pipefail
 trap 'rc=$?; echo -e "\n!! setup failed at line $LINENO while running: $BASH_COMMAND (exit $rc)" >&2; exit $rc' ERR
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR"
+
 # вход
 : "${GH_TOKEN:?GH_TOKEN is missing}"
 GH_HOST="${GH_HOST:-github.com}"
@@ -27,14 +30,38 @@ export GIT_TERMINAL_PROMPT=0
 log() { printf '>> %s\n' "$*"; }
 die() { printf '❌ %s\n' "$*" >&2; exit 1; }
 
-# ensure AGENTS.md exists
-if [ ! -f AGENTS.md ]; then
-  curl -fsSL https://qqrm.github.io/avatars-mcp/BASE_AGENTS.md -o AGENTS.md \
-    || cp BASE_AGENTS.md AGENTS.md
-  log "AGENTS.md created"
-else
-  log "AGENTS.md already exists"
-fi
+MCP_BASE_URL="${MCP_BASE_URL:-https://qqrm.github.io/avatars-mcp}"
+AVATAR_DIR="${AVATAR_DIR:-avatars}"
+BASE_FILE="${BASE_FILE:-BASE_AGENTS.md}"
+INDEX_PATH="${INDEX_PATH:-$AVATAR_DIR/index.json}"
+export MCP_BASE_URL AVATAR_DIR BASE_FILE INDEX_PATH
+
+ensure_rust_script() {
+  if command -v rust-script >/dev/null 2>&1; then
+    return 0
+  fi
+  log "Installing rust-script"
+  if command -v cargo-binstall >/dev/null 2>&1; then
+    if cargo binstall rust-script -y --quiet --disable-strategies compile; then
+      command -v rust-script >/dev/null 2>&1 && return 0
+      log "cargo-binstall rust-script failed; falling back to cargo install"
+    fi
+  fi
+  if ! cargo install rust-script --locked --quiet; then
+    cargo install rust-script --locked
+  fi
+  command -v rust-script >/dev/null 2>&1 || die "rust-script installation failed"
+}
+
+sync_mcp_resources() {
+  command -v cargo >/dev/null 2>&1 || die "cargo is required to sync MCP resources"
+  ensure_rust_script
+  if rust-script scripts/sync_mcp.rs; then
+    log "MCP resources refreshed from ${MCP_BASE_URL}"
+  else
+    die "Failed to sync MCP resources via rust-script"
+  fi
+}
 
 # ensure mcp.json exists
 if [ ! -f mcp.json ]; then
@@ -45,6 +72,19 @@ if [ ! -f mcp.json ]; then
   fi
 else
   log "mcp.json already exists"
+fi
+
+sync_mcp_resources
+
+if [ ! -f AGENTS.md ]; then
+  if [ -f "$BASE_FILE" ]; then
+    cp "$BASE_FILE" AGENTS.md
+    log "AGENTS.md created from ${BASE_FILE}"
+  else
+    log "${BASE_FILE} missing; skipping AGENTS.md creation"
+  fi
+else
+  log "AGENTS.md already exists"
 fi
 
 # gh installation if missing
