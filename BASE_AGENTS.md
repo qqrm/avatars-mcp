@@ -43,6 +43,7 @@ These guidelines apply to every avatar in this repository.
 - If a `local_setup.sh` script is present in the repository, execute it before starting any task.
 - Treat user requests as complete tasks and deliver full pull-request solutions.
 - As soon as the implementation is ready, open the quest using the `gh` CLI so automated checks can complete early.
+- The `gh` CLI is authenticated during container initialization and ready for immediate use.
 - Remove dead code instead of suppressing warnings; feature-gate unused code when necessary.
 - Write tests for new functionality and resolve any reported problems.
 - Pipeline secrets are stored in the `prod` environment.
