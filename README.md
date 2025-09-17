@@ -116,15 +116,9 @@ cargo clippy --all-targets --all-features -D warnings
 cargo test
 ```
 
-### GitHub Pages Deployment
+### GitHub Pages Publishing
 
- A workflow in `.github/workflows/pages.yml` rebuilds `avatars/index.json` and publishes it under the `avatars/` path on GitHub Pages. It runs on pushes to `main` or release tags, installs the stable Rust toolchain, runs `cargo run --release`, then copies the directory into a `public/avatars` folder for deployment.
----
-
-### GitHub Pages Workflow
-
-- When avatars are added or updated in the `avatars/` directory, pushes to `main` run the CI workflow which builds `avatars/index.json`.
-- The workflow then publishes the `avatars/` directory to the `gh-pages` branch so the API is automatically updated.
+The [GitHub Pages workflow](.github/workflows/pages.yml) rebuilds `avatars/index.json` and publishes the `avatars/` directory to GitHub Pages whenever updates land on `main` or release tags. Refer to the workflow file for the complete automation steps.
 
 ### Published API
 
