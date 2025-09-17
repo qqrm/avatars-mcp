@@ -36,30 +36,11 @@ BASE_FILE="${BASE_FILE:-BASE_AGENTS.md}"
 INDEX_PATH="${INDEX_PATH:-$AVATAR_DIR/index.json}"
 export MCP_BASE_URL AVATAR_DIR BASE_FILE INDEX_PATH
 
-ensure_rust_script() {
-  if command -v rust-script >/dev/null 2>&1; then
-    return 0
-  fi
-  log "Installing rust-script"
-  if command -v cargo-binstall >/dev/null 2>&1; then
-    if cargo binstall rust-script -y --quiet --disable-strategies compile; then
-      command -v rust-script >/dev/null 2>&1 && return 0
-      log "cargo-binstall rust-script failed; falling back to cargo install"
-    fi
-  fi
-  if ! cargo install rust-script --locked --quiet; then
-    cargo install rust-script --locked
-  fi
-  command -v rust-script >/dev/null 2>&1 || die "rust-script installation failed"
-}
-
 sync_mcp_resources() {
-  command -v cargo >/dev/null 2>&1 || die "cargo is required to sync MCP resources"
-  ensure_rust_script
-  if rust-script scripts/sync_mcp.rs; then
+  if bash scripts/sync_mcp.sh; then
     log "MCP resources refreshed from ${MCP_BASE_URL}"
   else
-    die "Failed to sync MCP resources via rust-script"
+    die "Failed to sync MCP resources via shell script"
   fi
 }
 
@@ -237,9 +218,9 @@ log "  env -u GH_TOKEN gh repo view cli/cli --json name,description | jq"
 log "  env -u GH_TOKEN gh run list -R ${CHECK_REPO:-owner/repo} -L 5 || true"
 
 # run repository-specific setup if available
-if [ -f repo_setup.sh ]; then
-  log "Executing repo_setup.sh"
-  bash repo_setup.sh
+if [ -f repo-setup.sh ]; then
+  log "Executing repo-setup.sh"
+  bash repo-setup.sh
 fi
 
 log "setup completed"
