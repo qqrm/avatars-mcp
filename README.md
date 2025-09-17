@@ -36,14 +36,13 @@ External clients rely on a small set of shared files published alongside the ava
 
 Repository tooling keeps these artifacts in sync for local use:
 
-- [`scripts/sync_mcp.sh`](scripts/sync_mcp.sh) — a Bash utility that mirrors the published baseline instructions and avatar index.
-- [`setup.sh`](setup.sh) — a POSIX shell bootstrapper that installs tooling before invoking the shell sync script.
+- [`setup.sh`](setup.sh) — a POSIX shell bootstrapper that installs tooling while mirroring the published baseline instructions and avatar index.
 
 ## Repository-Specific Setup Script
 
 Every repository in this ecosystem can ship its own local setup helper tailored to its automation requirements under the shared
 name `repo-setup.sh`. The [`setup.sh`](setup.sh) script in this repository provisions GitHub CLI authentication,
-installs required Rust tooling, refreshes the published MCP assets through `scripts/sync_mcp.sh`, and then runs `repo-setup.sh`
+installs required Rust tooling, refreshes the published MCP assets directly, and then runs `repo-setup.sh`
 if it exists. When working in other repositories, expect their `repo-setup.sh` contents to diverge—each project documents and
 automates only the dependencies it needs while keeping the filename consistent.
 
