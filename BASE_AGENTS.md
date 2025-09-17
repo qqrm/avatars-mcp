@@ -55,6 +55,7 @@ These guidelines apply to every avatar in this repository.
 - Interact with pipelines locally using the [WRKFLW](https://github.com/bahdotsh/wrkflw) utility to validate and run GitHub workflows.
 - Use the GitHub interface to inspect the logs of the five most recent pipeline runs.
 - Use the [`dtolnay/rust-toolchain`](https://github.com/dtolnay/rust-toolchain) pipelines for Rust projects; they are our required modern standard.
+- Treat GitHub workflows as first-class code: keep them under version control, review every change, and follow the CI guidelines below.
 - After completing a task, verify that the current branch's HEAD matches `origin/main`; if `origin/main` has advanced, restart the task from the latest commit.
 
 ## Pre-commit Checks
@@ -77,6 +78,22 @@ cargo machete            # if available
 - Markdown uses `#` for headers and specifies languages for code blocks.
 - Markdown filenames must be ALL_CAPS with underscores between words.
 - Comments and documentation are always in English.
+
+## GitHub Workflow Guidelines
+
+- Author workflows inside `.github/workflows` using lowercase hyphen-case filenames that end with `.yml`.
+- Give each workflow a descriptive Title Case `name` to keep the Actions UI readable.
+- Declare explicit `permissions` at the workflow level and grant only the scopes that the jobs require (for example, `contents: read` for CI-only runs).
+- Add a `concurrency` block that cancels superseded runs; include `${{ github.ref }}` in the group identifier for push and pull request triggers.
+- Set `env.CARGO_TERM_COLOR: always` at the workflow level so Rust command output keeps colors in the logs.
+- Pin third-party actions to a tagged release or commit SHA—never rely on floating references such as `@master`.
+- Start jobs that need repository files with `actions/checkout@v4`.
+- Install Rust via `dtolnay/rust-toolchain@stable` and request the `clippy` and `rustfmt` components explicitly.
+- Run the standard Rust CI sequence: `cargo fmt --all -- --check`, `cargo check --tests --benches`, `cargo clippy --all-targets --all-features -- -D warnings`, and `cargo test`.
+- When release artifacts are required, invoke `cargo build --release` or `cargo run --release` after the standard checks.
+- Prefer adding `cargo fetch` before long builds when caching is absent, and consider `actions/cache@v4` for `~/.cargo` and `target` if runtime becomes a bottleneck.
+- Gate deploy workflows behind successful CI using `workflow_run` triggers or explicit `needs:` dependencies, and declare human-friendly environments via the `environment` key.
+- Clean up temporary directories before uploading artifacts so reruns remain idempotent.
 
 ## Reasoning
 - Apply JointThinking to every user request:

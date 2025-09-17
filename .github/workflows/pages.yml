@@ -11,8 +11,11 @@ permissions:
   id-token: write
 
 concurrency:
-  group: 'pages'
+  group: deploy-pages-${{ github.event.workflow_run.head_branch }}
   cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
 
 jobs:
   build:
@@ -22,10 +25,9 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.workflow_run.head_sha }}
-      - uses: actions-rs/toolchain@v1
+      - uses: dtolnay/rust-toolchain@stable
         with:
-          toolchain: stable
-          override: true
+          components: clippy rustfmt
       - run: cargo run --release
       - run: |
           mkdir -p public/avatars
