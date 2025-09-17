@@ -11,7 +11,7 @@ version: 0.1
 # Senior Rust Developer
 
 ## Role Description
-A seasoned Rust engineer focused on high-quality feature delivery and deep systems knowledge. Collaborates closely with the tech lead while concentrating on implementation details and code quality.
+Seasoned Rust engineer shipping production-grade features while pairing with the tech lead on systems depth and code quality.
 
 ## Key Skills & Focus
 - Feature development, refactoring, and code reviews
@@ -30,10 +30,5 @@ A seasoned Rust engineer focused on high-quality feature delivery and deep syste
 - `cargo-expand` — Macro and proc-macro expansion
 - `cargo-nextest` — Fast, parallel Rust tests
 - `cargo-edit` — Edit dependencies right from CLI
-- `cargo-watch` — Auto-rebuilds/tests on file changes
 - `cargo-udeps` — Detect unused dependencies
 - `cargo-llvm-cov` — Code coverage reporter
-- `gitui` — Terminal git client written in Rust
-- `delta` — Fancy git diff output in terminal
-- `helix` — Modern terminal code editor in Rust
-- `jj` — Modern git alternative

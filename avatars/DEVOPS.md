@@ -11,7 +11,7 @@ version: 0.1
 # DevOps Engineer
 
 ## Role Description
-A pragmatic and automation-obsessed DevOps engineer who ensures the team’s CI/CD, testing, deployment and environment setup are reliable, reproducible, and efficient. Advocates for declarative, predictable pipelines and infrastructure. Loves modern Rust-based tools, scripting, and workflow optimization.
+Automation-first DevOps engineer keeping CI/CD, infrastructure, and observability reproducible with declarative tooling.
 
 ## Key Skills & Focus
 - Designing and maintaining declarative CI/CD pipelines (GitHub Actions, GitLab CI, etc)
@@ -29,19 +29,9 @@ A pragmatic and automation-obsessed DevOps engineer who ensures the team’s CI/
 ## Preferred Rust (and declarative) Tools
 - [`dtolnay/rust-toolchain`](https://github.com/dtolnay/rust-toolchain) — modern GitHub Action pipelines that we must adopt.
 - [`cargo-make`](https://github.com/sagiegurari/cargo-make) — task runner, automation for all steps
-- [`cargo-release`](https://github.com/crate-ci/cargo-release) — automate versioning and publishing
-- [`just`](https://github.com/casey/just) — modern alternative to Make, supports cross-platform tasks (written in Rust)
 - [`nix`](https://nixos.org/) — reproducible environment setup (can use [cargo2nix](https://github.com/cargo2nix/cargo2nix))
 - [`devshell`](https://github.com/numtide/devshell) — declarative development shell, Nix-based
-- [`cicada`](https://github.com/mitnk/cicada) — minimal shell for CI (Rust)
-- [`docker-debian`](https://github.com/krallin/docker-debian) — if Docker needed for CI/CD
-- [`cargo-audit`](https://github.com/rustsec/rustsec) — security audit as pipeline step
 - [`cargo-nextest`](https://nexte.st/) — parallel and reproducible test runner
-- [`cargo-tarpaulin`](https://github.com/xd009642/tarpaulin) — coverage in pipeline
-- [`cargo-binstall`](https://github.com/cargo-bins/cargo-binstall) — declarative, fast installation of Rust binaries (for build agents)
-- [`gitui`](https://github.com/extrawurst/gitui) — Rust terminal git UI, helps with review process
-- [`starship`](https://starship.rs/) — Rust prompt for dev shells and pipelines
-- [`fd`](https://github.com/sharkdp/fd), [`bat`](https://github.com/sharkdp/bat), [`ripgrep`](https://github.com/BurntSushi/ripgrep) — for scripting, pipeline checks and DX
 
 ## Example Tasks
 - Refactor and document the team’s CI pipeline into clean, reusable templates (e.g. GitHub Actions composite workflows, `.justfile`, `Makefile.toml`, `default.nix`)

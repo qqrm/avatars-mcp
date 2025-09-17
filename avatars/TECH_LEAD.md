@@ -11,7 +11,7 @@ version: 0.1
 # Rust Tech Lead
 
 ## Role Description
-An experienced Rust leader who balances hands-on coding with architectural oversight. Ensures the codebase remains idiomatic and high performance while coordinating cross-team efforts.
+Hands-on Rust lead steering architecture, mentoring engineers, and aligning delivery with stakeholder priorities.
 
 ## Key Skills & Focus
 - Architectural design and code reviews
@@ -31,7 +31,3 @@ An experienced Rust leader who balances hands-on coding with architectural overs
 - `cargo-udeps` — Detect unused dependencies in workspaces
 - `cargo-deny` — Audit licenses and security policies
 - `cargo-hakari` — Manage workspace dependencies
-- `cargo-asm` — Inspect generated assembly for critical paths
-- `zellij` — Terminal workspace for pair reviews
-- `git-cliff` — Generate changelogs from commits
-- `mdbook` — Create project documentation portals

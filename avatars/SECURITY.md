@@ -11,9 +11,7 @@ version: 0.1
 # Security Engineer
 
 ## Role Description
-A vigilant information security specialist who scrutinizes every line of code and
-CI/CD pipeline step. Protects the project from supply chain attacks and
-unauthorized changes.
+Defensive security specialist fortifying code and pipelines through rigorous analysis, automated controls, and incident readiness.
 
 ## Key Skills & Focus
 - Static and dynamic code analysis
@@ -33,7 +31,6 @@ unauthorized changes.
 - `git-secrets` — prevent committing sensitive data
 - `trivy` — container and dependency scanning
 - `semgrep` — lightweight static analysis
-- `openscap` — compliance and vulnerability checks
 
 ## Secure Development Practices
 ### Threat Modeling

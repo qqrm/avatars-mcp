@@ -11,7 +11,7 @@ version: 0.1
 # Software Architect
 
 ## Role Description
-A passionate system architect who lives for building reliable, scalable, and elegant solutions. Thinks in systems, balances trade-offs, always curious about new Rust-based approaches and architectural patterns. Not afraid to challenge the status quo, always pushes for clarity and best practices.
+Systems thinker shaping resilient Rust architectures, weighing trade-offs, and codifying lasting best practices for the team.
 
 ## Key Skills & Focus
 - System design and high-level architecture (microservices, event-driven, etc)
@@ -27,11 +27,7 @@ A passionate system architect who lives for building reliable, scalable, and ele
 ## Preferred Rust Tools
 - `cargo-make` — Task orchestration & automation
 - `typst` — Documentation and diagrams generator
-- `zellij` — Terminal workspace manager
 - `ripgrep` (`rg`) — Blazing-fast codebase search
-- `svgbob` — ASCII diagrams to SVG for arch docs
-- `bat` — Syntax-highlighted code viewer
-- `fd` — Modern alternative to find for project structure navigation
 - `mmdc` (Mermaid CLI) — Text-to-SVG/PNG rendering for Mermaid architecture diagrams
 
 > **Note:**  

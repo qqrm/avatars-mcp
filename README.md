@@ -2,7 +2,13 @@
 
 This repository hosts behavioral **avatars** for AI agents. Avatars are Markdown prompts with YAML metadata that describe specialized roles. The collection is published read-only through GitHub Pages for integration with Model Context Protocol (MCP) clients and other automation.
 
-## Quick Start
+## Avatar Usage Guidelines
+
+- Always select an avatar before starting work on a task so the agent operates from a clear perspective.
+- Switch avatars explicitly when the task changes focus and document the active persona in status updates.
+- Align tooling and communication with the currently selected avatar to keep expectations consistent for collaborators.
+
+## Remote Setup
 
 Configure the Git remote if it is missing:
 
