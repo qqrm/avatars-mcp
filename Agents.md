@@ -18,6 +18,9 @@ These guidelines apply to every avatar in this repository.
 
 ## Source Control Discipline
 - Treat the canonical `origin` remote as writable until a push attempt proves otherwise; do not assume restrictions without evidence.
+- Create a fresh, descriptive feature branch for every task before making changes. Branch names must be in English, use hyphenated words, and describe the work (for example, `configure-remote-in-setup`).
+- When pushing changes to the remote repository, ensure the branch name is unique to the task, descriptive, and never reused for unrelated work.
+- The bootstrap branch named `work` is reserved; do **not** commit or push changes from it, and never create or push a branch named `WORK`. Switch to your task-specific branch immediately after running the setup script.
 - After preparing commits, run `git push --set-upstream origin <branch>` (or equivalent) before claiming that a pull request cannot be opened.
 - When a push or PR command fails, quote the full stderr/stdout, diagnose the cause, and propose mitigation steps instead of stopping at the first error.
 
