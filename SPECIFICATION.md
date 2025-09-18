@@ -70,7 +70,7 @@ You are a DevOps engineer. Your job is to:
 
 ## 4. Index Generation
 
-Tooling may iterate over `/avatars/`, parse YAML front matter, and produce `avatars/index.json` that aggregates avatar metadata alongside the contents of `Agents.md`. The resulting JSON is published on GitHub Pages and consumed by clients.
+Tooling may iterate over `/avatars/`, parse YAML front matter, and produce `avatars/index.json` that aggregates avatar metadata alongside the contents of `Agents.md`. The resulting JSON is published on GitHub Pages as both `avatars.json` and the legacy alias `avatars/index.json` and consumed by clients.
 
 Example index entry produced from the front matter above:
 
@@ -85,19 +85,19 @@ Example index entry produced from the front matter above:
 
 ## 5. API and MCP Access
 
-- **Catalog and base instructions:** `GET /avatars/index.json`
+- **Catalog and base instructions:** `GET /avatars.json` (the legacy alias `GET /avatars/index.json` remains available).
 - **Full avatar:** `GET /avatars/{id}.md`
 
 The optional Model Context Protocol server mirrors these resources over STDIO and implements:
 
-- `resources/list` – advertises `avatars/index.json` along with shared base instructions.
+- `resources/list` – advertises the catalog (`avatars.json`, also available at `avatars/index.json`) along with shared base instructions.
 - `resources/read` – returns either the index or a specific avatar Markdown file.
 
 ## 6. Extensibility and Tooling
 
 - Add new avatars by committing additional Markdown files under `/avatars/` with the required front matter.
 - Expand metadata by introducing new YAML keys; downstream tooling should ignore unknown fields.
-- A Rust CLI (typically under `src/`) can regenerate `avatars/index.json` via `cargo run --release`.
+- A Rust CLI (typically under `src/`) can regenerate `avatars/index.json` via `cargo run --release`; the GitHub Pages deployment publishes the result as both `avatars.json` and `avatars/index.json`.
 
 ## 7. Relationship to README
 

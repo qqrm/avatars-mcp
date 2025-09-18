@@ -30,7 +30,7 @@ Run `./setup.sh` to install the optional MCP servers referenced by `mcp.json`; i
 
 External clients rely on a small set of shared files published alongside the avatars:
 
-- [`Agents.md`](Agents.md) — the baseline instructions served to external agents and bundled into `avatars/index.json`.
+- [`Agents.md`](Agents.md) — the baseline instructions served to external agents and bundled into `avatars.json` (mirrored at the legacy path `avatars/index.json`).
 - [`INSTRUCTIONS.md`](INSTRUCTIONS.md) — a condensed description of the HTTP API exposed via GitHub Pages.
 - [`mcp.json`](mcp.json) — the default Model Context Protocol manifest that activates these resources in compatible clients.
 
@@ -48,14 +48,14 @@ automates only the dependencies it needs while keeping the filename consistent.
 
 ## Tooling
 
-A Rust CLI located in [`src/`](src) regenerates `avatars/index.json` by parsing the avatar front matter and bundling `Agents.md`. Build the index with:
+A Rust CLI located in [`src/`](src) regenerates the catalog (`avatars/index.json`, published to GitHub Pages as both `avatars.json` and `avatars/index.json`) by parsing the avatar front matter and bundling `Agents.md`. Build the index with:
 
 ```bash
 cargo run --release
 ```
 ### GitHub Pages Publishing
 
-The [GitHub Pages workflow](.github/workflows/pages.yml) rebuilds `avatars/index.json` and publishes the `avatars/` directory to GitHub Pages whenever updates land on `main` or release tags. Refer to the workflow file for the complete automation steps.
+The [GitHub Pages workflow](.github/workflows/pages.yml) rebuilds the avatar catalog and publishes it as both `avatars.json` and `avatars/index.json`, alongside the `avatars/` directory, whenever updates land on `main` or release tags. Refer to the workflow file for the complete automation steps.
 
 ### Published API
 
@@ -65,12 +65,12 @@ The latest version of the avatar API is served from GitHub Pages at:
 https://qqrm.github.io/avatars-mcp/
 ```
 
-You can browse individual avatar files or fetch `avatars/index.json` from that URL, for example:
+You can browse individual avatar files or fetch the catalog directly from `avatars.json` (the legacy alias `avatars/index.json` remains available), for example:
 
 ```text
-https://qqrm.github.io/avatars-mcp/avatars/index.json
+https://qqrm.github.io/avatars-mcp/avatars.json
 ```
 
-Continuous integration pipelines lint and test the Rust tooling (`cargo fmt`, `cargo clippy`, and `cargo test`). GitHub Pages deployments rebuild `avatars/index.json` from `main` and publish both the index and avatar Markdown files under `https://qqrm.github.io/avatars-mcp/`.
+Continuous integration pipelines lint and test the Rust tooling (`cargo fmt`, `cargo clippy`, and `cargo test`). GitHub Pages deployments rebuild the catalog from `main` and publish it to both `https://qqrm.github.io/avatars-mcp/avatars.json` and `https://qqrm.github.io/avatars-mcp/avatars/index.json` alongside the avatar Markdown files.
 
 For detailed schemas, examples, and API usage, always defer to `SPECIFICATION.md`.
