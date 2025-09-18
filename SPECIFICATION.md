@@ -19,7 +19,7 @@ mcp.json
 ```
 
 - `/avatars/` stores every avatar Markdown file.
-- `Agents.md` contains shared base instructions bundled into the index.
+- `AGENTS.md` contains shared base instructions bundled into the index.
 - `src/` or `generator.rs` may host tooling that produces `avatars/catalog.json`.
 
 ## 3. Avatar File Format
@@ -70,7 +70,7 @@ You are a DevOps engineer. Your job is to:
 
 ## 4. Index Generation
 
-Tooling may iterate over `/avatars/`, parse YAML front matter, and produce `avatars/catalog.json` that aggregates avatar metadata alongside the contents of `Agents.md`. The resulting JSON is published on GitHub Pages as `avatars.json` and consumed by clients.
+Tooling may iterate over `/avatars/`, parse YAML front matter, and produce `avatars/catalog.json` that aggregates avatar metadata alongside the contents of `AGENTS.md`. The resulting JSON is published on GitHub Pages as `avatars.json` and consumed by clients.
 
 Example index entry produced from the front matter above:
 

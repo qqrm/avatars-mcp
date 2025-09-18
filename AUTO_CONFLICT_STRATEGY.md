@@ -10,7 +10,7 @@ This document defines the production workflow the automation agent must follow t
    git config --global pull.rebase true
    ```
 2. Honour the repository merge policies committed in `.gitattributes`. They guarantee predictable merges for generated assets (`*.snap`, `*.svg`, `target/**`, `Cargo.lock`) and enforce LF line endings for Rust sources.
-3. Always work on a dedicated feature branch. Branch names use English, hyphenated words (`feature-name-improvement`).
+3. Always work on a dedicated feature branch, keeping it active across iterations of the same task until the pull request merges. Branch names use English, hyphenated words (`feature-name-improvement`).
 
 ## 2. Required tooling scripts
 

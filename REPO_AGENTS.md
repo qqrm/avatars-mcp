@@ -1,11 +1,6 @@
 # Repository Agent Instructions
 
-These instructions extend the base `Agents.md` rules for the entire repository.
-
-## Mindset
-- Assume you are contributing to a production service. Optimise for reliable delivery, not experimentation.
-- Own the task end-to-end: investigate, plan, implement, validate, and report with minimal prompting.
-- Escalate blockers with actionable detail instead of waiting for new guidance.
+These instructions extend the base `AGENTS.md` rules for the entire repository.
 
 ## Mandatory Setup
 - Before modifying the repository, execute `./repo-setup.sh` from the repository root. The script configures the canonical `origin` remote automatically when it is missing or incorrect.
@@ -20,22 +15,9 @@ These instructions extend the base `Agents.md` rules for the entire repository.
 - When the downloads succeed, pick an avatar for the task, document the reason for the choice, and include this explanation in both the pull-request description and the final response to the user.
 - If asset retrieval is impossible, log the attempts, escalate the outage, and continue with the best-matching avatar based on cached knowledge.
 
-## Branch Management
-- Create a fresh, descriptive feature branch for every task before making any changes. Branch names must be in English, use hyphenated words, and describe the work (for example, `configure-remote-in-setup`).
-- When pushing changes to the remote repository, ensure the branch name is unique, descriptive, and not reused across unrelated tasks.
-- The bootstrap branch named `work` is reserved; do **not** commit or push changes from it, and never create or push a branch named `WORK`. Switch to your task-specific branch immediately after running the setup script.
-- Push the freshly created branch (`git push --set-upstream origin <branch>`) to verify remote access before making extensive edits. Quote the exact failure output if the push is rejected.
+## Repository Validation
+- Run the Rust test suite from the repository root (`cargo test`) before opening a pull request so the CLI that publishes the avatar catalog remains healthy.
+- Capture the output of any failing command and address the problem before proceeding. If a failure is outside your control, document the exact logs and escalate it.
 
-## Development Process
-- Structure your work into small, focused commits with clear English messages.
-- After implementing changes, run every required check. At minimum, execute `cargo test --manifest-path sitegen/Cargo.toml` when that manifest exists, and add any extra commands that apply to the edited components. Capture and address failures instead of skipping them.
-- Keep the working tree clean (`git status` should show no pending changes) before creating a pull request.
-- Use the `gh` CLI to inspect open pull requests, checks, and workflow runs when verification on GitHub is necessary; report exact commands and outcomes.
-- Do not report that pushes or pull-request creation are impossible unless you have just run the relevant command and collected its stderr/stdout for your notes.
-
-## Pull Request Requirements
-- Ensure your branch is based on `main` and contains all necessary commits.
-- Create the GitHub pull request with `gh pr create --base main --fill` (or specify a title and description manually). If the command fails, retry and capture the exact error message for the final report.
-- Provide the pull-request URL in the final message to the user together with the avatar details.
-- When pull-request creation ultimately fails, document every attempted command and error message so reviewers understand the failure mode.
-- Push the latest commits before each `gh pr create` attempt so the remote branch reflects your changes; include the command output in the final report when issues persist.
+## Branch Management and Pull Requests
+This repository relies on the global branching, pull-request, and conflict-resolution process defined in `AGENTS.md` (including `AUTO_CONFLICT_STRATEGY.md`). Follow those universal rules here, then apply the repository-specific setup and automation practices described above.
