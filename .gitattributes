@@ -1,0 +1,6 @@
+# Merge strategy configuration for generated and low-risk artifacts
+*.snap          merge=union
+*.svg           merge=union
+target/**       merge=ours
+Cargo.lock      merge=ours
+*.rs            text eol=lf
