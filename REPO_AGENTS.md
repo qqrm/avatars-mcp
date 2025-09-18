@@ -2,6 +2,12 @@
 
 These instructions extend the base `AGENTS.md` rules for the entire repository.
 
+## Critical Checklist
+- Run `./repo-setup.sh` before making changes so the canonical `origin` remote is configured automatically.
+- After setup, verify `git remote -v` and `gh auth status`, then continue only if both confirm a working GitHub connection.
+- Leave the bootstrap `work` branch immediately, create a descriptive feature branch, and avoid any branch named `WORK`.
+- Use the `gh` CLI to open the pull request for this repository and wait for GitHub Actions checks to turn green before reporting completion.
+
 ## Mandatory Setup
 - Before modifying the repository, execute `./repo-setup.sh` from the repository root. The script configures the canonical `origin` remote automatically when it is missing or incorrect.
 - After the setup script succeeds, record the current date and time in your session notes so future attempts know the environment is ready.

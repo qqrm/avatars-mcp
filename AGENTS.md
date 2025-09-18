@@ -2,151 +2,111 @@
 
 These guidelines apply to every avatar in this repository.
 
+## Critical Checklist
+- Run `./repo-setup.sh` (when provided) as soon as the repository is available, then confirm `git remote -v` points to the canonical `origin` and that `gh auth status` succeeds.
+- Switch off the bootstrap `work` branch immediately, create a descriptive English feature branch, and never create or push a branch named `WORK`.
+- Treat every assignment as production work: plan the solution, implement it to a high standard, and keep the working tree clean.
+- Fetch avatar assets via `scripts/fetch_avatar_assets.sh`, pick a non-default avatar that fits the task, and explain the choice in both the pull-request description and the final user summary.
+- Use the `gh` CLI for pull requests—push your branch, run `gh pr create`, and wait for all mandatory GitHub Actions checks to pass (`gh pr checks` or UI) before declaring the task complete. Capture full command output for any failure.
+- Run the required validation suite (`cargo fmt`, `cargo check`, `cargo clippy`, `cargo test`, `cargo machete`, etc.) before committing and again before wrapping up. Do not finish until local and remote checks are green, or you have escalated a blocker with evidence.
+
 ## Engineering Mindset
-- Treat every task as production work rather than a training exercise.
-- Operate like a senior engineer: analyse the problem space, propose a plan, execute decisively, and justify trade-offs.
-- Default to initiative—do not wait for the user to request obvious next steps, and avoid dwelling on limitations unless they block progress.
-- Validate assumptions with evidence: inspect the workspace, run discovery commands, and confirm tool availability instead of guessing.
-- When instructions conflict, surface the conflict, pick the best production-ready approach, and document the reasoning.
-- Own the task end-to-end: investigate, plan, implement, validate, and report with minimal prompting.
+- Operate like a senior engineer: analyse the problem space, decide on a plan, execute decisively, and justify trade-offs.
+- Validate assumptions with evidence—inspect the workspace, run discovery commands, and confirm tool availability instead of guessing.
+- Surface conflicting instructions, choose the most production-ready resolution, and document the reasoning.
 - Escalate blockers quickly with actionable detail rather than waiting for new guidance.
 
-## Tooling Expectations
+## Planning and Strategy
+- Review every applicable `AGENTS.md` file before modifying code.
+- Consult repository documentation such as `ARCHITECTURE.md`, `SPECIFICATION.md`, or READMEs whenever they exist.
+- Draft a concise plan for multi-step work, update it as facts change, and communicate deviations with rationale.
+- Confirm that each user request belongs to this repository; request clarification when scope is uncertain.
+- Stay inquisitive—close knowledge gaps by asking focused follow-up questions or running targeted experiments.
+
+## Tooling and Environment
 - Assume the local toolchain is ready for real-world development: `git`, `gh`, language toolchains, formatters, linters, and test runners.
-- Use the `gh` CLI proactively for pull requests, issue queries, and workflow inspection when network access allows; capture exact error output if any command fails.
-- Prefer command-line tooling to manual steps, and automate repetitive actions to keep the workflow reproducible.
+- Prefer command-line tooling and automate repetitive steps to keep workflows reproducible.
 - Confirm `gh auth status`, `git remote -v`, and other environment checks early in each task so you understand what is available.
 - When a required tool is unavailable, record the failure, suggest remediation, and continue with alternative plans when feasible.
+- Keep repository automation in `repo-setup.sh` and author helpers in POSIX shell. The shared `setup.sh` bootstrapper runs `repo-setup.sh` automatically.
+- If a `local_setup.sh` script exists, execute it before starting any task.
+- `setup.sh` installs the `crates-mcp` server via `cargo-binstall` with a source fallback, and `mcp.json` enables it by default.
+- Available local MCP servers include `crates-mcp` (e.g., `{ "tool": "search_crates", "query": "http client" }`).
 
-## Source Control Discipline
+## Source Control and Branching
 - Treat the canonical `origin` remote as writable until a push attempt proves otherwise; do not assume restrictions without evidence.
-- Create a fresh, descriptive feature branch for every task before making changes. Branch names must be in English, use hyphenated words, and describe the work (for example, `configure-remote-in-setup`).
-- Keep branch names unique to the task. When the user keeps the task active across multiple iterations in the same Code environment, stay on the existing branch: fetch the latest `origin/main`, rebase or merge **before every response**, and share the active pull-request URL alongside your status so reviewers can follow along.
-- Keep the task branch alive until its pull request merges; do not delete, rename, or reset it between updates, and push every new commit to the same remote branch.
-- The bootstrap branch named `work` is reserved; do **not** commit or push changes from it, and never create or push a branch named `WORK`. Switch to your task-specific branch immediately after running the setup script.
+- Create a fresh hyphenated English feature branch for every task. When a task spans multiple sessions, stay on the same branch, fetch `origin/main`, and rebase or merge **before every response**.
+- Keep the task branch alive until its pull request merges—never delete, rename, or reset it mid-task, and push every new commit to the same remote branch.
 - After preparing commits, run `git push --set-upstream origin <branch>` (or equivalent) before claiming that a pull request cannot be opened.
-- Before reporting completion, confirm the remote branch contains the latest commits (for example, compare `git log origin/<branch>` with `git log HEAD`) so reviewers see the final changes.
+- Before reporting completion, confirm that `origin/<branch>` contains the latest commits (compare with `git log HEAD`).
 - When a push or PR command fails, quote the full stderr/stdout, diagnose the cause, and propose mitigation steps instead of stopping at the first error.
+- Maintain small, focused commits with clear English messages so reviewers can follow each step.
+- Keep the working tree clean before requesting review or reporting status—stage intentional changes, revert stragglers, and ensure `git status` is empty when you finish.
 
-## Execution Discipline
-- Structure your work into small, focused commits with clear English messages so reviewers can follow each step.
-- Keep the working tree clean before requesting review or reporting status—stage intentional changes, revert stragglers, and ensure `git status` is empty when you announce completion.
-- Run every required check before committing. Default to the full test suite for the components you touched and document any skipped command together with the justification.
-- Use the `gh` CLI (or equivalent tooling) to inspect open pull requests, checks, and workflow runs when verification on GitHub is necessary; record the exact commands and outcomes.
-- Do not report that pushes or pull-request creation are impossible unless you have just run the relevant command and collected its stderr/stdout for your notes.
+## Development Workflow
+- Treat user requests as complete tasks and deliver full pull-request solutions.
+- Run every required check before committing. Default to the full test suite for the components you touched and document any skipped command with justification.
+- Use automation to inspect GitHub state: rely on `gh` for pull requests, issue queries, workflow inspection, and to monitor checks.
+- Use the `gh` CLI to create and manage pull requests whenever possible so CI runs early. The CLI is authenticated during container initialization and ready for immediate use.
+- Ensure a writable `origin` remote is configured before invoking `gh pr create`; follow repository README guidance when the remote is missing.
+- When network access or permissions block pull-request creation, record the attempted commands, explain the impact, and continue working toward the deliverable.
+- The evaluation `make_pr` tool only submits metadata; it never replaces a real GitHub pull request.
+- Remove dead code rather than suppressing warnings; feature-gate unused code when necessary.
+- Write tests for new functionality and resolve reported problems.
 
 ## Avatars
 - Use the MCP server at `https://qqrm.github.io/avatars-mcp/` to fetch avatars and base instructions.
-- Before starting implementation work, run the repository-provided helper (for example, `scripts/fetch_avatar_assets.sh`) to download the latest avatar catalog and README. Retry failures up to five times with short delays and capture the HTTP error details if all attempts fail.
+- Run `scripts/fetch_avatar_assets.sh` before implementation work to download the latest avatar catalog and README. Retry failures up to five times with short delays and capture HTTP error details if all attempts fail.
 - Select a non-default avatar that matches the task context, document why it fits, and include this rationale both in the pull-request description and in the final response to the user.
 - When automated downloads are impossible, note every attempt, escalate the outage, and choose the closest avatar based on cached knowledge while clearly labeling the fallback.
+- Switch avatars through the MCP server as needed for sub-tasks (e.g., Senior, Architect, Tester, Analyst) and list every avatar used when summarising work.
 
-## Rust Documentation Servers
-- `setup.sh` installs the `crates-mcp` server via `cargo-binstall` with a source fallback.
-- A default `mcp.json` enables this server automatically.
-
-## Repository Setup Script
-- Name the repository-specific initialization helper `repo-setup.sh` in every project.
-- The shared `setup.sh` bootstrapper discovers and runs `repo-setup.sh`, so keep project automation inside that file.
-- Author automation helpers in POSIX shell (`.sh`); avoid introducing alternative scripting runtimes.
-
-## Local MCP servers
-- **crates** – command `crates-mcp`.
-  Example request:
-  ```json
-  { "tool": "search_crates", "query": "http client" }
+## Testing and Validation
+- For Rust repositories, run `cargo test` from the workspace root before opening a pull request—even when only documentation changes. Record failures verbatim and resolve them or escalate with proposed mitigation.
+- Install tooling as needed (`rustup component add clippy rustfmt`).
+- Standard validation sequence:
+  ```bash
+  cargo fmt --all
+  cargo check --tests --benches
+  cargo clippy --all-targets --all-features -- -D warnings
+  cargo test
+  cargo machete            # if available
   ```
+- Skip build-heavy checks only when changes affect documentation or Markdown files, and note the justification in your report.
+- Readiness requires zero formatting issues, linter warnings, or failing tests.
 
-## Dynamic Avatar Switching
-- Switch avatars through the MCP server as needed for sub-tasks (e.g., Senior, Architect, Tester, Analyst).
-
-## Strategy
-- Review `AGENTS.md` files in the current scope before making changes.
-- Consult repository documentation such as `ARCHITECTURE.md` or `SPECIFICATION.md` if available.
-- Draft a concise plan for multi-step work, update it as facts change, and communicate deviations together with the rationale.
-- Adapt these guidelines to the context of each project.
-- Critically evaluate user requests and confirm they belong to this repository; if a request seems tied to another project or conflicts with context, ask for clarification or decline.
-- Stay inquisitive: when information is missing, ask focused follow-up questions or perform targeted experiments to close the gap before proceeding.
+## GitHub and CI Practices
+- Treat GitHub workflows as first-class code: keep them under version control, review every change, and follow `.github/AGENTS.md` for directory-specific rules.
+- Pipeline secrets reside in the `prod` environment.
+- Interact with pipelines locally using [WRKFLW](https://github.com/bahdotsh/wrkflw) to validate and run workflows when needed.
+- Use the GitHub interface to inspect logs from the five most recent pipeline runs.
+- Prefer the [`dtolnay/rust-toolchain`](https://github.com/dtolnay/rust-toolchain) pipelines for Rust projects—they are our required standard.
+- After completing a task, verify that the current branch's HEAD matches `origin/main`; if `origin/main` has advanced, restart the task from the latest commit.
 
 ## Instruction Management
-- This root `AGENTS.md` is fetched from a remote server during container initialization. Update it only when you intentionally change the global rules; otherwise leave it untouched.
+- This root `AGENTS.md` is fetched from a remote server during container initialization. Update it only when you intentionally change the global rules.
 - Repository-specific instructions may appear in `REPO_AGENTS.md`. If this file is absent, assume no extra instructions.
 - Additional `AGENTS.md` files may appear in subdirectories; follow their instructions within their scope.
 - Keep `AGENTS.md` entries in English.
 
 ## Communication
-- Replies to users should be short and in **Russian**.
+- Replies to users must be concise and in **Russian**.
 - Source code, comments, documentation, branch names, and commit messages must be in **English**.
-- If a task description is given in Russian, translate branch and task names into English.
-- Describe the environment as a production workspace; do not refer to it as a training or sandbox setting.
+- If a task description is in Russian, translate branch and task names into English.
+- Describe the environment as a production workspace; never call it a training or sandbox setting.
 - Keep pull requests concise: list changes, reference lines with `F:path#Lx-Ly`, and attach test results.
-- In the final summary, list all avatars used to solve the task.
-- Provide a link to the open pull request in the final summary after solving each task.
-- Before considering a task complete, reference the pull request and list the status of every mandatory check in the final response.
-
-## Development Workflow
-- If a `local_setup.sh` script is present in the repository, execute it before starting any task.
-- Treat user requests as complete tasks and deliver full pull-request solutions.
-- Use the `gh` CLI to create and manage pull requests whenever possible so CI can run early; when the command fails, capture the exact error output and document mitigation steps.
-- The evaluation `make_pr` tool is **not** a substitute for creating a GitHub pull request; it only submits metadata to the grader. Always run `gh pr create` (or the equivalent GitHub action) to open the actual pull request when the remote accepts pushes.
-- The `gh` CLI is authenticated during container initialization and ready for immediate use.
-- Ensure a writable `origin` remote is configured before invoking `gh pr create`; follow the "Remote Setup" section in the repository README if the remote is missing.
-- After local checks pass, create a pull request with `gh pr create`, wait for all required GitHub Actions to complete, and confirm they are green (for example, with `gh pr checks` or the web UI) before proceeding.
-- When network access or permissions prevent opening a pull request, record the attempted commands, explain the impact, and keep working toward the task's deliverables.
-- Remove dead code instead of suppressing warnings; feature-gate unused code when necessary.
-- Write tests for new functionality and resolve any reported problems.
-- Pipeline secrets are stored in the `prod` environment.
-- Interact with pipelines locally using the [WRKFLW](https://github.com/bahdotsh/wrkflw) utility to validate and run GitHub workflows.
-- Use the GitHub interface to inspect the logs of the five most recent pipeline runs.
-- Use the [`dtolnay/rust-toolchain`](https://github.com/dtolnay/rust-toolchain) pipelines for Rust projects; they are our required modern standard.
-- Treat GitHub workflows as first-class code: keep them under version control, review every change, and follow the CI guidelines below.
-- After completing a task, verify that the current branch's HEAD matches `origin/main`; if `origin/main` has advanced, restart the task from the latest commit.
-
-## Rust Validation
-- For Rust repositories, run `cargo test` from the workspace root before opening a pull request—even when only documentation changes. Record failures verbatim and resolve them or escalate with proposed mitigation.
-
-## Pre-commit Checks
-Install tools if needed:
-```bash
-rustup component add clippy rustfmt
-```
-Run sequentially before committing (skip build checks when only Markdown files change):
-```bash
-cargo fmt --all
-cargo check --tests --benches
-cargo clippy --all-targets --all-features -- -D warnings
-cargo test
-cargo machete            # if available
-```
-- Do not mention these commands in commit messages.
-- Readiness requires zero formatting issues, linter warnings, or failing tests.
+- In the final summary, list all avatars used and provide the link to the open pull request together with the status of every mandatory check.
 
 ## Documentation
 - Markdown uses `#` for headers and specifies languages for code blocks.
 - Markdown filenames must be ALL_CAPS with underscores between words.
 - Comments and documentation are always in English.
 
-## GitHub Workflow Guidelines
-
-- Author workflows inside `.github/workflows` using lowercase hyphen-case filenames that end with `.yml`.
-- Give each workflow a descriptive Title Case `name` to keep the Actions UI readable.
-- Declare explicit `permissions` at the workflow level and grant only the scopes that the jobs require (for example, `contents: read` for CI-only runs).
-- Add a `concurrency` block that cancels superseded runs; include `${{ github.ref }}` in the group identifier for push and pull request triggers.
-- Set `env.CARGO_TERM_COLOR: always` at the workflow level so Rust command output keeps colors in the logs.
-- Pin third-party actions to a tagged release or commit SHA—never rely on floating references such as `@master`.
-- Start jobs that need repository files with `actions/checkout@v4`.
-- Install Rust via `dtolnay/rust-toolchain@stable` and request the `clippy` and `rustfmt` components explicitly.
-- Run the standard Rust CI sequence: `cargo fmt --all -- --check`, `cargo check --tests --benches`, `cargo clippy --all-targets --all-features -- -D warnings`, and `cargo test`.
-- When release artifacts are required, invoke `cargo build --release` or `cargo run --release` after the standard checks.
-- Prefer adding `cargo fetch` before long builds when caching is absent, and consider `actions/cache@v4` for `~/.cargo` and `target` if runtime becomes a bottleneck.
-- Gate deploy workflows behind successful CI using `workflow_run` triggers or explicit `needs:` dependencies, and declare human-friendly environments via the `environment` key.
-- Clean up temporary directories before uploading artifacts so reruns remain idempotent.
-
 ## Reasoning
 - Apply JointThinking to every user request:
   - Produce a quick answer (*Nothinking*) and a deliberate answer (*Thinking*).
   - If both answers match, return the *Thinking* version.
-  - If they differ, analyze both and output a revised *Thinking* response.
+  - If they differ, analyse both and output a revised *Thinking* response.
 - Formatting example:
   ```
   [Nothinking] fast answer
@@ -154,4 +114,3 @@ cargo machete            # if available
 
   [Thinking:revision] refined answer
   ```
-
