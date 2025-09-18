@@ -165,11 +165,11 @@ mod tests {
                 avatars.join("TWO.md"),
                 "---\nid: two\nname: Two\n---\nbody\n",
             )?;
-            fs::write(root.join("BASE_AGENTS.md"), "Base instructions\n")?;
+            fs::write(root.join("Agents.md"), "Base instructions\n")?;
 
-            let index = generate_index(&avatars, &root.join("BASE_AGENTS.md"))?;
+            let index = generate_index(&avatars, &root.join("Agents.md"))?;
             assert_eq!(index.avatars.len(), 2);
-            assert_eq!(index.base_uri, "BASE_AGENTS.md");
+            assert_eq!(index.base_uri, "Agents.md");
 
             let first = index.avatars.iter().find(|m| m.meta.id == "one").unwrap();
             assert_eq!(first.meta.name, "One");
