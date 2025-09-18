@@ -99,7 +99,7 @@ pub fn generate_index(avatars_dir: &Path, base_path: &Path) -> Result<Index, Box
     }
     let index = Index { base_uri, avatars };
     let json = serde_json::to_string_pretty(&index)?;
-    fs::write(avatars_dir.join("index.json"), json + "\n")?;
+    fs::write(avatars_dir.join("catalog.json"), json + "\n")?;
     Ok(index)
 }
 
@@ -176,7 +176,7 @@ mod tests {
             assert_eq!(first.meta.description.as_deref(), Some("First"));
             assert_eq!(first.uri, "avatars/ONE.md");
 
-            let json = fs::read_to_string(avatars.join("index.json"))?;
+            let json = fs::read_to_string(avatars.join("catalog.json"))?;
             let parsed: Index = serde_json::from_str(&json)?;
             assert_eq!(parsed, index);
 

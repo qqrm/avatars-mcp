@@ -7,13 +7,10 @@ GUIDELINES_MD="${2:-/tmp/avatar_guidelines.md}"
 MAX_ATTEMPTS=5
 SLEEP_SECONDS=10
 
-PRIMARY_CATALOG_URL="${BASE_URL}/avatars.json"
-LEGACY_CATALOG_URL="${BASE_URL}/avatars/index.json"
+CATALOG_URL="${BASE_URL}/avatars.json"
 GUIDELINES_URL="${BASE_URL}/README.md"
 
 FETCH_ERROR=""
-CATALOG_SOURCE=""
-CATALOG_WARNING=""
 
 fetch() {
   local url="$1"
@@ -49,24 +46,11 @@ fetch() {
 }
 
 download_catalog() {
-  if fetch "$PRIMARY_CATALOG_URL" "$AVATAR_JSON"; then
-    CATALOG_SOURCE="primary"
-    CATALOG_WARNING=""
+  if fetch "$CATALOG_URL" "$AVATAR_JSON"; then
     return 0
   fi
 
-  local primary_error="$FETCH_ERROR"
-
-  if fetch "$LEGACY_CATALOG_URL" "$AVATAR_JSON"; then
-    CATALOG_SOURCE="legacy"
-    CATALOG_WARNING="Primary catalog unavailable: ${primary_error}"
-    return 0
-  fi
-
-  local legacy_error="$FETCH_ERROR"
-  FETCH_ERROR="Primary catalog unavailable: ${primary_error}; legacy catalog unavailable: ${legacy_error}"
-  CATALOG_SOURCE=""
-  CATALOG_WARNING=""
+  FETCH_ERROR="Catalog download failed: ${FETCH_ERROR}"
   return 1
 }
 
@@ -82,14 +66,7 @@ download_guidelines() {
 attempt=1
 while (( attempt <= MAX_ATTEMPTS )); do
   if download_catalog && download_guidelines; then
-    if [[ -n "$CATALOG_WARNING" ]]; then
-      printf '%s\n' "$CATALOG_WARNING" >&2
-    fi
-    if [[ "$CATALOG_SOURCE" == "legacy" ]]; then
-      printf 'Fetched avatar data on attempt %d using the legacy endpoint.\n' "$attempt"
-    else
-      printf 'Fetched avatar data on attempt %d.\n' "$attempt"
-    fi
+    printf 'Fetched avatar data on attempt %d.\n' "$attempt"
     exit 0
   fi
 
@@ -103,8 +80,6 @@ while (( attempt <= MAX_ATTEMPTS )); do
     sleep "$SLEEP_SECONDS"
   fi
   FETCH_ERROR=""
-  CATALOG_SOURCE=""
-  CATALOG_WARNING=""
   rm -f "$AVATAR_JSON" "$GUIDELINES_MD"
 done
 

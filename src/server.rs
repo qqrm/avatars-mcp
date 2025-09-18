@@ -35,7 +35,7 @@ fn list_avatar_files() -> std::io::Result<Vec<String>> {
 }
 
 fn list_resources() -> Vec<String> {
-    vec!["avatars.json".to_string(), "avatars/index.json".to_string()]
+    vec!["avatars.json".to_string()]
 }
 
 async fn handle_resources_list() -> Value {
@@ -47,6 +47,14 @@ async fn handle_resources_list() -> Value {
 }
 
 async fn handle_resources_read(uri: &str) -> Value {
+    if uri == "avatars.json" {
+        return match task::spawn_blocking(|| fs::read_to_string("avatars/catalog.json")).await {
+            Ok(Ok(content)) => json!({"contents": content}),
+            Ok(Err(e)) => json!({"error": {"code": -32000, "message": e.to_string()}}),
+            Err(e) => json!({"error": {"code": -32000, "message": e.to_string()}}),
+        };
+    }
+
     let avatars_dir = match task::spawn_blocking(|| fs::canonicalize("avatars")).await {
         Ok(Ok(dir)) => dir,
         Ok(Err(e)) => {
@@ -61,12 +69,7 @@ async fn handle_resources_read(uri: &str) -> Value {
         }
     };
 
-    let request_path = if uri == "avatars.json" {
-        "avatars/index.json".to_owned()
-    } else {
-        uri.to_owned()
-    };
-
+    let request_path = uri.to_owned();
     let normalized = match task::spawn_blocking(move || fs::canonicalize(request_path)).await {
         Ok(Ok(path)) => path,
         Ok(Err(e)) => {
@@ -179,7 +182,7 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn lists_resources_returns_index() {
+    async fn lists_resources_returns_catalog() {
         let result = handle_resources_list().await;
         let resources = result
             .get("resources")
@@ -189,19 +192,11 @@ mod tests {
             .iter()
             .map(|v| v.get("uri").and_then(|u| u.as_str()).unwrap())
             .collect();
-        assert_eq!(uris, vec!["avatars.json", "avatars/index.json"]);
+        assert_eq!(uris, vec!["avatars.json"]);
     }
 
     #[tokio::test]
-    async fn reads_index_json() {
-        std::fs::write("avatars/index.json", "{}").expect("create index");
-        let result = handle_resources_read("avatars/index.json").await;
-        assert!(result.get("contents").is_some());
-    }
-
-    #[tokio::test]
-    async fn reads_catalog_alias() {
-        std::fs::write("avatars/index.json", "{}").expect("create index");
+    async fn reads_avatar_catalog() {
         let result = handle_resources_read("avatars.json").await;
         assert!(result.get("contents").is_some());
     }
