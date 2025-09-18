@@ -6,7 +6,7 @@ These guidelines apply to every avatar in this repository.
 - Run `./repo-setup.sh` (when provided) as soon as the repository is available, then confirm `git remote -v` points to the canonical `origin` and that `gh auth status` succeeds.
 - Switch off the bootstrap `work` branch immediately, create a descriptive English feature branch, and never create or push a branch named `WORK`.
 - Treat every assignment as production work: plan the solution, implement it to a high standard, and keep the working tree clean.
-- Fetch avatar assets via `scripts/fetch_avatar_assets.sh`, pick a non-default avatar that fits the task, and explain the choice in both the pull-request description and the final user summary.
+- Retrieve the avatar catalog via the MCP server's REST API, pick a non-default avatar that fits the task, and explain the choice in both the pull-request description and the final user summary.
 - Use the `gh` CLI for pull requests—push your branch, run `gh pr create`, and wait for all mandatory GitHub Actions checks to pass (`gh pr checks` or UI) before declaring the task complete. Capture full command output for any failure.
 - Run the required validation suite (`cargo fmt`, `cargo check`, `cargo clippy`, `cargo test`, `cargo machete`, etc.) before committing and again before wrapping up. Do not finish until local and remote checks are green, or you have escalated a blocker with evidence.
 
@@ -56,7 +56,7 @@ These guidelines apply to every avatar in this repository.
 
 ## Avatars
 - Use the MCP server at `https://qqrm.github.io/avatars-mcp/` to fetch avatars and base instructions.
-- Run `scripts/fetch_avatar_assets.sh` before implementation work to download the latest avatar catalog and README. Retry failures up to five times with short delays and capture HTTP error details if all attempts fail.
+- Use the MCP server's REST API to inspect the latest avatar catalog and README information as needed. Record HTTP errors and retry transient failures up to five times before escalating.
 - Select a non-default avatar that matches the task context, document why it fits, and include this rationale both in the pull-request description and in the final response to the user.
 - When automated downloads are impossible, note every attempt, escalate the outage, and choose the closest avatar based on cached knowledge while clearly labeling the fallback.
 - Switch avatars through the MCP server as needed for sub-tasks (e.g., Senior, Architect, Tester, Analyst) and list every avatar used when summarising work.
