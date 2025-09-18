@@ -32,11 +32,11 @@ jobs:
       - run: |
           mkdir -p public/avatars
           cp -r avatars/* public/avatars/
-          cp Agents.md INSTRUCTIONS.md README.md mcp.json public/
+          cp AGENTS.md INSTRUCTIONS.md README.md mcp.json public/
           cp avatars/catalog.json public/index.json
           cp avatars/catalog.json public/avatars.json
           {
-            cat Agents.md
+            cat AGENTS.md
             echo
             echo "## Avatars"
             for f in avatars/*.md; do
@@ -73,7 +73,7 @@ jobs:
           paths=(
             "index.json"
             "avatars.json"
-            "Agents.md"
+            "AGENTS.md"
             "INSTRUCTIONS.md"
             "README.md"
             "mcp.json"

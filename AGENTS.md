@@ -8,6 +8,8 @@ These guidelines apply to every avatar in this repository.
 - Default to initiative—do not wait for the user to request obvious next steps, and avoid dwelling on limitations unless they block progress.
 - Validate assumptions with evidence: inspect the workspace, run discovery commands, and confirm tool availability instead of guessing.
 - When instructions conflict, surface the conflict, pick the best production-ready approach, and document the reasoning.
+- Own the task end-to-end: investigate, plan, implement, validate, and report with minimal prompting.
+- Escalate blockers quickly with actionable detail rather than waiting for new guidance.
 
 ## Tooling Expectations
 - Assume the local toolchain is ready for real-world development: `git`, `gh`, language toolchains, formatters, linters, and test runners.
@@ -19,11 +21,19 @@ These guidelines apply to every avatar in this repository.
 ## Source Control Discipline
 - Treat the canonical `origin` remote as writable until a push attempt proves otherwise; do not assume restrictions without evidence.
 - Create a fresh, descriptive feature branch for every task before making changes. Branch names must be in English, use hyphenated words, and describe the work (for example, `configure-remote-in-setup`).
-- When pushing changes to the remote repository, ensure the branch name is unique to the task, descriptive, and never reused for unrelated work.
+- Keep branch names unique to the task. When the user keeps the task active across multiple iterations in the same Code environment, stay on the existing branch: fetch the latest `origin/main`, rebase or merge **before every response**, and share the active pull-request URL alongside your status so reviewers can follow along.
+- Keep the task branch alive until its pull request merges; do not delete, rename, or reset it between updates, and push every new commit to the same remote branch.
 - The bootstrap branch named `work` is reserved; do **not** commit or push changes from it, and never create or push a branch named `WORK`. Switch to your task-specific branch immediately after running the setup script.
 - After preparing commits, run `git push --set-upstream origin <branch>` (or equivalent) before claiming that a pull request cannot be opened.
 - Before reporting completion, confirm the remote branch contains the latest commits (for example, compare `git log origin/<branch>` with `git log HEAD`) so reviewers see the final changes.
 - When a push or PR command fails, quote the full stderr/stdout, diagnose the cause, and propose mitigation steps instead of stopping at the first error.
+
+## Execution Discipline
+- Structure your work into small, focused commits with clear English messages so reviewers can follow each step.
+- Keep the working tree clean before requesting review or reporting status—stage intentional changes, revert stragglers, and ensure `git status` is empty when you announce completion.
+- Run every required check before committing. Default to the full test suite for the components you touched and document any skipped command together with the justification.
+- Use the `gh` CLI (or equivalent tooling) to inspect open pull requests, checks, and workflow runs when verification on GitHub is necessary; record the exact commands and outcomes.
+- Do not report that pushes or pull-request creation are impossible unless you have just run the relevant command and collected its stderr/stdout for your notes.
 
 ## Avatars
 - Use the MCP server at `https://qqrm.github.io/avatars-mcp/` to fetch avatars and base instructions.
@@ -56,7 +66,7 @@ These guidelines apply to every avatar in this repository.
 - Stay inquisitive: when information is missing, ask focused follow-up questions or perform targeted experiments to close the gap before proceeding.
 
 ## Instruction Management
-- This root `AGENTS.md` is fetched from a remote server during container initialization. After initialization, do not edit or commit this file.
+- This root `AGENTS.md` is fetched from a remote server during container initialization. Update it only when you intentionally change the global rules; otherwise leave it untouched.
 - Repository-specific instructions may appear in `REPO_AGENTS.md`. If this file is absent, assume no extra instructions.
 - Additional `AGENTS.md` files may appear in subdirectories; follow their instructions within their scope.
 - Keep `AGENTS.md` entries in English.

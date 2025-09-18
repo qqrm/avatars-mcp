@@ -52,12 +52,12 @@ else
   log "mcp.json already exists"
 fi
 
-# refresh Agents.md from the remote server
-agents_url="${MCP_BASE_URL%/}/Agents.md"
-if curl -fsSL "$agents_url" -o Agents.md; then
-  log "Agents.md refreshed from $agents_url"
+# refresh AGENTS.md from the remote server
+agents_url="${MCP_BASE_URL%/}/AGENTS.md"
+if curl -fsSL "$agents_url" -o AGENTS.md; then
+  log "AGENTS.md refreshed from $agents_url"
 else
-  log "Agents.md unavailable at $agents_url"
+  log "AGENTS.md unavailable at $agents_url"
 fi
 
 # gh installation if missing
