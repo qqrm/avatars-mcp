@@ -22,7 +22,8 @@ These instructions extend the base `Agents.md` rules for the entire repository.
 
 ## Branch Management
 - Create a fresh, descriptive feature branch for every task before making any changes. Branch names must be in English, use hyphenated words, and describe the work (for example, `configure-remote-in-setup`).
-- The bootstrap branch named `work` is reserved; do **not** commit or push changes from it. Switch to your task-specific branch immediately after running the setup script.
+- When pushing changes to the remote repository, ensure the branch name is unique, descriptive, and not reused across unrelated tasks.
+- The bootstrap branch named `work` is reserved; do **not** commit or push changes from it, and never create or push a branch named `WORK`. Switch to your task-specific branch immediately after running the setup script.
 - Push the freshly created branch (`git push --set-upstream origin <branch>`) to verify remote access before making extensive edits. Quote the exact failure output if the push is rejected.
 
 ## Development Process
