@@ -1,4 +1,4 @@
-use avatars_generator::Index;
+use avatars_core::Index;
 use std::env;
 use std::error::Error;
 use std::fs;

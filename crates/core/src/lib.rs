@@ -4,7 +4,7 @@ use std::fmt;
 use std::fs;
 use std::path::Path;
 
-#[derive(Serialize, Deserialize, Debug, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct AvatarMeta {
     pub id: String,
     pub name: String,
@@ -15,7 +15,7 @@ pub struct AvatarMeta {
     pub version: Option<String>,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 pub enum FrontMatterError {
     Missing,
     Malformed,
@@ -54,16 +54,17 @@ pub fn parse_front_matter(content: &str) -> Result<(String, String), FrontMatter
     Err(FrontMatterError::Malformed)
 }
 
-#[derive(Serialize, Deserialize, Debug, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct AvatarEntry {
     #[serde(flatten)]
     pub meta: AvatarMeta,
     pub uri: String,
 }
 
-#[derive(Serialize, Deserialize, Debug, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct Index {
     pub base_uri: String,
+    pub base_instructions: String,
     pub avatars: Vec<AvatarEntry>,
 }
 
@@ -74,38 +75,67 @@ impl Index {
 }
 
 pub fn generate_index(avatars_dir: &Path, base_path: &Path) -> Result<Index, Box<dyn Error>> {
-    let base_uri_path = avatars_dir
+    let index = build_index(avatars_dir, base_path)?;
+    write_index(avatars_dir, &index)?;
+    Ok(index)
+}
+
+fn build_index(avatars_dir: &Path, base_path: &Path) -> Result<Index, Box<dyn Error>> {
+    let base_uri = resolve_base_uri(avatars_dir, base_path);
+    let base_instructions = fs::read_to_string(base_path)?;
+    let mut avatars = collect_avatar_entries(avatars_dir)?;
+    avatars.sort_by(|a, b| a.meta.id.cmp(&b.meta.id));
+
+    Ok(Index {
+        base_uri,
+        base_instructions,
+        avatars,
+    })
+}
+
+fn write_index(avatars_dir: &Path, index: &Index) -> Result<(), Box<dyn Error>> {
+    let json = serde_json::to_string_pretty(index)?;
+    fs::write(avatars_dir.join("catalog.json"), json + "\n")?;
+    Ok(())
+}
+
+fn resolve_base_uri(avatars_dir: &Path, base_path: &Path) -> String {
+    avatars_dir
         .parent()
         .and_then(|parent| base_path.strip_prefix(parent).ok())
-        .unwrap_or(base_path);
-    let base_uri = base_uri_path.to_string_lossy().replace("\\", "/");
-    let mut avatars: Vec<AvatarEntry> = Vec::new();
+        .unwrap_or(base_path)
+        .to_string_lossy()
+        .replace('\\', "/")
+}
+
+fn collect_avatar_entries(avatars_dir: &Path) -> Result<Vec<AvatarEntry>, Box<dyn Error>> {
+    let mut entries = Vec::new();
     for entry in fs::read_dir(avatars_dir)? {
         let entry = entry?;
-        if entry.path().extension().and_then(|s| s.to_str()) == Some("md") {
-            let content = fs::read_to_string(entry.path())?;
-            let (fm, _) = parse_front_matter(&content)?;
-            let meta: AvatarMeta = serde_yaml::from_str(&fm)?;
-            let uri = format!(
-                "avatars/{}",
-                entry
-                    .path()
-                    .file_name()
-                    .and_then(|s| s.to_str())
-                    .unwrap_or_default()
-            );
-            avatars.push(AvatarEntry { meta, uri });
+        let path = entry.path();
+        if path.extension().and_then(|s| s.to_str()) != Some("md") {
+            continue;
         }
+        let content = fs::read_to_string(&path)?;
+        let (fm, _) = parse_front_matter(&content)?;
+        let meta: AvatarMeta = serde_yaml::from_str(&fm)?;
+        let uri = format!("avatars/{}", file_name(&path));
+        entries.push(AvatarEntry { meta, uri });
     }
-    let index = Index { base_uri, avatars };
-    let json = serde_json::to_string_pretty(&index)?;
-    fs::write(avatars_dir.join("catalog.json"), json + "\n")?;
-    Ok(index)
+    Ok(entries)
+}
+
+fn file_name(path: &Path) -> String {
+    path.file_name()
+        .and_then(|name| name.to_str())
+        .unwrap_or_default()
+        .to_string()
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use tempfile::tempdir;
 
     #[test]
     fn parses_with_extra_delimiter() {
@@ -144,43 +174,40 @@ mod tests {
         assert_eq!(err, FrontMatterError::Malformed);
     }
 
-    mod index_generation_tests {
-        use super::*;
-        use std::error::Error;
-        use std::fs;
-        use tempfile::tempdir;
+    #[test]
+    fn generates_index_with_expected_fields() -> Result<(), Box<dyn Error>> {
+        let tmp = tempdir()?;
+        let root = tmp.path();
+        let avatars = root.join("avatars");
+        fs::create_dir(&avatars)?;
 
-        #[test]
-        fn generates_index_with_expected_fields() -> Result<(), Box<dyn Error>> {
-            let tmp = tempdir()?;
-            let root = tmp.path();
-            let avatars = root.join("avatars");
-            fs::create_dir(&avatars)?;
+        fs::write(
+            avatars.join("ONE.md"),
+            "---\nid: one\nname: One\ndescription: First\n---\nbody\n",
+        )?;
+        fs::write(
+            avatars.join("TWO.md"),
+            "---\nid: two\nname: Two\n---\nbody\n",
+        )?;
+        fs::write(root.join("AGENTS.md"), "Base instructions\n")?;
 
-            fs::write(
-                avatars.join("ONE.md"),
-                "---\nid: one\nname: One\ndescription: First\n---\nbody\n",
-            )?;
-            fs::write(
-                avatars.join("TWO.md"),
-                "---\nid: two\nname: Two\n---\nbody\n",
-            )?;
-            fs::write(root.join("AGENTS.md"), "Base instructions\n")?;
+        let index = generate_index(&avatars, &root.join("AGENTS.md"))?;
+        assert_eq!(index.base_uri, "AGENTS.md");
+        assert_eq!(index.base_instructions, "Base instructions\n");
+        assert_eq!(index.avatars.len(), 2);
+        assert_eq!(
+            index
+                .avatars
+                .iter()
+                .map(|entry| entry.meta.id.as_str())
+                .collect::<Vec<_>>(),
+            vec!["one", "two"]
+        );
 
-            let index = generate_index(&avatars, &root.join("AGENTS.md"))?;
-            assert_eq!(index.avatars.len(), 2);
-            assert_eq!(index.base_uri, "AGENTS.md");
+        let json = fs::read_to_string(avatars.join("catalog.json"))?;
+        let parsed: Index = serde_json::from_str(&json)?;
+        assert_eq!(parsed, index);
 
-            let first = index.avatars.iter().find(|m| m.meta.id == "one").unwrap();
-            assert_eq!(first.meta.name, "One");
-            assert_eq!(first.meta.description.as_deref(), Some("First"));
-            assert_eq!(first.uri, "avatars/ONE.md");
-
-            let json = fs::read_to_string(avatars.join("catalog.json"))?;
-            let parsed: Index = serde_json::from_str(&json)?;
-            assert_eq!(parsed, index);
-
-            Ok(())
-        }
+        Ok(())
     }
 }

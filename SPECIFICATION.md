@@ -15,12 +15,12 @@ This specification defines how behavioral **avatars**, shared tooling, and metad
 README.md
 SPECIFICATION.md
 mcp.json
-(optional) src/ or generator.rs
+(optional) crates/
 ```
 
 - `/avatars/` stores every avatar Markdown file.
 - `AGENTS.md` contains shared base instructions bundled into the index.
-- `src/` or `generator.rs` may host tooling that produces `avatars/catalog.json`.
+- `crates/` hosts the Rust workspace used to generate `avatars/catalog.json` and run auxiliary tooling.
 
 ## 3. Avatar File Format
 
@@ -70,34 +70,49 @@ You are a DevOps engineer. Your job is to:
 
 ## 4. Index Generation
 
-Tooling may iterate over `/avatars/`, parse YAML front matter, and produce `avatars/catalog.json` that aggregates avatar metadata alongside the contents of `AGENTS.md`. The resulting JSON is published on GitHub Pages as `avatars.json` and consumed by clients.
+Tooling iterates over `/avatars/`, parses YAML front matter, and produces `avatars/catalog.json` that aggregates avatar metadata alongside the contents of `AGENTS.md`. The resulting JSON is published on GitHub Pages as `avatars.json` and consumed by clients.
 
-Example index entry produced from the front matter above:
+The catalog schema is:
 
 ```json
 {
-  "id": "devops",
-  "name": "DevOps Engineer",
-  "description": "Automates CI/CD, ensures infrastructure stability.",
-  "tags": ["ci", "cd", "infrastructure"]
+  "base_uri": "AGENTS.md",
+  "base_instructions": "... contents of AGENTS.md ...",
+  "avatars": [
+    {
+      "id": "devops",
+      "name": "DevOps Engineer",
+      "description": "Automates CI/CD, ensures infrastructure stability.",
+      "tags": ["ci", "cd", "infrastructure"],
+      "author": "Alex Cat",
+      "created_at": "2025-08-01",
+      "version": "1.0",
+      "uri": "avatars/DEVOPS.md"
+    }
+  ]
 }
 ```
+
+- `base_uri` exposes the relative location of the shared instructions so clients can issue a follow-up request.
+- `base_instructions` embeds the full Markdown body for bootstrap scenarios.
+- `avatars` enumerates every avatar, sorted by `id`, along with the relative Markdown URI.
 
 ## 5. API and MCP Access
 
 - **Catalog and base instructions:** `GET /avatars.json`.
-- **Full avatar:** `GET /avatars/{id}.md`
+- **Baseline instructions only:** `GET /AGENTS.md`.
+- **Full avatar:** `GET /avatars/{id}.md`.
 
 The optional Model Context Protocol server mirrors these resources over STDIO and implements:
 
-- `resources/list` – advertises the catalog (`avatars.json`) along with shared base instructions.
-- `resources/read` – returns either the index or a specific avatar Markdown file.
+- `resources/list` – advertises the catalog (`avatars.json`), `AGENTS.md`, and individual avatar files.
+- `resources/read` – returns the index, base instructions, or a specific avatar Markdown file.
 
 ## 6. Extensibility and Tooling
 
 - Add new avatars by committing additional Markdown files under `/avatars/` with the required front matter.
 - Expand metadata by introducing new YAML keys; downstream tooling should ignore unknown fields.
-- A Rust CLI (typically under `src/`) can regenerate `avatars/catalog.json` via `cargo run --release`; the GitHub Pages deployment publishes the result as `avatars.json`.
+- The Rust workspace under `crates/` can regenerate `avatars/catalog.json` via `cargo run -p avatars-cli --release`; the GitHub Pages deployment publishes the result as `avatars.json`.
 
 ## 7. Relationship to README
 
