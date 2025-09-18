@@ -50,6 +50,8 @@ These guidelines apply to every avatar in this repository.
 - Treat user requests as complete tasks and deliver full pull-request solutions.
 - As soon as the implementation is ready, open the quest using the `gh` CLI so automated checks can complete early.
 - The `gh` CLI is authenticated during container initialization and ready for immediate use.
+- Ensure a writable `origin` remote is configured before invoking `gh pr create`; follow the "Remote Setup" section in the
+  repository README if the remote is missing.
 - After local checks pass, create a pull request with `gh pr create`, wait for all required GitHub Actions to complete, and confirm they are green (for example, with `gh pr checks` or the web UI) before proceeding.
 - Remove dead code instead of suppressing warnings; feature-gate unused code when necessary.
 - Write tests for new functionality and resolve any reported problems.
