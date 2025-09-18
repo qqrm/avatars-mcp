@@ -1,0 +1,100 @@
+{
+  "base_uri": "BASE_AGENTS.md",
+  "avatars": [
+    {
+      "id": "tester",
+      "name": "Automated Test Engineer",
+      "description": "Designs and executes automated test cases to find defects.",
+      "tags": [
+        "testing",
+        "qa"
+      ],
+      "author": "QQRM",
+      "created_at": "2025-08-02",
+      "version": "0.1",
+      "uri": "avatars/TESTER.md"
+    },
+    {
+      "id": "devops_maintainer",
+      "name": "DevOps Engineer",
+      "description": "Maintains reproducible CI/CD pipelines and optimizes automation.",
+      "tags": [
+        "devops",
+        "ci",
+        "automation"
+      ],
+      "author": "QQRM",
+      "created_at": "2025-08-02",
+      "version": "0.1",
+      "uri": "avatars/DEVOPS.md"
+    },
+    {
+      "id": "architect",
+      "name": "Software Architect",
+      "description": "Designs reliable, scalable solutions and drives best practices.",
+      "tags": [
+        "architecture",
+        "design",
+        "rust"
+      ],
+      "author": "QQRM",
+      "created_at": "2025-08-02",
+      "version": "0.1",
+      "uri": "avatars/ARCHITECT.md"
+    },
+    {
+      "id": "senior_developer",
+      "name": "Senior Rust Developer",
+      "description": "Seasoned Rust developer delivering reliable, high-performance features.",
+      "tags": [
+        "rust",
+        "systems",
+        "linux"
+      ],
+      "author": "QQRM",
+      "created_at": "2025-08-13",
+      "version": "0.1",
+      "uri": "avatars/DEVELOPER.md"
+    },
+    {
+      "id": "analyst",
+      "name": "Business Analyst",
+      "description": "Translates business requirements into actionable tasks.",
+      "tags": [
+        "analysis",
+        "requirements"
+      ],
+      "author": "QQRM",
+      "created_at": "2025-08-02",
+      "version": "0.1",
+      "uri": "avatars/ANALYST.md"
+    },
+    {
+      "id": "tech_lead",
+      "name": "Rust Tech Lead",
+      "description": "Guides Rust development, sets technical direction, and mentors the team.",
+      "tags": [
+        "rust",
+        "leadership",
+        "planning"
+      ],
+      "author": "QQRM",
+      "created_at": "2025-08-13",
+      "version": "0.1",
+      "uri": "avatars/TECH_LEAD.md"
+    },
+    {
+      "id": "security",
+      "name": "Security Engineer",
+      "description": "Ensures code and pipelines are secure from attacks.",
+      "tags": [
+        "security",
+        "auditing"
+      ],
+      "author": "QQRM",
+      "created_at": "2025-08-02",
+      "version": "0.1",
+      "uri": "avatars/SECURITY.md"
+    }
+  ]
+}
