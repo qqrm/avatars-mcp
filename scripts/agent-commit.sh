@@ -16,6 +16,11 @@ TASK_ID=${TASK_ID:-${BRANCH//[^A-Za-z0-9]/-}}
 STATUS_FILE=".agent_status"
 rm -f "${STATUS_FILE}"
 
+record_status() {
+  local flag=$1
+  printf '%s\n' "${flag}" >>"${STATUS_FILE}"
+}
+
 git add -A
 if git diff --cached --quiet; then
   echo "agent-commit: nothing staged, exiting"
@@ -54,18 +59,24 @@ if git diff --cached --quiet; then
   echo "[agent-commit] No formatter or generator updates detected"
 else
   if ! git -c rerere.enabled=true commit -m "task:${TASK_ID} auto-resolve and rebase on main"; then
-    echo "AUTO_CONFLICT=1" > "${STATUS_FILE}"
+    record_status "AUTO_CONFLICT=1"
   fi
 fi
 
 echo "[agent-commit] Running cargo check"
 if ! cargo check --tests --benches; then
-  echo "TESTS_FAILED=1" > "${STATUS_FILE}"
+  record_status "TESTS_FAILED=1"
 fi
 
 echo "[agent-commit] Running cargo test"
 if ! cargo test; then
-  echo "TESTS_FAILED=1" > "${STATUS_FILE}"
+  record_status "TESTS_FAILED=1"
+fi
+
+if [[ -f "${STATUS_FILE}" ]]; then
+  echo "[agent-commit] Skipping push due to recorded failures:"
+  cat "${STATUS_FILE}"
+  exit 1
 fi
 
 git push -u origin HEAD
