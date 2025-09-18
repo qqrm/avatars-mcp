@@ -63,7 +63,7 @@ pub struct AvatarEntry {
 
 #[derive(Serialize, Deserialize, Debug, PartialEq)]
 pub struct Index {
-    pub base_instructions: String,
+    pub base_uri: String,
     pub avatars: Vec<AvatarEntry>,
 }
 
@@ -74,7 +74,11 @@ impl Index {
 }
 
 pub fn generate_index(avatars_dir: &Path, base_path: &Path) -> Result<Index, Box<dyn Error>> {
-    let base_instructions = fs::read_to_string(base_path)?;
+    let base_uri_path = avatars_dir
+        .parent()
+        .and_then(|parent| base_path.strip_prefix(parent).ok())
+        .unwrap_or(base_path);
+    let base_uri = base_uri_path.to_string_lossy().replace("\\", "/");
     let mut avatars: Vec<AvatarEntry> = Vec::new();
     for entry in fs::read_dir(avatars_dir)? {
         let entry = entry?;
@@ -93,10 +97,7 @@ pub fn generate_index(avatars_dir: &Path, base_path: &Path) -> Result<Index, Box
             avatars.push(AvatarEntry { meta, uri });
         }
     }
-    let index = Index {
-        base_instructions,
-        avatars,
-    };
+    let index = Index { base_uri, avatars };
     let json = serde_json::to_string_pretty(&index)?;
     fs::write(avatars_dir.join("index.json"), json + "\n")?;
     Ok(index)
@@ -168,7 +169,7 @@ mod tests {
 
             let index = generate_index(&avatars, &root.join("BASE_AGENTS.md"))?;
             assert_eq!(index.avatars.len(), 2);
-            assert_eq!(index.base_instructions, "Base instructions\n");
+            assert_eq!(index.base_uri, "BASE_AGENTS.md");
 
             let first = index.avatars.iter().find(|m| m.meta.id == "one").unwrap();
             assert_eq!(first.meta.name, "One");
