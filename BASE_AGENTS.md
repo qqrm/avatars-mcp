@@ -43,12 +43,14 @@ These guidelines apply to every avatar in this repository.
 - Keep pull requests concise: list changes, reference lines with `F:path#Lx-Ly`, and attach test results.
 - In the final summary, list all avatars used to solve the task.
 - Provide a link to the open quest (pull request) in the final summary after solving each task.
+- Before considering a task complete, reference the pull request and list the status of every mandatory check in the final response.
 
 ## Development Workflow
 - If a `local_setup.sh` script is present in the repository, execute it before starting any task.
 - Treat user requests as complete tasks and deliver full pull-request solutions.
 - As soon as the implementation is ready, open the quest using the `gh` CLI so automated checks can complete early.
 - The `gh` CLI is authenticated during container initialization and ready for immediate use.
+- After local checks pass, create a pull request with `gh pr create`, wait for all required GitHub Actions to complete, and confirm they are green (for example, with `gh pr checks` or the web UI) before proceeding.
 - Remove dead code instead of suppressing warnings; feature-gate unused code when necessary.
 - Write tests for new functionality and resolve any reported problems.
 - Pipeline secrets are stored in the `prod` environment.
