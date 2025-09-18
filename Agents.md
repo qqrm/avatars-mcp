@@ -42,13 +42,15 @@ These guidelines apply to every avatar in this repository.
 - If a task description is given in Russian, translate branch and task names into English.
 - Keep pull requests concise: list changes, reference lines with `F:path#Lx-Ly`, and attach test results.
 - In the final summary, list all avatars used to solve the task.
-- Provide a link to the open quest (pull request) in the final summary after solving each task.
+- Provide a link to the open pull request in the final summary after solving each task.
 - Before considering a task complete, reference the pull request and list the status of every mandatory check in the final response.
 
 ## Development Workflow
 - If a `local_setup.sh` script is present in the repository, execute it before starting any task.
 - Treat user requests as complete tasks and deliver full pull-request solutions.
-- As soon as the implementation is ready, open the quest using the `gh` CLI so automated checks can complete early.
+- As soon as the implementation is ready, open the pull request using the `gh` CLI so automated checks can complete early.
+- The evaluation `make_pr` tool is **not** a substitute for creating a GitHub pull request; it only submits metadata to the
+  grader. Always run `gh pr create` (or the equivalent GitHub action) to open the actual pull request.
 - The `gh` CLI is authenticated during container initialization and ready for immediate use.
 - Ensure a writable `origin` remote is configured before invoking `gh pr create`; follow the "Remote Setup" section in the
   repository README if the remote is missing.

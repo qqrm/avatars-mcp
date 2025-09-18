@@ -23,14 +23,14 @@ Run `./setup.sh` to install the optional MCP servers referenced by `mcp.json`; i
 
 - **Specification:** See [`SPECIFICATION.md`](SPECIFICATION.md) for the canonical directory layout, avatar schema, and API details.
 - **Avatars:** Individual prompts live in [`/avatars/`](avatars/); each file targets a single role.
-- **Base instructions:** Shared guidance for all avatars resides in [`BASE_AGENTS.md`](BASE_AGENTS.md).
+- **Base instructions:** Shared guidance for all avatars resides in [`Agents.md`](Agents.md).
 - **HTTP quick reference:** [`INSTRUCTIONS.md`](INSTRUCTIONS.md) summarizes the published endpoints external clients call.
 
 ## Shared Files for External Consumers
 
 External clients rely on a small set of shared files published alongside the avatars:
 
-- [`BASE_AGENTS.md`](BASE_AGENTS.md) — the baseline instructions served to external agents and bundled into `avatars/index.json`.
+- [`Agents.md`](Agents.md) — the baseline instructions served to external agents and bundled into `avatars/index.json`.
 - [`INSTRUCTIONS.md`](INSTRUCTIONS.md) — a condensed description of the HTTP API exposed via GitHub Pages.
 - [`mcp.json`](mcp.json) — the default Model Context Protocol manifest that activates these resources in compatible clients.
 
@@ -48,7 +48,7 @@ automates only the dependencies it needs while keeping the filename consistent.
 
 ## Tooling
 
-A Rust CLI located in [`src/`](src) regenerates `avatars/index.json` by parsing the avatar front matter and bundling `BASE_AGENTS.md`. Build the index with:
+A Rust CLI located in [`src/`](src) regenerates `avatars/index.json` by parsing the avatar front matter and bundling `Agents.md`. Build the index with:
 
 ```bash
 cargo run --release
