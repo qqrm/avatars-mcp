@@ -11,6 +11,7 @@ These instructions extend the base `Agents.md` rules for the entire repository.
 - Before modifying the repository, execute `./repo-setup.sh` from the repository root. The script configures the canonical `origin` remote automatically when it is missing or incorrect.
 - After the setup script succeeds, record the current date and time in your session notes so future attempts know the environment is ready.
 - Double-check `git remote -v` once the script finishes; the `origin` remote must point to `https://github.com/qqrm/avatars-mcp.git`.
+- Run `gh auth status` immediately after setup to confirm credentials are valid; capture the full output when authentication fails.
 - If any setup step fails, capture the full command output, diagnose the cause, and propose a fix or workaround.
 
 ## Avatar Retrieval Workflow
@@ -22,15 +23,18 @@ These instructions extend the base `Agents.md` rules for the entire repository.
 ## Branch Management
 - Create a fresh, descriptive feature branch for every task before making any changes. Branch names must be in English, use hyphenated words, and describe the work (for example, `configure-remote-in-setup`).
 - The bootstrap branch named `work` is reserved; do **not** commit or push changes from it. Switch to your task-specific branch immediately after running the setup script.
+- Push the freshly created branch (`git push --set-upstream origin <branch>`) to verify remote access before making extensive edits. Quote the exact failure output if the push is rejected.
 
 ## Development Process
 - Structure your work into small, focused commits with clear English messages.
 - After implementing changes, run every required check. At minimum, execute `cargo test --manifest-path sitegen/Cargo.toml` when that manifest exists, and add any extra commands that apply to the edited components. Capture and address failures instead of skipping them.
 - Keep the working tree clean (`git status` should show no pending changes) before creating a pull request.
 - Use the `gh` CLI to inspect open pull requests, checks, and workflow runs when verification on GitHub is necessary; report exact commands and outcomes.
+- Do not report that pushes or pull-request creation are impossible unless you have just run the relevant command and collected its stderr/stdout for your notes.
 
 ## Pull Request Requirements
 - Ensure your branch is based on `main` and contains all necessary commits.
 - Create the GitHub pull request with `gh pr create --base main --fill` (or specify a title and description manually). If the command fails, retry and capture the exact error message for the final report.
 - Provide the pull-request URL in the final message to the user together with the avatar details.
 - When pull-request creation ultimately fails, document every attempted command and error message so reviewers understand the failure mode.
+- Push the latest commits before each `gh pr create` attempt so the remote branch reflects your changes; include the command output in the final report when issues persist.
