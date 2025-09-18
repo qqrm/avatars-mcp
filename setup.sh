@@ -52,7 +52,13 @@ else
   log "mcp.json already exists"
 fi
 
-log "Skipping local avatar resource sync; relying on remote MCP server"
+# refresh Agents.md from the remote server
+agents_url="${MCP_BASE_URL%/}/Agents.md"
+if curl -fsSL "$agents_url" -o Agents.md; then
+  log "Agents.md refreshed from $agents_url"
+else
+  log "Agents.md unavailable at $agents_url"
+fi
 
 # gh installation if missing
 gh_ok() { gh --version >/dev/null 2>&1; }
