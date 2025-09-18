@@ -22,6 +22,7 @@ These guidelines apply to every avatar in this repository.
 - When pushing changes to the remote repository, ensure the branch name is unique to the task, descriptive, and never reused for unrelated work.
 - The bootstrap branch named `work` is reserved; do **not** commit or push changes from it, and never create or push a branch named `WORK`. Switch to your task-specific branch immediately after running the setup script.
 - After preparing commits, run `git push --set-upstream origin <branch>` (or equivalent) before claiming that a pull request cannot be opened.
+- Before reporting completion, confirm the remote branch contains the latest commits (for example, compare `git log origin/<branch>` with `git log HEAD`) so reviewers see the final changes.
 - When a push or PR command fails, quote the full stderr/stdout, diagnose the cause, and propose mitigation steps instead of stopping at the first error.
 
 ## Avatars
