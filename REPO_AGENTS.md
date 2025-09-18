@@ -8,7 +8,7 @@ These instructions extend the base `Agents.md` rules for the entire repository.
 - Double-check `git remote -v` once the script finishes; the `origin` remote must point to `https://github.com/qqrm/avatars-mcp.git`.
 
 ## Avatar Retrieval Workflow
-- Use `scripts/fetch_avatar_assets.sh` (or an equivalent helper) before coding to download `avatars.json` and `README.md` from `https://qqrm.github.io/avatars-mcp/`. Record any fallback to legacy endpoints so we can fix the deployment.
+- Use `scripts/fetch_avatar_assets.sh` (or an equivalent helper) before coding to download `avatars.json` and `README.md` from `https://qqrm.github.io/avatars-mcp/`. Capture detailed HTTP errors whenever a download fails so outages can be triaged quickly.
 - The helper must try up to five times with a 5–10 second pause between attempts. Record any HTTP status codes or curl errors if every attempt fails.
 - When the downloads succeed, pick an avatar for the task, document the reason for the choice, and include this explanation in both the pull-request description and the final response to the user.
 
