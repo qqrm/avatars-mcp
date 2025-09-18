@@ -37,6 +37,9 @@ These guidelines apply to every avatar in this repository.
 
 ## Avatars
 - Use the MCP server at `https://qqrm.github.io/avatars-mcp/` to fetch avatars and base instructions.
+- Before starting implementation work, run the repository-provided helper (for example, `scripts/fetch_avatar_assets.sh`) to download the latest avatar catalog and README. Retry failures up to five times with short delays and capture the HTTP error details if all attempts fail.
+- Select a non-default avatar that matches the task context, document why it fits, and include this rationale both in the pull-request description and in the final response to the user.
+- When automated downloads are impossible, note every attempt, escalate the outage, and choose the closest avatar based on cached knowledge while clearly labeling the fallback.
 
 ## Rust Documentation Servers
 - `setup.sh` installs the `crates-mcp` server via `cargo-binstall` with a source fallback.
@@ -98,6 +101,9 @@ These guidelines apply to every avatar in this repository.
 - Use the [`dtolnay/rust-toolchain`](https://github.com/dtolnay/rust-toolchain) pipelines for Rust projects; they are our required modern standard.
 - Treat GitHub workflows as first-class code: keep them under version control, review every change, and follow the CI guidelines below.
 - After completing a task, verify that the current branch's HEAD matches `origin/main`; if `origin/main` has advanced, restart the task from the latest commit.
+
+## Rust Validation
+- For Rust repositories, run `cargo test` from the workspace root before opening a pull request—even when only documentation changes. Record failures verbatim and resolve them or escalate with proposed mitigation.
 
 ## Pre-commit Checks
 Install tools if needed:
