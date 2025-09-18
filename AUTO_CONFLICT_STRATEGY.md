@@ -50,7 +50,7 @@ The sync script performs:
    - **`Cargo.lock`**: replaced with our regenerated version via `cargo generate-lockfile`.
 3. If the post-format commit fails because conflicts persist, the script records `AUTO_CONFLICT=1` for escalation.
 4. Validation commands (`cargo check --tests --benches`, `cargo test`) run after conflict resolution. Failures write `TESTS_FAILED=1`.
-5. On success, the branch is pushed with `git push -u origin HEAD`.
+5. The branch is pushed with `git push -u origin HEAD` only when `.agent_status` remains absent after validation. Any recorded flag stops the script and prevents publishing broken commits.
 
 ## 5. Handling common merge scenarios
 
