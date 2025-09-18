@@ -1,7 +1,14 @@
 use serde_json::{Value, json};
 use std::fs;
+use std::io::{Error as IoError, ErrorKind, Result as IoResult};
+use std::path::{Path, PathBuf};
 use tokio::io::{self, AsyncBufReadExt, AsyncWriteExt, BufReader};
 use tokio::task;
+
+const CATALOG_URI: &str = "avatars.json";
+const CATALOG_PATH: &str = "avatars/catalog.json";
+const BASE_URI: &str = "AGENTS.md";
+const AVATARS_DIR: &str = "avatars";
 
 async fn handle_initialize() -> Value {
     json!({
@@ -10,91 +17,99 @@ async fn handle_initialize() -> Value {
     })
 }
 
-#[cfg(test)]
-fn list_avatar_files() -> std::io::Result<Vec<String>> {
-    use std::path::Path;
-    let avatars_dir = Path::new("avatars");
+fn list_avatar_files() -> IoResult<Vec<String>> {
+    let avatars_dir = avatars_root();
     let mut files = Vec::new();
-    let entries = fs::read_dir(avatars_dir)?;
-    for entry_result in entries {
-        match entry_result {
-            Ok(entry) => {
-                let path = entry.path();
-                if path.extension().and_then(|s| s.to_str()) == Some("md") {
-                    match path.strip_prefix(avatars_dir) {
-                        Ok(relative) => files.push(relative.to_string_lossy().to_string()),
-                        Err(e) => eprintln!("Failed to strip prefix for {:?}: {}", path, e),
-                    }
-                }
+    for entry in fs::read_dir(avatars_dir)? {
+        let entry = entry?;
+        let path = entry.path();
+        if path.extension().and_then(|s| s.to_str()) == Some("md") {
+            if let Some(name) = path.file_name().and_then(|s| s.to_str()) {
+                files.push(name.to_string());
             }
-            Err(e) => eprintln!("Failed to read directory entry: {}", e),
         }
     }
     files.sort();
     Ok(files)
 }
 
-fn list_resources() -> Vec<String> {
-    vec!["avatars.json".to_string()]
+fn enumerate_resources() -> IoResult<Vec<String>> {
+    let mut resources = vec![CATALOG_URI.to_string(), BASE_URI.to_string()];
+    for file in list_avatar_files()? {
+        resources.push(format!("{}/{}", AVATARS_DIR, file));
+    }
+    Ok(resources)
+}
+
+fn error_response(message: impl Into<String>) -> Value {
+    json!({"error": {"code": -32000, "message": message.into()}})
 }
 
 async fn handle_resources_list() -> Value {
-    let resources: Vec<Value> = list_resources()
-        .into_iter()
-        .map(|uri| json!({"uri": uri}))
-        .collect();
-    json!({"resources": resources})
+    match enumerate_resources() {
+        Ok(resources) => {
+            let values: Vec<Value> = resources
+                .into_iter()
+                .map(|uri| json!({"uri": uri}))
+                .collect();
+            json!({"resources": values})
+        }
+        Err(e) => error_response(e.to_string()),
+    }
 }
 
 async fn handle_resources_read(uri: &str) -> Value {
-    if uri == "avatars.json" {
-        return match task::spawn_blocking(|| fs::read_to_string("avatars/catalog.json")).await {
-            Ok(Ok(content)) => json!({"contents": content}),
-            Ok(Err(e)) => json!({"error": {"code": -32000, "message": e.to_string()}}),
-            Err(e) => json!({"error": {"code": -32000, "message": e.to_string()}}),
-        };
+    match uri {
+        CATALOG_URI => read_file(catalog_path()).await,
+        BASE_URI => read_file(base_instructions_path()).await,
+        _ if uri.starts_with(&format!("{}/", AVATARS_DIR)) => match avatar_path_from_uri(uri) {
+            Ok(path) => read_file(path).await,
+            Err(e) => error_response(e.to_string()),
+        },
+        _ => error_response("Unknown resource"),
     }
+}
 
-    let avatars_dir = match task::spawn_blocking(|| fs::canonicalize("avatars")).await {
-        Ok(Ok(dir)) => dir,
-        Ok(Err(e)) => {
-            return json!({
-                "error": {"code": -32000, "message": e.to_string()}
-            });
-        }
-        Err(e) => {
-            return json!({
-                "error": {"code": -32000, "message": e.to_string()}
-            });
-        }
-    };
-
-    let request_path = uri.to_owned();
-    let normalized = match task::spawn_blocking(move || fs::canonicalize(request_path)).await {
-        Ok(Ok(path)) => path,
-        Ok(Err(e)) => {
-            return json!({
-                "error": {"code": -32000, "message": e.to_string()}
-            });
-        }
-        Err(e) => {
-            return json!({
-                "error": {"code": -32000, "message": e.to_string()}
-            });
-        }
-    };
-
-    if !normalized.starts_with(&avatars_dir) {
-        return json!({
-            "error": {"code": -32000, "message": "Access denied"}
-        });
-    }
-
-    match task::spawn_blocking(move || fs::read_to_string(normalized)).await {
+async fn read_file(path: PathBuf) -> Value {
+    match task::spawn_blocking(move || fs::read_to_string(path)).await {
         Ok(Ok(content)) => json!({"contents": content}),
-        Ok(Err(e)) => json!({"error": {"code": -32000, "message": e.to_string()}}),
-        Err(e) => json!({"error": {"code": -32000, "message": e.to_string()}}),
+        Ok(Err(e)) => error_response(e.to_string()),
+        Err(e) => error_response(e.to_string()),
     }
+}
+
+fn avatar_path_from_uri(uri: &str) -> IoResult<PathBuf> {
+    let relative = Path::new(uri)
+        .strip_prefix(AVATARS_DIR)
+        .map_err(|_| IoError::new(ErrorKind::NotFound, "Unknown resource"))?;
+    let base = fs::canonicalize(avatars_root())?;
+    let candidate = base.join(relative);
+    let normalized = fs::canonicalize(&candidate)?;
+    if normalized.starts_with(&base) {
+        Ok(normalized)
+    } else {
+        Err(IoError::new(ErrorKind::PermissionDenied, "Access denied"))
+    }
+}
+
+fn avatars_root() -> PathBuf {
+    workspace_path(AVATARS_DIR)
+}
+
+fn base_instructions_path() -> PathBuf {
+    workspace_path(BASE_URI)
+}
+
+fn catalog_path() -> PathBuf {
+    workspace_path(CATALOG_PATH)
+}
+
+fn workspace_path(relative: &str) -> PathBuf {
+    let mut path = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+    path.pop();
+    path.pop();
+    path.push(relative);
+    path
 }
 
 #[tokio::main]
@@ -130,10 +145,10 @@ async fn main() -> io::Result<()> {
                 {
                     handle_resources_read(uri).await
                 } else {
-                    json!({"error": {"code": -32602, "message": "Missing uri"}})
+                    error_response("Missing uri")
                 }
             }
-            _ => json!({"error": {"code": -32601, "message": "Unknown method"}}),
+            _ => error_response("Unknown method"),
         };
 
         let response = if result.get("error").is_some() {
@@ -182,7 +197,7 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn lists_resources_returns_catalog() {
+    async fn lists_resources_returns_catalog_and_base() {
         let result = handle_resources_list().await;
         let resources = result
             .get("resources")
@@ -192,12 +207,19 @@ mod tests {
             .iter()
             .map(|v| v.get("uri").and_then(|u| u.as_str()).unwrap())
             .collect();
-        assert_eq!(uris, vec!["avatars.json"]);
+        assert!(uris.contains(&"avatars.json"));
+        assert!(uris.contains(&"AGENTS.md"));
     }
 
     #[tokio::test]
     async fn reads_avatar_catalog() {
         let result = handle_resources_read("avatars.json").await;
+        assert!(result.get("contents").is_some());
+    }
+
+    #[tokio::test]
+    async fn reads_base_instructions() {
+        let result = handle_resources_read("AGENTS.md").await;
         assert!(result.get("contents").is_some());
     }
 }
