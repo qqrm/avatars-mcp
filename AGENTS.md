@@ -72,6 +72,7 @@ These guidelines apply to every avatar in this repository.
   cargo test
   cargo machete            # if available
   ```
+- Treat every failure or warning from the required tooling—including findings such as unused dependencies reported by `cargo machete`—as part of the active task and resolve them before finishing, even when the issue originates outside the immediate scope of the requested change.
 - Skip build-heavy checks only when changes affect documentation or Markdown files, and note the justification in your report.
 - Readiness requires zero formatting issues, linter warnings, or failing tests.
 - Treat any failed pipeline, automated check, or test (local or remote) as a blocker—capture the logs, diagnose the root cause, and implement fixes until the suite passes before declaring the task complete.
