@@ -7,6 +7,7 @@ These instructions extend the base `AGENTS.md` rules for the entire repository.
 - After setup, verify `git remote -v` and `gh auth status`, then continue only if both confirm a working GitHub connection.
 - Leave the bootstrap `work` branch immediately, create a descriptive feature branch, and avoid any branch named `WORK`.
 - Use the `gh` CLI to inspect branch protection, required status checks, and the latest workflow runs. Mirror those checks locally before reporting completion.
+- Whenever you modify an `AGENTS.md` file, regenerate the avatar catalog (for example with `cargo run -p avatars-cli --release`) and confirm `avatars/catalog.json` reflects the change before handing off the branch.
 
 ## Mandatory Setup
 - Before modifying the repository, execute `./repo-setup.sh` from the repository root. The script configures the canonical `origin` remote automatically when it is missing or incorrect.

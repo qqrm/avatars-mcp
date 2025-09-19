@@ -64,11 +64,11 @@ The latest version of the avatar API is served from GitHub Pages at:
 https://qqrm.github.io/avatars-mcp/
 ```
 
-- `GET /avatars.json` — retrieve the catalog along with the embedded `base_instructions` payload.
-- `GET /AGENTS.md` — download the shared baseline instructions directly (mirrors the `base_instructions` field).
+- `GET /avatars.json` — retrieve the catalog, including the `base_uri` pointer to the shared instructions.
+- `GET /AGENTS.md` — download the shared baseline instructions referenced by `base_uri`.
 - `GET /avatars/{id}.md` — retrieve the complete descriptor for the avatar with the given `id`.
 
-Clients should fetch both the catalog and `AGENTS.md` to ensure they stay in sync with the published baseline guidance, even though bootstrap scripts normally install the Markdown locally.
+Clients should fetch both the catalog and `AGENTS.md` to ensure they stay in sync with the published baseline guidance, because the catalog intentionally omits the Markdown body in favour of the shared URI.
 
 Continuous integration pipelines lint and test the Rust tooling (`cargo fmt`, `cargo clippy`, and `cargo test`). GitHub Pages deployments rebuild the catalog from `main` and publish it to `https://qqrm.github.io/avatars-mcp/avatars.json` alongside the avatar Markdown files.
 

@@ -70,14 +70,13 @@ You are a DevOps engineer. Your job is to:
 
 ## 4. Index Generation
 
-Tooling iterates over `/avatars/`, parses YAML front matter, and produces `avatars/catalog.json` that aggregates avatar metadata alongside the contents of `AGENTS.md`. The resulting JSON is published on GitHub Pages as `avatars.json` and consumed by clients.
+Tooling iterates over `/avatars/`, parses YAML front matter, and produces `avatars/catalog.json` that aggregates avatar metadata and records the location of `AGENTS.md`. The resulting JSON is published on GitHub Pages as `avatars.json` and consumed by clients.
 
 The catalog schema is:
 
 ```json
 {
   "base_uri": "AGENTS.md",
-  "base_instructions": "... contents of AGENTS.md ...",
   "avatars": [
     {
       "id": "devops",
@@ -94,7 +93,6 @@ The catalog schema is:
 ```
 
 - `base_uri` exposes the relative location of the shared instructions so clients can issue a follow-up request.
-- `base_instructions` embeds the full Markdown body for bootstrap scenarios.
 - `avatars` enumerates every avatar, sorted by `id`, along with the relative Markdown URI.
 
 ## 5. API and MCP Access
@@ -106,7 +104,7 @@ The catalog schema is:
 The optional Model Context Protocol server mirrors these resources over STDIO and implements:
 
 - `resources/list` – advertises the catalog (`avatars.json`), `AGENTS.md`, and individual avatar files.
-- `resources/read` – returns the index, base instructions, or a specific avatar Markdown file.
+- `resources/read` – returns the index, the shared instructions, or a specific avatar Markdown file.
 
 ## 6. Extensibility and Tooling
 

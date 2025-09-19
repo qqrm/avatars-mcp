@@ -64,7 +64,6 @@ pub struct AvatarEntry {
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct Index {
     pub base_uri: String,
-    pub base_instructions: String,
     pub avatars: Vec<AvatarEntry>,
 }
 
@@ -81,16 +80,12 @@ pub fn generate_index(avatars_dir: &Path, base_path: &Path) -> Result<Index, Box
 }
 
 fn build_index(avatars_dir: &Path, base_path: &Path) -> Result<Index, Box<dyn Error>> {
+    fs::metadata(base_path)?;
     let base_uri = resolve_base_uri(avatars_dir, base_path);
-    let base_instructions = fs::read_to_string(base_path)?;
     let mut avatars = collect_avatar_entries(avatars_dir)?;
     avatars.sort_by(|a, b| a.meta.id.cmp(&b.meta.id));
 
-    Ok(Index {
-        base_uri,
-        base_instructions,
-        avatars,
-    })
+    Ok(Index { base_uri, avatars })
 }
 
 fn write_index(avatars_dir: &Path, index: &Index) -> Result<(), Box<dyn Error>> {
@@ -193,7 +188,6 @@ mod tests {
 
         let index = generate_index(&avatars, &root.join("AGENTS.md"))?;
         assert_eq!(index.base_uri, "AGENTS.md");
-        assert_eq!(index.base_instructions, "Base instructions\n");
         assert_eq!(index.avatars.len(), 2);
         assert_eq!(
             index
