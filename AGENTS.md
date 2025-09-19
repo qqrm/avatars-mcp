@@ -74,6 +74,7 @@ These guidelines apply to every avatar in this repository.
   ```
 - Skip build-heavy checks only when changes affect documentation or Markdown files, and note the justification in your report.
 - Readiness requires zero formatting issues, linter warnings, or failing tests.
+- Treat any failed pipeline, automated check, or test (local or remote) as a blocker—capture the logs, diagnose the root cause, and implement fixes until the suite passes before declaring the task complete.
 
 ## GitHub and CI Practices
 - Treat GitHub workflows as first-class code: keep them under version control, review every change, and follow `.github/AGENTS.md` for directory-specific rules.
