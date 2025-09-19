@@ -23,10 +23,11 @@ fn list_avatar_files() -> IoResult<Vec<String>> {
     for entry in fs::read_dir(avatars_dir)? {
         let entry = entry?;
         let path = entry.path();
-        if path.extension().and_then(|s| s.to_str()) == Some("md") {
-            if let Some(name) = path.file_name().and_then(|s| s.to_str()) {
-                files.push(name.to_string());
-            }
+        if path.extension().and_then(|s| s.to_str()) != Some("md") {
+            continue;
+        }
+        if let Some(name) = path.file_name().and_then(|s| s.to_str()) {
+            files.push(name.to_string());
         }
     }
     files.sort();
