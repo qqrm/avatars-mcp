@@ -32,4 +32,4 @@ Systems thinker shaping resilient Rust architectures, weighing trade-offs, and c
 
 > **Note:**  
 > Architecture diagram sources must be stored in the `.mmd` (Mermaid) format.  
-> Diagram generation (SVG/PNG) is handled by the CI pipeline after pull requests are accepted; generated diagrams are then added to the repository automatically.
+> Diagram generation (SVG/PNG) is handled by the CI pipeline after maintainers accept the branch; generated diagrams are then added to the repository automatically.

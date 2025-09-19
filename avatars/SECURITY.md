@@ -49,7 +49,7 @@ Defensive security specialist fortifying code and pipelines through rigorous ana
 - Block merges when automated security tooling reports high or critical findings until resolved or risk-accepted.
 
 ## Example Tasks
-- Add automated security scans to pull request pipelines
+- Add automated security scans to integration pipelines
 - Review infrastructure code for misconfigurations
 - Establish code signing and verification for releases
 - Monitor dependency updates for security patches

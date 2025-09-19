@@ -6,8 +6,8 @@ These guidelines apply to every avatar in this repository.
 - Run `./repo-setup.sh` (when provided) as soon as the repository is available, then confirm `git remote -v` points to the canonical `origin` and that `gh auth status` succeeds.
 - Switch off the bootstrap `work` branch immediately, create a descriptive English feature branch, and never create or push a branch named `WORK`.
 - Treat every assignment as production work: plan the solution, implement it to a high standard, and keep the working tree clean.
-- Retrieve the avatar catalog via the MCP server's REST API, pick a non-default avatar that fits the task, and explain the choice in both the pull-request description and the final user summary.
-- Use the `gh` CLI for pull requests—push your branch, run `gh pr create`, and wait for all mandatory GitHub Actions checks to pass (`gh pr checks` or UI) before declaring the task complete. Capture full command output for any failure.
+- Retrieve the avatar catalog via the MCP server's REST API, pick a non-default avatar that fits the task, and explain the choice in the final user summary and maintainer notes.
+- Use the `gh` CLI to inspect branch protection rules, required status checks, and recent workflow runs so you can mirror them locally. Do **not** create pull requests—maintainers open them manually via Codex after review.
 - Run the required validation suite (`cargo fmt`, `cargo check`, `cargo clippy`, `cargo test`, `cargo machete`, etc.) before committing and again before wrapping up. Do not finish until local and remote checks are green, or you have escalated a blocker with evidence.
 
 ## Engineering Mindset
@@ -36,33 +36,32 @@ These guidelines apply to every avatar in this repository.
 ## Source Control and Branching
 - Treat the canonical `origin` remote as writable until a push attempt proves otherwise; do not assume restrictions without evidence.
 - Create a fresh hyphenated English feature branch for every task. When a task spans multiple sessions, stay on the same branch, fetch `origin/main`, and rebase or merge **before every response**.
-- Keep the task branch alive until its pull request merges—never delete, rename, or reset it mid-task, and push every new commit to the same remote branch.
-- After preparing commits, run `git push --set-upstream origin <branch>` (or equivalent) before claiming that a pull request cannot be opened.
+- Keep the task branch alive until maintainers confirm integration—never delete, rename, or reset it mid-task, and push every new commit to the same remote branch.
+- After preparing commits, push the branch to `origin` (for example, `git push --set-upstream origin <branch>`). Escalate immediately if the push fails.
 - Before reporting completion, confirm that `origin/<branch>` contains the latest commits (compare with `git log HEAD`).
-- When a push or PR command fails, quote the full stderr/stdout, diagnose the cause, and propose mitigation steps instead of stopping at the first error.
+- When a push or GitHub command fails, quote the full stderr/stdout, diagnose the cause, and propose mitigation steps instead of stopping at the first error.
 - Maintain small, focused commits with clear English messages so reviewers can follow each step.
 - Keep the working tree clean before requesting review or reporting status—stage intentional changes, revert stragglers, and ensure `git status` is empty when you finish.
 
 ## Development Workflow
-- Treat user requests as complete tasks and deliver full pull-request solutions.
+- Treat user requests as complete tasks and deliver production-ready branches that maintainers can promote without extra fixes.
 - Run every required check before committing. Default to the full test suite for the components you touched and document any skipped command with justification.
-- Use automation to inspect GitHub state: rely on `gh` for pull requests, issue queries, workflow inspection, and to monitor checks.
-- Use the `gh` CLI to create and manage pull requests whenever possible so CI runs early. The CLI is authenticated during container initialization and ready for immediate use.
-- Ensure a writable `origin` remote is configured before invoking `gh pr create`; follow repository README guidance when the remote is missing.
-- When network access or permissions block pull-request creation, record the attempted commands, explain the impact, and continue working toward the deliverable.
-- The evaluation `make_pr` tool only submits metadata; it never replaces a real GitHub pull request.
+- Use automation to inspect GitHub state: rely on `gh` for branch protection data, issue queries, workflow inspection, and to monitor checks.
+- Surface any blockers preventing a clean branch handoff (failed checks, diverged history, etc.) together with remediation steps.
+- Do not open pull requests. Once the branch is ready and checks are green, hand off the context so maintainers can create the PR manually via Codex.
+- The evaluation `make_pr` tool only submits metadata; it never interacts with GitHub on your behalf or replaces the maintainer-driven PR.
 - Remove dead code rather than suppressing warnings; feature-gate unused code when necessary.
 - Write tests for new functionality and resolve reported problems.
 
 ## Avatars
 - Use the MCP server at `https://qqrm.github.io/avatars-mcp/` to fetch avatars and base instructions.
 - Use the MCP server's REST API to inspect the latest avatar catalog and README information as needed. Record HTTP errors and retry transient failures up to five times before escalating.
-- Select a non-default avatar that matches the task context, document why it fits, and include this rationale both in the pull-request description and in the final response to the user.
+- Select a non-default avatar that matches the task context, document why it fits, and include this rationale in the final response to the user and in maintainer notes when requested.
 - When automated downloads are impossible, note every attempt, escalate the outage, and choose the closest avatar based on cached knowledge while clearly labeling the fallback.
 - Switch avatars through the MCP server as needed for sub-tasks (e.g., Senior, Architect, Tester, Analyst) and list every avatar used when summarising work.
 
 ## Testing and Validation
-- For Rust repositories, run `cargo test` from the workspace root before opening a pull request—even when only documentation changes. Record failures verbatim and resolve them or escalate with proposed mitigation.
+- For Rust repositories, run `cargo test` from the workspace root even when only documentation changes. Record failures verbatim and resolve them or escalate with proposed mitigation.
 - Install tooling as needed (`rustup component add clippy rustfmt`).
 - Standard validation sequence:
   ```bash
@@ -72,8 +71,10 @@ These guidelines apply to every avatar in this repository.
   cargo test
   cargo machete            # if available
   ```
+- Treat every failure or warning from the required tooling—including findings such as unused dependencies reported by `cargo machete`—as part of the active task and resolve them before finishing, even when the issue originates outside the immediate scope of the requested change.
 - Skip build-heavy checks only when changes affect documentation or Markdown files, and note the justification in your report.
 - Readiness requires zero formatting issues, linter warnings, or failing tests.
+- Treat any failed pipeline, automated check, or test (local or remote) as a blocker—capture the logs, diagnose the root cause, and implement fixes until the suite passes before declaring the task complete.
 
 ## GitHub and CI Practices
 - Treat GitHub workflows as first-class code: keep them under version control, review every change, and follow `.github/AGENTS.md` for directory-specific rules.
@@ -94,8 +95,8 @@ These guidelines apply to every avatar in this repository.
 - Source code, comments, documentation, branch names, and commit messages must be in **English**.
 - If a task description is in Russian, translate branch and task names into English.
 - Describe the environment as a production workspace; never call it a training or sandbox setting.
-- Keep pull requests concise: list changes, reference lines with `F:path#Lx-Ly`, and attach test results.
-- In the final summary, list all avatars used and provide the link to the open pull request together with the status of every mandatory check.
+- Provide maintainers with concise notes: list changes, reference lines with `F:path#Lx-Ly`, and attach test results.
+- In the final summary, list all avatars used and report the status of every mandatory check you reproduced locally.
 
 ## Documentation
 - Markdown uses `#` for headers and specifies languages for code blocks.
