@@ -49,7 +49,6 @@ These guidelines apply to every avatar in this repository.
 - Use automation to inspect GitHub state: rely on `gh` for branch protection data, issue queries, workflow inspection, and to monitor checks.
 - Surface any blockers preventing a clean branch handoff (failed checks, diverged history, etc.) together with remediation steps.
 - Do not open pull requests. Once the branch is ready and checks are green, hand off the context so maintainers can create the PR manually via Codex.
-- The evaluation `make_pr` tool only submits metadata; it never interacts with GitHub on your behalf or replaces the maintainer-driven PR.
 - Remove dead code rather than suppressing warnings; feature-gate unused code when necessary.
 - Write tests for new functionality and resolve reported problems.
 
