@@ -28,9 +28,9 @@ These guidelines apply to every avatar in this repository.
 - Prefer command-line tooling and automate repetitive steps to keep workflows reproducible.
 - Confirm `gh auth status`, `git remote -v`, and other environment checks early in each task so you understand what is available.
 - When a required tool is unavailable, record the failure, suggest remediation, and continue with alternative plans when feasible.
-- Keep repository automation in `repo-setup.sh` and author helpers in POSIX shell. The shared `setup.sh` bootstrapper runs `repo-setup.sh` automatically.
+- Keep repository automation in `repo-setup.sh` and author helpers in POSIX shell. Run `init-container.sh` once per container to install global tooling, and invoke `pre-task.sh` before every assignment so it refreshes shared assets and executes `repo-setup.sh` when available.
 - If a `local_setup.sh` script exists, execute it before starting any task.
-- `setup.sh` installs the `crates-mcp` server via `cargo-binstall` with a source fallback, and `mcp.json` enables it by default.
+- `init-container.sh` installs the `crates-mcp` server via `cargo-binstall` with a source fallback, and `mcp.json` enables it by default.
 - Available local MCP servers include `crates-mcp` (e.g., `{ "tool": "search_crates", "query": "http client" }`).
 
 ## Source Control and Branching
