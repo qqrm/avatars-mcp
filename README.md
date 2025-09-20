@@ -17,7 +17,17 @@ git remote add origin https://github.com/qqrm/avatars-mcp.git
 git fetch origin
 ```
 
-Run `./setup.sh` to install the optional MCP servers referenced by `mcp.json`; it automatically invokes a repository-specific `repo-setup.sh` when present.
+Initialize a fresh container once:
+
+```bash
+curl -fsSL "https://raw.githubusercontent.com/qqrm/avatars-mcp/refs/heads/main/init-container.sh" | bash -s --
+```
+
+Before starting each task, refresh the workspace:
+
+```bash
+curl -fsSL "https://raw.githubusercontent.com/qqrm/avatars-mcp/refs/heads/main/pre-task.sh" | bash -s --
+```
 
 ## Documentation
 
@@ -36,11 +46,12 @@ External clients rely on a small set of shared files published alongside the ava
 
 Repository tooling keeps these artifacts in sync for local use:
 
-- [`setup.sh`](setup.sh) — a POSIX shell bootstrapper that installs tooling while mirroring the published baseline instructions and avatar index.
+- [`init-container.sh`](init-container.sh) — installs the required tooling and persists GitHub CLI authentication for the container.
+- [`pre-task.sh`](pre-task.sh) — refreshes the MCP assets and executes repository-specific setup helpers before each task.
 
 ## Repository-Specific Setup Script
 
-Every repository in this ecosystem can ship its own local setup helper tailored to its automation requirements under the shared name `repo-setup.sh`. The [`setup.sh`](setup.sh) script in this repository provisions GitHub CLI authentication, installs required Rust tooling, refreshes the published MCP assets directly, and then runs `repo-setup.sh` if it exists. When working in other repositories, expect their `repo-setup.sh` contents to diverge—each project documents and automates only the dependencies it needs while keeping the filename consistent.
+Every repository in this ecosystem can ship its own local setup helper tailored to its automation requirements under the shared name `repo-setup.sh`. The [`init-container.sh`](init-container.sh) script runs once to provision GitHub CLI authentication and install the Rust tooling used across tasks. The [`pre-task.sh`](pre-task.sh) helper reruns before each assignment to refresh the published MCP assets and invoke `repo-setup.sh` when present. When working in other repositories, expect their `repo-setup.sh` contents to diverge—each project documents and automates only the dependencies it needs while keeping the filename consistent.
 
 ## Tooling
 

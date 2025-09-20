@@ -1,14 +1,10 @@
 #!/usr/bin/env bash
-# scripts/setup.sh
-# Persistent auth для GitHub CLI в init-окне с секретом. Не зависит от gh auth status.
-# Делает:
-# - ставит gh при необходимости
-# - сохраняет токен в ~/.config/gh/hosts.yml
-# - настраивает git на использование gh auth git-credential
-# - проверяет, что gh видит токен уже без GH_TOKEN в окружении
+# init-container.sh
+# Prepare the development container with one-time tooling installations and
+# auth persistence.
 
 set -Eeuo pipefail
-trap 'rc=$?; echo -e "\n!! setup failed at line $LINENO while running: $BASH_COMMAND (exit $rc)" >&2; exit $rc' ERR
+trap 'rc=$?; echo -e "\n!! init-container failed at line $LINENO while running: $BASH_COMMAND (exit $rc)" >&2; exit $rc' ERR
 
 SCRIPT_PATH="${BASH_SOURCE[0]-}"
 SCRIPT_SOURCE_IS_STDIN=0
@@ -20,12 +16,10 @@ else
   SCRIPT_SOURCE_IS_STDIN=1
 fi
 
-# вход
 : "${GH_TOKEN:?GH_TOKEN is missing}"
 GH_HOST="${GH_HOST:-github.com}"
-CHECK_REPO="${CHECK_REPO:-}"   # optional owner/repo to verify access
+CHECK_REPO="${CHECK_REPO:-}"
 
-# basic environment
 export HOME="${HOME:-/root}"
 mkdir -p "$HOME" "$HOME/.local/bin" "$HOME/.cargo/bin"
 export PATH="$HOME/.cargo/bin:$HOME/.local/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
@@ -40,30 +34,7 @@ die() { printf '❌ %s\n' "$*" >&2; exit 1; }
 MCP_BASE_URL="${MCP_BASE_URL:-https://qqrm.github.io/avatars-mcp}"
 export MCP_BASE_URL
 
-# ensure mcp.json exists
-mcp_url="${MCP_BASE_URL%/}/mcp.json"
-if [ ! -f mcp.json ]; then
-  if curl -fsSL "$mcp_url" -o mcp.json; then
-    log "mcp.json created from $mcp_url"
-  else
-    log "mcp.json unavailable at $mcp_url"
-  fi
-else
-  log "mcp.json already exists"
-fi
-
-# refresh AGENTS.md from the remote server
-agents_url="${MCP_BASE_URL%/}/AGENTS.md"
-if curl -fsSL "$agents_url" -o AGENTS.md; then
-  log "AGENTS.md refreshed from $agents_url"
-else
-  log "AGENTS.md unavailable at $agents_url"
-fi
-
-# gh installation if missing
 gh_ok() { gh --version >/dev/null 2>&1; }
-
-# cargo-binstall installation if missing
 cargo_binstall_ok() { command -v cargo-binstall >/dev/null 2>&1; }
 
 install_cargo_binstall() {
@@ -111,7 +82,6 @@ gh_ok || die "gh is not operational"
 
 log "gh version: $(gh --version | head -n1)"
 
-# install cargo-machete using cargo-binstall
 if ! cargo_binstall_ok; then
   log "Installing cargo-binstall"
   install_cargo_binstall
@@ -124,7 +94,6 @@ if ! command -v cargo-machete >/dev/null 2>&1; then
 fi
 command -v cargo-machete >/dev/null 2>&1 || die "cargo-machete installation failed"
 
-# install wrkflw using cargo-binstall with tarball fallback
 if ! command -v wrkflw >/dev/null 2>&1; then
   log "Installing wrkflw via cargo-binstall"
   if ! cargo binstall wrkflw@0.7.0 -y --quiet --disable-strategies compile; then
@@ -143,7 +112,6 @@ if ! command -v wrkflw >/dev/null 2>&1; then
 fi
 command -v wrkflw >/dev/null 2>&1 || die "wrkflw installation failed"
 
-# install Rust documentation MCP servers
 for mcp_pkg in crates-mcp; do
   if ! command -v "$mcp_pkg" >/dev/null 2>&1; then
     log "Installing $mcp_pkg via cargo-binstall"
@@ -152,32 +120,28 @@ for mcp_pkg in crates-mcp; do
   command -v "$mcp_pkg" >/dev/null 2>&1 || die "$mcp_pkg installation failed"
 done
 
-# пробуем узнать login, если токен разрешает, иначе оставим unknown
 user_login="unknown"
 if GH_TOKEN="$GH_TOKEN" gh api /user -q .login >/dev/null 2>&1; then
   user_login="$(GH_TOKEN="$GH_TOKEN" gh api /user -q .login)"
 fi
 
-# записываем hosts.yml напрямую, не полагаясь на gh auth login
 cfg_root="${XDG_CONFIG_HOME:-$HOME/.config}"
 cfg_dir="$cfg_root/gh"
 hosts="$cfg_dir/hosts.yml"
 mkdir -p "$cfg_dir"
 umask 077
 
-# важно: не светим токен в трассировке
 set +x
-cat > "$hosts" <<EOF
+cat > "$hosts" <<EOF_INNER
 $GH_HOST:
     user: $user_login
     oauth_token: $GH_TOKEN
     git_protocol: https
-EOF
+EOF_INNER
 set -x
 
 chmod 600 "$hosts" 2>/dev/null || true
 
-# настраиваем git под gh helper
 if [[ "$(git config --global credential.helper || true)" != '!gh auth git-credential' ]]; then
   git config --global credential.helper '!gh auth git-credential'
 fi
@@ -185,10 +149,8 @@ if ! git config --global --get-all url."https://github.com/".insteadof | grep -q
   git config --global url."https://github.com/".insteadOf git@github.com:
 fi
 
-# очищаем следы секрета из окружения
 unset GH_TOKEN
 
-# проверка что gh теперь использует сохраненный токен без GH_TOKEN
 log "Validating saved auth using hosts.yml"
 if env -u GH_TOKEN gh api -H "Accept: application/vnd.github+json" /rate_limit >/dev/null 2>&1; then
   log "rate_limit ok"
@@ -204,15 +166,9 @@ if [[ -n "$CHECK_REPO" ]]; then
   fi
 fi
 
-# краткая подсказка
 log "Auth persisted. Example checks without GH_TOKEN:"
 log "  env -u GH_TOKEN gh repo view cli/cli --json name,description | jq"
 log "  env -u GH_TOKEN gh run list -R ${CHECK_REPO:-owner/repo} -L 5 || true"
 
-# run repository-specific setup if available
-if [ -f repo-setup.sh ]; then
-  log "Executing repo-setup.sh"
-  bash repo-setup.sh
-fi
-
-log "setup completed"
+set +x
+log "Container initialization complete. Run ./pre-task.sh before starting work on each task."
