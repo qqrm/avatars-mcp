@@ -118,7 +118,7 @@ The optional Model Context Protocol server mirrors these resources over STDIO an
 
 - Add new avatars by committing additional Markdown files under `/avatars/` with the required front matter.
 - Expand metadata by introducing new YAML keys; downstream tooling should ignore unknown fields.
-- The Rust workspace under `crates/` can regenerate `avatars/catalog.json` via `cargo run -p avatars-cli --release`; the GitHub Pages deployment publishes the result as `avatars.json`.
+- The Rust workspace under `crates/` can regenerate `avatars/catalog.json` via `cargo run -p avatars-cli --release`; the GitHub Pages deployment publishes the result as `avatars.json`. The workspace sets `default-run = "avatars-cli"`, so `cargo run --release` resolves to the same binary in automation contexts.
 
 ## 7. Relationship to README
 

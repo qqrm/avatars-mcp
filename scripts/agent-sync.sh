@@ -45,8 +45,18 @@ cargo generate-lockfile
 echo "[agent-sync] Running cargo check"
 cargo check --tests --benches
 
+echo "[agent-sync] Running cargo clippy"
+cargo clippy --all-targets --all-features -- -D warnings
+
 echo "[agent-sync] Running cargo test"
 cargo test
+
+if command -v cargo-machete >/dev/null 2>&1; then
+  echo "[agent-sync] Running cargo machete"
+  cargo machete
+else
+  echo "[agent-sync] Skipping cargo machete (cargo-machete not installed)"
+fi
 
 if git status --porcelain | grep -q .; then
   echo "SYNC_PENDING_CHANGES=1" > "${STATUS_FILE}"
