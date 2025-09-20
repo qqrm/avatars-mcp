@@ -12,7 +12,7 @@ These guidelines apply to every avatar in this repository.
   repo=$(gh repo view --json nameWithOwner -q .nameWithOwner)
   gh api repos/${repo}/branches --paginate \
     --jq '.[]
-      | select(.name | test("^(main|master|develop|release|prod|production|stable)$"; "i") | not)
+      | select(.name | test("^(main|master|develop|prod|production|stable|release($|[-/_0-9].*))$"; "i") | not)
       | select((now - (.commit.committer.date | fromdateiso8601)) > 172800)
       | "\(.name)\t\(.commit.committer.date)"'
   gh pr close <number> --delete-branch
