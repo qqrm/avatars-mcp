@@ -55,13 +55,13 @@ Every repository in this ecosystem can ship its own local setup helper tailored 
 
 ## Tooling
 
-A Rust workspace under [`/crates/`](crates/) regenerates the catalog stored at [`avatars/catalog.json`](avatars/catalog.json) by parsing the avatar front matter and bundling both the base instructions and avatar metadata. The GitHub Pages deployment exposes this catalog as `avatars.json`. Build the index with:
+A Rust workspace under [`/crates/`](crates/) regenerates the catalog stored at [`avatars/catalog.json`](avatars/catalog.json) by parsing the avatar front matter and bundling both the base instructions and avatar metadata. The GitHub Pages deployment exposes this catalog as `avatars.json`. The deployment pipeline rebuilds the index automatically whenever `main` changes, so running the generator locally is only necessary for debugging or previewing changes. Build the index with:
 
 ```bash
 cargo run -p avatars-cli --release
 ```
 
-The auxiliary binary `index_uris` (packaged with the CLI crate) lists the avatar URIs from an existing catalog to simplify pipeline scripting.
+The auxiliary binary `index_uris` (packaged with the CLI crate) lists the avatar URIs from an existing catalog to simplify pipeline scripting. Clients begin with `avatars.json` to decide which personas they need, then fetch `AGENTS.md` and the target avatars on demand to avoid loading unnecessary Markdown into the working context.
 
 ### GitHub Pages Publishing
 

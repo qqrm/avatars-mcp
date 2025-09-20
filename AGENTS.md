@@ -3,11 +3,22 @@
 These guidelines apply to every avatar in this repository.
 
 ## Critical Checklist
-- Run `./repo-setup.sh` (when provided) as soon as the repository is available, then confirm `git remote -v` points to the canonical `origin` and that `gh auth status` succeeds.
+- Confirm the repository is ready by checking `git remote -v` and `gh auth status`; Codex automatically provisions the workspace.
 - Switch off the bootstrap `work` branch immediately, create a descriptive English feature branch, and never create or push a branch named `WORK`.
 - Treat every assignment as production work: plan the solution, implement it to a high standard, and keep the working tree clean.
 - Retrieve the avatar catalog via the MCP server's REST API, pick a non-default avatar that fits the task, and explain the choice in the final user summary and maintainer notes.
-- Use the `gh` CLI to inspect branch protection rules, required status checks, and recent workflow runs so you can mirror them locally. Do **not** create pull requests—maintainers open them manually via Codex after review.
+- Before starting substantive work, inspect remote branches with `gh`, delete anything older than 48 hours, and close associated pull requests so the namespace stays clean. Example commands:
+  ```bash
+  repo=$(gh repo view --json nameWithOwner -q .nameWithOwner)
+  gh api repos/${repo}/branches --paginate \
+    --jq '.[] | select((now - (.commit.committer.date | fromdateiso8601)) > 172800) |
+      "\(.name)\t\(.commit.committer.date)"'
+  gh pr close <number> --delete-branch
+  gh api repos/${repo}/git/refs/heads/<branch> -X DELETE
+  # Optional: when the `gh-branch` extension is installed (gh extension install mislav/gh-branch)
+  gh branch delete <branch> --remote
+  ```
+- Mirror GitHub Actions locally: inspect recent workflow runs with `gh` and execute the required pipelines with `wrkflw` (for example, `wrkflw validate` and `wrkflw run .github/workflows/<workflow>.yml`). Do **not** create pull requests—maintainers open them manually via Codex after review.
 - Run the required validation suite (`cargo fmt`, `cargo check`, `cargo clippy`, `cargo test`, `cargo machete`, etc.) before committing and again before wrapping up. Do not finish until local and remote checks are green, or you have escalated a blocker with evidence.
 
 ## Engineering Mindset
@@ -28,9 +39,7 @@ These guidelines apply to every avatar in this repository.
 - Prefer command-line tooling and automate repetitive steps to keep workflows reproducible.
 - Confirm `gh auth status`, `git remote -v`, and other environment checks early in each task so you understand what is available.
 - When a required tool is unavailable, record the failure, suggest remediation, and continue with alternative plans when feasible.
-- Keep repository automation in `repo-setup.sh` and author helpers in POSIX shell. Run `init-container.sh` once per container to install global tooling, and invoke `pre-task.sh` before every assignment so it refreshes shared assets and executes `repo-setup.sh` when available.
-- If a `local_setup.sh` script exists, execute it before starting any task.
-- `init-container.sh` installs the `crates-mcp` server via `cargo-binstall` with a source fallback, and `mcp.json` enables it by default.
+- Codex bootstrap scripts install shared tooling (including `wrkflw`) automatically; raise an incident only if required commands are missing.
 - Available local MCP servers include `crates-mcp` (e.g., `{ "tool": "search_crates", "query": "http client" }`).
 
 ## Source Control and Branching
@@ -46,7 +55,7 @@ These guidelines apply to every avatar in this repository.
 ## Development Workflow
 - Treat user requests as complete tasks and deliver production-ready branches that maintainers can promote without extra fixes.
 - Run every required check before committing. Default to the full test suite for the components you touched and document any skipped command with justification.
-- Use automation to inspect GitHub state: rely on `gh` for branch protection data, issue queries, workflow inspection, and to monitor checks.
+- Use automation to inspect GitHub state: rely on `gh` for issue triage and workflow history, and keep `wrkflw` runs aligned with the GitHub Actions checks enforced on the repository.
 - Surface any blockers preventing a clean branch handoff (failed checks, diverged history, etc.) together with remediation steps.
 - Do not open pull requests. Once the branch is ready and checks are green, hand off the context so maintainers can create the PR manually via Codex.
 - Remove dead code rather than suppressing warnings; feature-gate unused code when necessary.
@@ -78,7 +87,11 @@ These guidelines apply to every avatar in this repository.
 ## GitHub and CI Practices
 - Treat GitHub workflows as first-class code: keep them under version control, review every change, and follow `.github/AGENTS.md` for directory-specific rules.
 - Pipeline secrets reside in the `prod` environment.
-- Interact with pipelines locally using [WRKFLW](https://github.com/bahdotsh/wrkflw) to validate and run workflows when needed.
+- Run GitHub Actions workflows locally with [WRKFLW](https://github.com/bahdotsh/wrkflw) before handing off a branch. Typical commands:
+  ```bash
+  wrkflw validate
+  wrkflw run .github/workflows/<workflow>.yml
+  ```
 - Use the GitHub interface to inspect logs from the five most recent pipeline runs.
 - Prefer the [`dtolnay/rust-toolchain`](https://github.com/dtolnay/rust-toolchain) pipelines for Rust projects—they are our required standard.
 - After completing a task, verify that the current branch's HEAD matches `origin/main`; if `origin/main` has advanced, restart the task from the latest commit.

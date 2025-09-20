@@ -72,6 +72,10 @@ You are a DevOps engineer. Your job is to:
 
 Tooling iterates over `/avatars/`, parses YAML front matter, and produces `avatars/catalog.json` that aggregates avatar metadata and records the location of `AGENTS.md`. The resulting JSON is published on GitHub Pages as `avatars.json` and consumed by clients.
 
+GitHub Pages automation regenerates the catalog on every publish from `main`, so the deployed `avatars.json` is always aligned with the latest Markdown sources. The checked-in `avatars/catalog.json` is a convenience snapshot that keeps tests deterministic and enables offline inspection; treat it as a derived artifact and rebuild it only when debugging the generator or intentionally changing its output format.
+
+### 4.1 Catalog schema
+
 The catalog schema is:
 
 ```json
@@ -94,6 +98,10 @@ The catalog schema is:
 
 - `base_uri` exposes the relative location of the shared instructions so clients can issue a follow-up request.
 - `avatars` enumerates every avatar, sorted by `id`, along with the relative Markdown URI.
+
+### 4.2 Delivery model
+
+Clients begin by fetching `avatars.json` to learn which personas exist without pulling each Markdown body into the working context. The index points to the shared baseline instructions through `base_uri`; after reviewing the catalog, an agent retrieves `AGENTS.md` and then issues targeted requests for only the avatars it needs. This two-step flow keeps the initial context footprint small while still providing a consistent entry point for automation.
 
 ## 5. API and MCP Access
 
