@@ -7,13 +7,16 @@ These guidelines apply to every avatar in this repository.
 - Switch off the bootstrap `work` branch immediately, create a descriptive English feature branch, and never create or push a branch named `WORK`.
 - Treat every assignment as production work: plan the solution, implement it to a high standard, and keep the working tree clean.
 - Retrieve the avatar catalog via the MCP server's REST API, pick a non-default avatar that fits the task, and explain the choice in the final user summary and maintainer notes.
-- Before starting substantive work, inspect remote branches with `gh`, delete anything older than 48 hours, and close associated pull requests so the namespace stays clean. Example commands:
+- Before starting substantive work, inspect remote branches with `gh`, delete temporary feature branches older than 48 hours, and close associated pull requests so the namespace stays clean. Never attempt to delete protected branches such as `main`, `develop`, or release branches. Example commands:
   ```bash
   repo=$(gh repo view --json nameWithOwner -q .nameWithOwner)
   gh api repos/${repo}/branches --paginate \
-    --jq '.[] | select((now - (.commit.committer.date | fromdateiso8601)) > 172800) |
-      "\(.name)\t\(.commit.committer.date)"'
+    --jq '.[]
+      | select(.name | test("^(main|master|develop|release|prod|production|stable)$"; "i") | not)
+      | select((now - (.commit.committer.date | fromdateiso8601)) > 172800)
+      | "\(.name)\t\(.commit.committer.date)"'
   gh pr close <number> --delete-branch
+  # Only delete confirmed temporary feature branches:
   gh api repos/${repo}/git/refs/heads/<branch> -X DELETE
   # Optional: when the `gh-branch` extension is installed (gh extension install mislav/gh-branch)
   gh branch delete <branch> --remote
