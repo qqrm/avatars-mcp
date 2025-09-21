@@ -33,9 +33,38 @@ die() { printf '❌ %s\n' "$*" >&2; exit 1; }
 
 MCP_BASE_URL="${MCP_BASE_URL:-https://qqrm.github.io/avatars-mcp}"
 export MCP_BASE_URL
+CANONICAL_CLEANUP_PATH=".github/workflows/codex-cleanup.yml"
 
 gh_ok() { gh --version >/dev/null 2>&1; }
 cargo_binstall_ok() { command -v cargo-binstall >/dev/null 2>&1; }
+
+ensure_codex_cleanup_workflow() {
+  local repo_root dest canonical_url tmp
+  if ! git rev-parse --show-toplevel >/dev/null 2>&1; then
+    log "Skipping Codex cleanup bootstrap: not inside a Git repository."
+    return
+  fi
+
+  repo_root="$(git rev-parse --show-toplevel)"
+  dest="${repo_root}/${CANONICAL_CLEANUP_PATH}"
+
+  if [[ -f "$dest" ]]; then
+    log "Codex Branch Cleanup workflow already present at ${CANONICAL_CLEANUP_PATH}."
+    return
+  fi
+
+  canonical_url="${MCP_BASE_URL%/}/workflows/codex-cleanup.yml"
+  tmp="${dest}.tmp"
+  mkdir -p "$(dirname "$dest")"
+
+  if curl -fsSL "$canonical_url" -o "$tmp"; then
+    mv "$tmp" "$dest"
+    log "Installed Codex Branch Cleanup workflow from ${canonical_url}."
+  else
+    rm -f "$tmp"
+    log "Unable to install Codex Branch Cleanup workflow from ${canonical_url}."
+  fi
+}
 
 install_cargo_binstall() {
   local arch target url tmp
@@ -165,6 +194,8 @@ if [[ -n "$CHECK_REPO" ]]; then
     die "no access to $CHECK_REPO with saved token"
   fi
 fi
+
+ensure_codex_cleanup_workflow
 
 log "Auth persisted. Example checks without GH_TOKEN:"
 log "  env -u GH_TOKEN gh repo view cli/cli --json name,description | jq"

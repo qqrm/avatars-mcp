@@ -33,6 +33,8 @@ jobs:
           mkdir -p public/avatars
           cp -r avatars/* public/avatars/
           cp AGENTS.md INSTRUCTIONS.md README.md mcp.json public/
+          mkdir -p public/workflows
+          cp .github/workflows/codex-cleanup.yml public/workflows/
           cp avatars/catalog.json public/index.json
           cp avatars/catalog.json public/avatars.json
           {
@@ -77,6 +79,7 @@ jobs:
             "INSTRUCTIONS.md"
             "README.md"
             "mcp.json"
+            "workflows/codex-cleanup.yml"
           )
           sleep 10
           for path in "${paths[@]}"; do

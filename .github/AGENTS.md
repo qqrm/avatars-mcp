@@ -5,6 +5,7 @@ These rules apply to everything under `.github`.
 ## Workflow Authoring
 - Place GitHub workflow definitions inside `.github/workflows` using lowercase hyphen-case filenames that end with `.yml`.
 - Give each workflow a descriptive Title Case `name` so runs are easy to identify.
+- Use the exact workflow title `Codex Branch Cleanup` for the scheduled Codex branch pruning pipeline so cross-repository automation can recognise it consistently.
 - Keep triggers minimal: default to `push`/`pull_request` on `main` and add extra events only when the feature requires them.
 - Name jobs in lowercase with hyphenated identifiers (for example, `build`, `deploy`) and prefer a single responsibility per job.
 
