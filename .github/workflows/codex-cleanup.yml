@@ -1,0 +1,195 @@
+name: Codex Branch Cleanup
+
+on:
+  schedule:
+    - cron: '0 */12 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: codex-cleanup-${{ github.ref || github.run_id }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sweep Codex branches and pull requests
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const codexPrefix = 'codex/';
+            const codexLogin = 'github-codex[bot]';
+            const cutoffHours = 24;
+            const cutoffMs = cutoffHours * 60 * 60 * 1000;
+            const now = Date.now();
+
+            core.info(`Scanning for branches prefixed with "${codexPrefix}" and pull requests from ${codexLogin}.`);
+            const protectedBranchPatterns = [
+              /^(main|master|develop|prod|production|stable|release)(\/|$)/i,
+            ];
+
+            const isProtectedBranch = (name, isMarkedProtected) => {
+              if (isMarkedProtected) {
+                return true;
+              }
+              return protectedBranchPatterns.some((pattern) => pattern.test(name));
+            };
+
+            const isCodexBranch = (name) => name.startsWith(codexPrefix);
+
+            const describeAge = (ms) => `${(ms / 3600000).toFixed(2)}h`;
+
+            const resolveCommitDate = (branch) => {
+              const commit = branch.commit ?? {};
+              const nested = commit.commit ?? {};
+              const candidates = [
+                nested.committer?.date,
+                nested.author?.date,
+                commit.committer?.date,
+                commit.author?.date,
+              ].filter(Boolean);
+              if (candidates.length === 0) {
+                return undefined;
+              }
+              const parsed = Date.parse(candidates[0]);
+              if (Number.isNaN(parsed)) {
+                return undefined;
+              }
+              return parsed;
+            };
+
+            const branches = await github.paginate(github.rest.repos.listBranches, {
+              owner,
+              repo,
+              per_page: 100,
+            });
+
+            core.info(`Fetched ${branches.length} branches.`);
+            const deletedBranches = [];
+            for (const branch of branches) {
+              const branchName = branch.name;
+              if (!isCodexBranch(branchName)) {
+                continue;
+              }
+              if (isProtectedBranch(branchName, Boolean(branch.protected))) {
+                core.info(`[branch] Skipping protected branch ${branchName}.`);
+                continue;
+              }
+
+              const commitTimestamp = resolveCommitDate(branch);
+              if (commitTimestamp === undefined) {
+                core.warning(`[branch] Could not determine last commit date for ${branchName}; skipping.`);
+                continue;
+              }
+
+              const ageMs = now - commitTimestamp;
+              const lastCommitIso = new Date(commitTimestamp).toISOString();
+              core.info(`[branch] ${branchName} last commit at ${lastCommitIso} (${describeAge(ageMs)} old).`);
+
+              if (ageMs <= cutoffMs) {
+                continue;
+              }
+
+              try {
+                await github.rest.git.deleteRef({
+                  owner,
+                  repo,
+                  ref: `heads/${branchName}`,
+                });
+                deletedBranches.push(branchName);
+                core.info(`[branch] Deleted ${branchName} because it is older than ${cutoffHours}h.`);
+              } catch (error) {
+                const message = error?.message ?? String(error);
+                core.warning(`[branch] Failed to delete ${branchName}: ${message}`);
+              }
+            }
+
+            const openPulls = await github.paginate(github.rest.pulls.list, {
+              owner,
+              repo,
+              state: 'open',
+              per_page: 100,
+            });
+
+            core.info(`Fetched ${openPulls.length} open pull request(s).`);
+            for (const pr of openPulls) {
+              const author = pr.user?.login ?? '<unknown>';
+              if (author !== codexLogin) {
+                continue;
+              }
+
+              const createdAt = Date.parse(pr.created_at ?? '');
+              if (Number.isNaN(createdAt)) {
+                core.warning(`[pr] Could not parse creation date for #${pr.number}; skipping.`);
+                continue;
+              }
+
+              const ageMs = now - createdAt;
+              core.info(`[pr] #${pr.number} (${pr.title}) by ${author} is ${describeAge(ageMs)} old.`);
+              if (ageMs <= cutoffMs) {
+                continue;
+              }
+
+              try {
+                await github.rest.pulls.update({
+                  owner,
+                  repo,
+                  pull_number: pr.number,
+                  state: 'closed',
+                });
+                core.info(`[pr] Closed pull request #${pr.number} because it is older than ${cutoffHours}h.`);
+              } catch (error) {
+                const message = error?.message ?? String(error);
+                core.warning(`[pr] Failed to close #${pr.number}: ${message}`);
+                continue;
+              }
+
+              const headRepo = pr.head?.repo?.full_name;
+              const headRef = pr.head?.ref;
+              if (!headRef) {
+                core.info(`[pr] Pull request #${pr.number} has no head ref; skipping branch deletion.`);
+                continue;
+              }
+
+              if (headRepo !== `${owner}/${repo}`) {
+                core.info(`[pr] Pull request #${pr.number} originates from ${headRepo}; skipping branch deletion.`);
+                continue;
+              }
+
+              if (!isCodexBranch(headRef)) {
+                core.info(`[pr] Head branch ${headRef} does not use the ${codexPrefix} prefix; skipping deletion.`);
+                continue;
+              }
+
+              if (protectedBranchPatterns.some((pattern) => pattern.test(headRef))) {
+                core.info(`[pr] Head branch ${headRef} matches a protected pattern; skipping deletion.`);
+                continue;
+              }
+
+              try {
+                await github.rest.git.deleteRef({
+                  owner,
+                  repo,
+                  ref: `heads/${headRef}`,
+                });
+                core.info(`[pr] Deleted branch ${headRef} associated with #${pr.number}.`);
+              } catch (error) {
+                if (error?.status === 404) {
+                  core.info(`[pr] Branch ${headRef} was already absent.`);
+                } else {
+                  const message = error?.message ?? String(error);
+                  core.warning(`[pr] Failed to delete branch ${headRef}: ${message}`);
+                }
+              }
+            }
+
+            core.info(`Completed cleanup. Removed ${deletedBranches.length} branch(es) pre-emptively.`);
