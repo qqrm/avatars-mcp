@@ -1,0 +1,64 @@
+# Workflow requires repository-level auto-merge to remain enabled and all required checks to succeed before GitHub completes the merge.
+name: Markdown Auto Merge
+
+on:
+  pull_request_target:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - labeled
+
+permissions:
+  contents: write
+
+concurrency:
+  group: markdown-automerge-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  validate-markdown:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Evaluate pull request files
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            if (!pr) {
+              core.info('No pull request payload available.');
+              return;
+            }
+
+            const files = await octokit.paginate(octokit.pulls.listFiles, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: pr.number,
+            });
+
+            const nonMarkdown = files
+              .map((file) => file.filename)
+              .filter((filename) => !filename.toLowerCase().endsWith('.md'));
+
+            if (nonMarkdown.length > 0) {
+              core.info(`Detected non-Markdown files: ${nonMarkdown.join(', ')}`);
+              core.info('Skipping auto-merge enablement.');
+              return;
+            }
+
+            await octokit.graphql(
+              `mutation EnableAutoMerge($pullRequestId: ID!, $mergeMethod: PullRequestMergeMethod!) {
+                enablePullRequestAutoMerge(input: {pullRequestId: $pullRequestId, mergeMethod: $mergeMethod}) {
+                  clientMutationId
+                }
+              }`,
+              {
+                pullRequestId: pr.node_id,
+                mergeMethod: 'SQUASH',
+              },
+            );
+
+            core.info('Auto-merge enabled for Markdown-only pull request.');
