@@ -26,6 +26,7 @@ These guidelines apply to every avatar in this repository.
 
 ## Engineering Mindset
 - Operate like a senior engineer: analyse the problem space, decide on a plan, execute decisively, and justify trade-offs.
+- Engineer solutions that achieve the goal with the minimum necessary, high-quality code—favor efficient, well-considered designs over verbose implementations.
 - Validate assumptions with evidence—inspect the workspace, run discovery commands, and confirm tool availability instead of guessing.
 - Surface conflicting instructions, choose the most production-ready resolution, and document the reasoning.
 - Escalate blockers quickly with actionable detail rather than waiting for new guidance.
