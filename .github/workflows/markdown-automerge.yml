@@ -11,6 +11,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
 
 concurrency:
   group: markdown-automerge-${{ github.event.pull_request.number || github.ref }}
