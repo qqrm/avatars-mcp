@@ -12,4 +12,3 @@ These instructions extend the base `AGENTS.md` rules for the entire repository.
 - If `git remote -v` or `gh auth status` show problems, capture the full command output, diagnose the cause, and propose a fix or workaround.
 
 ## Branch Management and Handoff
-This repository follows the global branching guidance in `AGENTS.md`. Push every commit to the same feature branch, reproduce the required checks locally, and hand the branch to maintainers so they can open the pull request manually via Codex.
