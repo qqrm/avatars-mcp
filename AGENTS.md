@@ -35,8 +35,6 @@ These guidelines apply to every avatar in this repository.
 ## Source Control and Branching
 - Treat the canonical `origin` remote as writable until a push attempt proves otherwise; do not assume restrictions without evidence.
 - Create a fresh hyphenated English feature branch for every task. When a task spans multiple sessions, stay on the same branch, fetch `origin/main`, and rebase or merge **before every response**.
-- Keep the task branch alive until maintainers confirm integration—never delete, rename, or reset it mid-task, and push every new commit to the same remote branch.
-- After preparing commits, push the branch to `origin` (for example, `git push --set-upstream origin <branch>`). Escalate immediately if the push fails.
 - Before reporting completion, confirm that `origin/<branch>` contains the latest commits (compare with `git log HEAD`).
 - When a push or GitHub command fails, quote the full stderr/stdout, diagnose the cause, and propose mitigation steps instead of stopping at the first error.
 - Maintain small, focused commits with clear English messages so reviewers can follow each step.
