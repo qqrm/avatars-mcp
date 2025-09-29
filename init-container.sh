@@ -30,6 +30,13 @@ export GIT_TERMINAL_PROMPT=0
 
 log() { printf '>> %s\n' "$*"; }
 die() { printf '❌ %s\n' "$*" >&2; exit 1; }
+with_privilege() {
+  if command -v sudo >/dev/null 2>&1; then
+    sudo "$@"
+  else
+    "$@"
+  fi
+}
 
 MCP_BASE_URL="${MCP_BASE_URL:-https://qqrm.github.io/avatars-mcp}"
 export MCP_BASE_URL
@@ -37,6 +44,7 @@ CANONICAL_CLEANUP_PATH=".github/workflows/codex-cleanup.yml"
 
 gh_ok() { gh --version >/dev/null 2>&1; }
 cargo_binstall_ok() { command -v cargo-binstall >/dev/null 2>&1; }
+docker_ok() { command -v docker >/dev/null 2>&1; }
 
 ensure_codex_cleanup_workflow() {
   local repo_root dest canonical_url tmp
@@ -110,6 +118,43 @@ fi
 gh_ok || die "gh is not operational"
 
 log "gh version: $(gh --version | head -n1)"
+
+install_docker() {
+  local pkg_manager=""
+  if docker_ok; then
+    log "docker version: $(docker --version | head -n1)"
+    return
+  fi
+
+  if command -v apt-get >/dev/null 2>&1; then
+    pkg_manager="apt-get"
+    log "Installing Docker via apt-get"
+    with_privilege env DEBIAN_FRONTEND=noninteractive apt-get update
+    with_privilege env DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends docker.io
+  elif command -v dnf >/dev/null 2>&1; then
+    pkg_manager="dnf"
+    log "Installing Docker via dnf"
+    with_privilege dnf install -y docker
+  elif command -v yum >/dev/null 2>&1; then
+    pkg_manager="yum"
+    log "Installing Docker via yum"
+    with_privilege yum install -y docker
+  elif command -v zypper >/dev/null 2>&1; then
+    pkg_manager="zypper"
+    log "Installing Docker via zypper"
+    with_privilege zypper install -y docker
+  else
+    log "Skipping Docker installation: no supported package manager found"
+  fi
+
+  if docker_ok; then
+    log "docker version: $(docker --version | head -n1)"
+  elif [[ -n "$pkg_manager" ]]; then
+    die "Docker installation via $pkg_manager reported success but docker command is missing"
+  fi
+}
+
+install_docker
 
 if ! cargo_binstall_ok; then
   log "Installing cargo-binstall"
