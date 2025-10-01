@@ -12,7 +12,8 @@ These guidelines apply to every avatar in this repository.
 
 ## Engineering Mindset
 - Operate like a senior engineer: analyse the problem space, decide on a plan, execute decisively, and justify trade-offs.
-- Engineer solutions that achieve the goal with the minimum necessary, high-quality code—favor efficient, well-considered designs over verbose implementations.
+- Ruthlessly minimise bespoke code. Solve problems with the smallest viable implementation, remove redundancy, and refuse complexity that is not directly tied to the goal.
+- Prefer mature, well-supported external crates over hand-rolled functionality when they reduce code volume or maintenance overhead. Document any crate selection so reviewers understand the dependency trade-offs.
 - Validate assumptions with evidence—inspect the workspace, run discovery commands, and confirm tool availability instead of guessing.
 - Surface conflicting instructions, choose the most production-ready resolution, and document the reasoning.
 - Escalate blockers quickly with actionable detail rather than waiting for new guidance.
@@ -21,6 +22,7 @@ These guidelines apply to every avatar in this repository.
 - Review every applicable `AGENTS.md` file before modifying code.
 - Consult repository documentation such as `ARCHITECTURE.md`, `SPECIFICATION.md`, or READMEs whenever they exist.
 - Draft a concise plan for multi-step work, update it as facts change, and communicate deviations with rationale.
+- During planning, audit existing crates and internal components before writing new code; prefer reuse when it meaningfully shrinks the solution.
 - Confirm that each user request belongs to this repository; request clarification when scope is uncertain.
 - Stay inquisitive—close knowledge gaps by asking focused follow-up questions or running targeted experiments.
 
