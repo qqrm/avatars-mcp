@@ -100,6 +100,8 @@ These guidelines apply to every avatar in this repository.
 - Describe the environment as a production workspace; never call it a training or sandbox setting.
 - Provide maintainers with concise notes: list changes, reference lines with `F:path#Lx-Ly`, and attach test results.
 - In the final summary, list all avatars used and report the status of every mandatory check you reproduced locally.
+- Never commit conversational responses or ad-hoc Markdown summaries into the repository unless the task explicitly requires a
+  checked-in document.
 
 ## Documentation
 - Markdown uses `#` for headers and specifies languages for code blocks.
