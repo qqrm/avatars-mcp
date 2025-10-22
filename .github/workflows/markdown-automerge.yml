@@ -53,7 +53,14 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           PR_URL: ${{ github.event.pull_request.html_url }}
-        run: gh pr merge "$PR_URL" --auto --squash
+        run: |
+          if [ -z "${PR_URL}" ]; then
+            echo "No pull request URL available; skipping auto-merge.";
+            exit 0;
+          fi;
+          if ! gh pr merge "$PR_URL" --auto --squash; then
+            echo "::warning::Failed to enable auto-merge for ${PR_URL}; check token permissions.";
+          fi
       - name: Skip auto-merge
         if: steps.validate_files.outputs.all_markdown != 'true'
         run: echo "Auto-merge disabled because non-Markdown files were detected."
