@@ -16,7 +16,7 @@ ensure_git_repo() {
 }
 
 ensure_origin_remote() {
-  local canonical_remote="https://github.com/qqrm/avatars-mcp.git"
+  local canonical_remote="https://github.com/qqrm/codex-tools.git"
 
   if git remote get-url origin >/dev/null 2>&1; then
     local current_url
@@ -48,7 +48,7 @@ warn_branch_name() {
   fi
 }
 
-log "Running repository setup for avatars-mcp"
+log "Running repository setup for codex-tools"
 log "Repository root: $SCRIPT_DIR"
 
 ensure_git_repo

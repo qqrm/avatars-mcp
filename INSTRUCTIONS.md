@@ -1,9 +1,9 @@
 # Instructions
 
-The avatar API is available at:
+The published avatar site is available at:
 
 ```text
-https://qqrm.github.io/avatars-mcp/
+https://qqrm.github.io/codex-tools/
 ```
 
 - `GET /avatars.json` — retrieve the avatar catalog with the `base_uri` pointer to the shared instructions. The deployment does **not** expose `/catalog.json`, so avoid requesting that legacy path.
