@@ -38,8 +38,6 @@ with_privilege() {
   fi
 }
 
-MCP_BASE_URL="${MCP_BASE_URL:-https://qqrm.github.io/avatars-mcp}"
-export MCP_BASE_URL
 CANONICAL_CLEANUP_PATH=".github/workflows/codex-cleanup.yml"
 
 gh_ok() { gh --version >/dev/null 2>&1; }
@@ -82,7 +80,7 @@ ensure_codex_cleanup_workflow() {
     return
   fi
 
-  canonical_url="${MCP_BASE_URL%/}/workflows/codex-cleanup.yml"
+  canonical_url="https://qqrm.github.io/avatars-mcp/workflows/codex-cleanup.yml"
   tmp="${dest}.tmp"
   mkdir -p "$(dirname "$dest")"
 
@@ -208,14 +206,6 @@ if ! command -v wrkflw >/dev/null 2>&1; then
   fi
 fi
 command -v wrkflw >/dev/null 2>&1 || die "wrkflw installation failed"
-
-for mcp_pkg in crates-mcp; do
-  if ! command -v "$mcp_pkg" >/dev/null 2>&1; then
-    log "Installing $mcp_pkg via cargo-binstall"
-    cargo binstall "$mcp_pkg" -y --quiet
-  fi
-  command -v "$mcp_pkg" >/dev/null 2>&1 || die "$mcp_pkg installation failed"
-done
 
 user_login="unknown"
 if GH_TOKEN="$GH_TOKEN" gh api /user -q .login >/dev/null 2>&1; then
