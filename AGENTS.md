@@ -6,7 +6,7 @@ These guidelines apply to every avatar in this repository.
 - Confirm the repository is ready by checking `git remote -v` and `gh auth status`; Codex automatically provisions the workspace.
 - Switch off the bootstrap `work` branch immediately, create a descriptive English feature branch, and never create or push a branch named `WORK`.
 - Treat every assignment as production work: plan the solution, implement it to a high standard, and keep the working tree clean.
-- Retrieve the avatar catalog via the MCP server's REST API, pick a non-default avatar that fits the task, and explain the choice in the final user summary and maintainer notes.
+- Retrieve the avatar catalog via the MCP server's REST API (`https://qqrm.github.io/avatars-mcp/avatars.json`); the deployment does **not** publish `/catalog.json`, so avoid requesting that path. Pick a non-default avatar that fits the task and explain the choice in the final user summary and maintainer notes.
 - Mirror GitHub Actions locally: inspect recent workflow runs with `gh` and execute the required pipelines with `wrkflw` (for example, `wrkflw validate` and `wrkflw run .github/workflows/<workflow>.yml`). Do **not** create pull requests—maintainers open them manually via Codex after review.
 - Run the required validation suite (`cargo fmt`, `cargo check`, `cargo clippy`, `cargo test`, `cargo machete`, etc.) before committing and again before wrapping up. Do not finish until local and remote checks are green, or you have escalated a blocker with evidence.
 
@@ -53,7 +53,7 @@ These guidelines apply to every avatar in this repository.
 
 ## Avatars
 - Use the MCP server at `https://qqrm.github.io/avatars-mcp/` to fetch avatars and base instructions.
-- Use the MCP server's REST API to inspect the latest avatar catalog and README information as needed. Record HTTP errors and retry transient failures up to five times before escalating.
+- Use the MCP server's REST API to inspect the latest avatar catalog (`/avatars.json`) and README information as needed. Record HTTP errors (excluding the expected `/catalog.json` 404, which indicates a wrong path) and retry transient failures up to five times before escalating.
 - Select a non-default avatar that matches the task context, document why it fits, and include this rationale in the final response to the user and in maintainer notes when requested.
 - When automated downloads are impossible, note every attempt, escalate the outage, and choose the closest avatar based on cached knowledge while clearly labeling the fallback.
 - Switch avatars through the MCP server as needed for sub-tasks (e.g., Senior, Architect, Tester, Analyst) and list every avatar used when summarising work.

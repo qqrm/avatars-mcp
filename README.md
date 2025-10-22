@@ -55,7 +55,7 @@ Every repository in this ecosystem can ship its own local setup helper tailored 
 
 ## Tooling
 
-A Rust workspace under [`/crates/`](crates/) regenerates the catalog stored at [`avatars/catalog.json`](avatars/catalog.json) by parsing the avatar front matter and bundling both the base instructions and avatar metadata. The GitHub Pages deployment exposes this catalog as `avatars.json`. The deployment pipeline rebuilds the index automatically whenever `main` changes, so running the generator locally is only necessary for debugging or previewing changes. Build the index with either form below:
+A Rust workspace under [`/crates/`](crates/) regenerates the catalog stored at [`avatars/catalog.json`](avatars/catalog.json) by parsing the avatar front matter and bundling both the base instructions and avatar metadata. The GitHub Pages deployment exposes this catalog as `avatars.json` (the legacy `/catalog.json` alias is intentionally unavailable; clients must request `/avatars.json`). The deployment pipeline rebuilds the index automatically whenever `main` changes, so running the generator locally is only necessary for debugging or previewing changes. Build the index with either form below:
 
 ```bash
 cargo run -p avatars-cli --release
@@ -63,7 +63,7 @@ cargo run -p avatars-cli --release
 
 The workspace sets `default-run = "avatars-cli"`, so the deployment pipeline invokes the same binary with `cargo run --release`.
 
-The auxiliary binary `index_uris` (packaged with the CLI crate) lists the avatar URIs from an existing catalog to simplify pipeline scripting. Clients begin with `avatars.json` to decide which personas they need, then fetch `AGENTS.md` and the target avatars on demand to avoid loading unnecessary Markdown into the working context.
+The auxiliary binary `index_uris` (packaged with the CLI crate) lists the avatar URIs from an existing catalog to simplify pipeline scripting. Clients begin with `avatars.json` to decide which personas they need, then fetch `AGENTS.md` and the target avatars on demand to avoid loading unnecessary Markdown into the working context. Requests to `/catalog.json` return `404 Not Found` by design; update clients rather than adding an alias.
 
 ### GitHub Pages Publishing
 
@@ -77,7 +77,7 @@ The latest version of the avatar API is served from GitHub Pages at:
 https://qqrm.github.io/avatars-mcp/
 ```
 
-- `GET /avatars.json` — retrieve the catalog, including the `base_uri` pointer to the shared instructions.
+- `GET /avatars.json` — retrieve the catalog, including the `base_uri` pointer to the shared instructions. The deployment does **not** publish `/catalog.json`.
 - `GET /AGENTS.md` — download the shared baseline instructions referenced by `base_uri`.
 - `GET /avatars/{id}.md` — retrieve the complete descriptor for the avatar with the given `id`.
 
