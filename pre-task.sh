@@ -22,9 +22,8 @@ fi
 
 log() { printf '>> %s\n' "$*"; }
 
-MCP_BASE_URL="${MCP_BASE_URL:-https://qqrm.github.io/avatars-mcp}"
-AGENTS_URL="${MCP_BASE_URL%/}/AGENTS.md"
-MCP_MANIFEST_URL="${MCP_BASE_URL%/}/mcp.json"
+PAGES_BASE_URL="${PAGES_BASE_URL:-https://qqrm.github.io/codex-tools}"
+AGENTS_URL="${PAGES_BASE_URL%/}/AGENTS.md"
 
 fetch_file() {
   local url="$1"
@@ -41,7 +40,6 @@ fetch_file() {
 }
 
 fetch_file "$AGENTS_URL" "AGENTS.md"
-fetch_file "$MCP_MANIFEST_URL" "mcp.json"
 
 if [ -f repo-setup.sh ]; then
   log "Executing repo-setup.sh"

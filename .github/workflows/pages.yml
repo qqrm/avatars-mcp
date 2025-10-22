@@ -28,11 +28,11 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: clippy rustfmt
-      - run: cargo run --release
+      - run: cargo test -p avatars-core
       - run: |
           mkdir -p public/avatars
           cp -r avatars/* public/avatars/
-          cp AGENTS.md INSTRUCTIONS.md README.md mcp.json public/
+          cp AGENTS.md INSTRUCTIONS.md README.md public/
           mkdir -p public/workflows
           cp .github/workflows/codex-cleanup.yml public/workflows/
           cp avatars/catalog.json public/index.json
@@ -71,14 +71,13 @@ jobs:
       - name: Smoke test published endpoints
         run: |
           set -euo pipefail
-          base_url="https://qqrm.github.io/avatars-mcp"
+          base_url="https://qqrm.github.io/codex-tools"
           paths=(
             "index.json"
             "avatars.json"
             "AGENTS.md"
             "INSTRUCTIONS.md"
             "README.md"
-            "mcp.json"
             "workflows/codex-cleanup.yml"
           )
           sleep 10

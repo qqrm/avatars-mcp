@@ -1,8 +1,8 @@
-# Avatar Repository Specification
+# Codex Tools Specification
 
 ## 1. Purpose
 
-This specification defines how behavioral **avatars**, shared tooling, and metadata are organized within the repository. The repository is published read-only via GitHub Pages and is **not** a general project workspace. Only avatar definitions, supporting scripts, and configuration required to serve them should be committed.
+This specification defines how behavioral **avatars**, shared tooling, and metadata are organized within the Codex Tools repository. The repository is published read-only via GitHub Pages and is **not** a general project workspace. Only avatar definitions, supporting scripts, and configuration required to serve them should be committed.
 
 ## 2. Directory Layout
 
@@ -14,13 +14,14 @@ This specification defines how behavioral **avatars**, shared tooling, and metad
   ...
 README.md
 SPECIFICATION.md
-mcp.json
 (optional) crates/
+(optional) scripts/
 ```
 
 - `/avatars/` stores every avatar Markdown file.
 - `AGENTS.md` contains shared base instructions bundled into the index.
-- `crates/` hosts the Rust workspace used to generate `avatars/catalog.json` and run auxiliary tooling.
+- `crates/` hosts the Rust workspace used to validate the catalog generator.
+- `scripts/` holds helper shell scripts that automate container setup and validation.
 
 ## 3. Avatar File Format
 
@@ -32,7 +33,7 @@ Each avatar resides in `/avatars/` as a Markdown (`.md`) file that **must** begi
 | ------------- | ------ | -------- | ------------------------------------ |
 | `id`          | string | yes      | Unique identifier for the avatar     |
 | `name`        | string | yes      | Display name (human-readable)        |
-| `description` | string | yes      | Short description for listings       |
+| `description` | string | no       | Short description for listings       |
 | `tags`        | array  | no       | List of keywords/categories          |
 | `author`      | string | no       | Who created or maintains this avatar |
 | `created_at`  | date   | no       | Creation date (YYYY-MM-DD)           |
@@ -68,11 +69,9 @@ You are a DevOps engineer. Your job is to:
 - Avoid repository-specific secrets or credentials.
 - Document any required tools or workflows inside the avatar text.
 
-## 4. Index Generation
+## 4. Catalog Generation
 
-Tooling iterates over `/avatars/`, parses YAML front matter, and produces `avatars/catalog.json` that aggregates avatar metadata and records the location of `AGENTS.md`. The resulting JSON is published on GitHub Pages as `avatars.json` and consumed by clients. The legacy `/catalog.json` alias is intentionally absent; clients must request `/avatars.json`.
-
-GitHub Pages automation regenerates the catalog on every publish from `main`, so the deployed `avatars.json` is always aligned with the latest Markdown sources. The checked-in `avatars/catalog.json` is a convenience snapshot that keeps tests deterministic and enables offline inspection; treat it as a derived artifact and rebuild it only when debugging the generator or intentionally changing its output format.
+Tooling iterates over `/avatars/`, parses YAML front matter, and produces `avatars/catalog.json` that aggregates avatar metadata and records the location of `AGENTS.md`. The resulting JSON is published on GitHub Pages as `avatars.json`. The checked-in `avatars/catalog.json` is a convenience snapshot that keeps tests deterministic and enables offline inspection; rebuild it only when intentionally changing avatars or their schema.
 
 ### 4.1 Catalog schema
 
@@ -103,23 +102,20 @@ The catalog schema is:
 
 Clients begin by fetching `avatars.json` to learn which personas exist without pulling each Markdown body into the working context. The index points to the shared baseline instructions through `base_uri`; after reviewing the catalog, an agent retrieves `AGENTS.md` and then issues targeted requests for only the avatars it needs. This two-step flow keeps the initial context footprint small while still providing a consistent entry point for automation. Requests to `/catalog.json` should be treated as configuration errors.
 
-## 5. API and MCP Access
+## 5. API Endpoints
+
+GitHub Pages exposes the repository at `https://qqrm.github.io/codex-tools/`. Clients rely on the following endpoints:
 
 - **Catalog and base instructions:** `GET /avatars.json`.
 - **Incorrect legacy path:** `GET /catalog.json` returns `404 Not Found` and indicates a misconfigured client.
 - **Baseline instructions only:** `GET /AGENTS.md`.
 - **Full avatar:** `GET /avatars/{id}.md`.
 
-The optional Model Context Protocol server mirrors these resources over STDIO and implements:
-
-- `resources/list` – advertises the catalog (`avatars.json`), `AGENTS.md`, and individual avatar files.
-- `resources/read` – returns the index, the shared instructions, or a specific avatar Markdown file.
-
 ## 6. Extensibility and Tooling
 
 - Add new avatars by committing additional Markdown files under `/avatars/` with the required front matter.
 - Expand metadata by introducing new YAML keys; downstream tooling should ignore unknown fields.
-- The Rust workspace under `crates/` can regenerate `avatars/catalog.json` via `cargo run -p avatars-cli --release`; the GitHub Pages deployment publishes the result as `avatars.json`. The workspace sets `default-run = "avatars-cli"`, so `cargo run --release` resolves to the same binary in automation contexts.
+- The Rust workspace under `crates/` regenerates `avatars/catalog.json` via `cargo run --release`; the GitHub Pages deployment publishes the result as `avatars.json`.
 
 ## 7. Relationship to README
 

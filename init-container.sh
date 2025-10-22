@@ -80,7 +80,7 @@ ensure_codex_cleanup_workflow() {
     return
   fi
 
-  canonical_url="https://qqrm.github.io/avatars-mcp/workflows/codex-cleanup.yml"
+  canonical_url="https://qqrm.github.io/codex-tools/workflows/codex-cleanup.yml"
   tmp="${dest}.tmp"
   mkdir -p "$(dirname "$dest")"
 
