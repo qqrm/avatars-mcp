@@ -45,6 +45,27 @@ CANONICAL_CLEANUP_PATH=".github/workflows/codex-cleanup.yml"
 gh_ok() { gh --version >/dev/null 2>&1; }
 cargo_binstall_ok() { command -v cargo-binstall >/dev/null 2>&1; }
 docker_ok() { command -v docker >/dev/null 2>&1; }
+rustup_ok() { command -v rustup >/dev/null 2>&1; }
+
+install_rustup() {
+  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \
+    | sh -s -- -y --profile minimal --default-toolchain stable
+}
+
+ensure_rust_toolchain() {
+  if ! rustup_ok; then
+    log "Installing rustup and the latest stable Rust toolchain"
+    install_rustup
+  fi
+
+  rustup_ok || die "rustup installation failed"
+
+  log "Updating Rust toolchain to the latest stable release"
+  rustup update stable >/dev/null
+  rustup default stable >/dev/null
+  rustup component add --toolchain stable rustfmt clippy >/dev/null
+  log "rustc version: $(rustc --version | head -n1)"
+}
 
 ensure_codex_cleanup_workflow() {
   local repo_root dest canonical_url tmp
@@ -118,6 +139,8 @@ fi
 gh_ok || die "gh is not operational"
 
 log "gh version: $(gh --version | head -n1)"
+
+ensure_rust_toolchain
 
 install_docker() {
   local pkg_manager=""
