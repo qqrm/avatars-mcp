@@ -261,8 +261,15 @@ bootstrap_refresh_pages_asset() {
 }
 
 bootstrap_run_repo_setup() {
-  if [[ -f repo-setup.sh ]]; then
-    bootstrap_log "Executing repo-setup.sh"
-    bash repo-setup.sh
+  local repo_setup=""
+  if [[ -f scripts/repo-setup.sh ]]; then
+    repo_setup="scripts/repo-setup.sh"
+  elif [[ -f repo-setup.sh ]]; then
+    repo_setup="repo-setup.sh"
+  fi
+
+  if [[ -n "$repo_setup" ]]; then
+    bootstrap_log "Executing ${repo_setup}"
+    bash "$repo_setup"
   fi
 }

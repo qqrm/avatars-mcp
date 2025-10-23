@@ -7,21 +7,28 @@ This specification defines how behavioral **avatars**, shared tooling, and metad
 ## 2. Directory Layout
 
 ```
+AGENTS.md
+REPO_AGENTS.md
+.docs/
+  README.md
+  INSTRUCTIONS.md
+  SPECIFICATION.md
 /avatars/
   DEVOPS.md
   QA.md
   ANALYST.md
   ...
-README.md
-SPECIFICATION.md
+scripts/
+  init-container.sh
+  ...
 (optional) crates/
-(optional) scripts/
 ```
 
+- `.docs/` groups the repository documentation served alongside the avatars.
 - `/avatars/` stores every avatar Markdown file.
 - `AGENTS.md` contains shared base instructions bundled into the index.
-- `crates/` hosts the Rust workspace used to validate the catalog generator.
 - `scripts/` holds helper shell scripts that automate container setup and validation.
+- `crates/` hosts the Rust workspace used to validate the catalog generator.
 
 ## 3. Avatar File Format
 
@@ -119,4 +126,4 @@ GitHub Pages exposes the repository at `https://qqrm.github.io/codex-tools/`. Cl
 
 ## 7. Relationship to README
 
-`README.md` provides a high-level overview and onboarding notes. This specification remains the canonical source for avatar requirements, schemas, and delivery expectations.
+`.docs/README.md` provides a high-level overview and onboarding notes. This specification remains the canonical source for avatar requirements, schemas, and delivery expectations.

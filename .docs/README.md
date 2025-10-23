@@ -31,7 +31,7 @@ Three published entry points cover the common Codex container workflows. Each sn
 - Verifies repository access and installs the Codex cleanup workflow once
 
 ```bash
-curl -fsSL "https://qqrm.github.io/codex-tools/init-container.sh" | bash -s --
+curl -fsSL "https://qqrm.github.io/codex-tools/scripts/init-container.sh" | bash -s --
 ```
 
 #### Non-cached container — fresh provisioning
@@ -40,7 +40,7 @@ curl -fsSL "https://qqrm.github.io/codex-tools/init-container.sh" | bash -s --
 - Downloads the latest `AGENTS.md` from GitHub Pages and runs `repo-setup.sh` for a complete project bootstrap
 
 ```bash
-curl -fsSL "https://qqrm.github.io/codex-tools/init-ephemeral-container.sh" | bash -s --
+curl -fsSL "https://qqrm.github.io/codex-tools/scripts/init-ephemeral-container.sh" | bash -s --
 ```
 
 #### Cached container — lightweight refresh before a task
@@ -48,35 +48,35 @@ curl -fsSL "https://qqrm.github.io/codex-tools/init-ephemeral-container.sh" | ba
 - Invokes `repo-setup.sh` to pull in repository-specific updates without reinstalling global tooling
 
 ```bash
-curl -fsSL "https://qqrm.github.io/codex-tools/pre-task.sh" | bash -s --
+curl -fsSL "https://qqrm.github.io/codex-tools/scripts/pre-task.sh" | bash -s --
 ```
 
 ## Documentation
 
 - **Specification:** See [`SPECIFICATION.md`](SPECIFICATION.md) for the canonical directory layout, avatar schema, and delivery expectations.
-- **Avatars:** Individual prompts live in [`/avatars/`](avatars/); each file targets a single role.
-- **Base instructions:** Shared guidance for all avatars resides in [`AGENTS.md`](AGENTS.md).
+- **Avatars:** Individual prompts live in [`/avatars/`](../avatars/); each file targets a single role.
+- **Base instructions:** Shared guidance for all avatars resides in [`AGENTS.md`](../AGENTS.md).
 - **HTTP quick reference:** [`INSTRUCTIONS.md`](INSTRUCTIONS.md) summarizes the published endpoints external clients call.
 
 ## Shared Files for External Consumers
 
 External clients rely on a small set of shared files published alongside the avatars:
 
-- [`AGENTS.md`](AGENTS.md) — the baseline instructions served to external agents, embedded in and linked from the published `avatars.json` catalog.
+- [`AGENTS.md`](../AGENTS.md) — the baseline instructions served to external agents, embedded in and linked from the published `avatars.json` catalog.
 - [`INSTRUCTIONS.md`](INSTRUCTIONS.md) — a condensed description of the HTTP API exposed via GitHub Pages.
 
 Repository tooling keeps these artifacts in sync for local use:
 
-- [`init-container.sh`](init-container.sh) — installs the required tooling and persists GitHub CLI authentication for the container.
-- [`pre-task.sh`](pre-task.sh) — refreshes the published assets and executes repository-specific setup helpers before each task.
+- [`init-container.sh`](../scripts/init-container.sh) — installs the required tooling and persists GitHub CLI authentication for the container.
+- [`pre-task.sh`](../scripts/pre-task.sh) — refreshes the published assets and executes repository-specific setup helpers before each task.
 
 ## Repository-Specific Setup Script
 
-Every repository in this ecosystem can ship its own local setup helper tailored to its automation requirements under the shared name `repo-setup.sh`. The [`init-container.sh`](init-container.sh) script runs once to provision GitHub CLI authentication and install the Rust tooling used across tasks. The [`pre-task.sh`](pre-task.sh) helper reruns before each assignment to refresh the published site assets and invoke `repo-setup.sh` when present. When working in other repositories, expect their `repo-setup.sh` contents to diverge—each project documents and automates only the dependencies it needs while keeping the filename consistent.
+Every repository in this ecosystem can ship its own local setup helper tailored to its automation requirements under the shared name `repo-setup.sh`. The [`init-container.sh`](../scripts/init-container.sh) script runs once to provision GitHub CLI authentication and install the Rust tooling used across tasks. The [`pre-task.sh`](../scripts/pre-task.sh) helper reruns before each assignment to refresh the published site assets and invoke `repo-setup.sh` when present. When working in other repositories, expect their `repo-setup.sh` contents to diverge—each project documents and automates only the dependencies it needs while keeping the filename consistent.
 
 ## Tooling
 
-A Rust workspace under [`/crates/`](crates/) regenerates the catalog stored at [`avatars/catalog.json`](avatars/catalog.json) by parsing the avatar front matter and bundling both the base instructions and avatar metadata. The GitHub Pages deployment exposes this catalog as `avatars.json` (the legacy `/catalog.json` alias is intentionally unavailable; clients must request `/avatars.json`). The deployment pipeline rebuilds the index automatically whenever `main` changes, so running the generator locally is only necessary for debugging or previewing changes. Build the index with:
+A Rust workspace under [`/crates/`](../crates/) regenerates the catalog stored at [`avatars/catalog.json`](../avatars/catalog.json) by parsing the avatar front matter and bundling both the base instructions and avatar metadata. The GitHub Pages deployment exposes this catalog as `avatars.json` (the legacy `/catalog.json` alias is intentionally unavailable; clients must request `/avatars.json`). The deployment pipeline rebuilds the index automatically whenever `main` changes, so running the generator locally is only necessary for debugging or previewing changes. Build the index with:
 
 ```bash
 cargo run --release
@@ -86,7 +86,7 @@ Clients begin with `avatars.json` to decide which personas they need, then fetch
 
 ### GitHub Pages Publishing
 
-The [GitHub Pages workflow](.github/workflows/pages.yml) publishes the avatar catalog, shared instructions, and Markdown prompts whenever updates land on `main`. Refer to the workflow file for the complete automation steps.
+The [GitHub Pages workflow](../.github/workflows/pages.yml) publishes the avatar catalog, shared instructions, and Markdown prompts whenever updates land on `main`. Refer to the workflow file for the complete automation steps.
 
 ### Published API
 

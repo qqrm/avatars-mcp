@@ -7,6 +7,7 @@ set -Eeuo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="${SCRIPT_DIR%/scripts}"
+DOCS_DIR="${REPO_ROOT}/.docs"
 if [[ ! -d "${REPO_ROOT}/.git" ]]; then
   echo "Error: build-pages.sh must run from within the repository." >&2
   exit 1
@@ -47,16 +48,18 @@ mkdir -p "${OUTPUT_DIR}/avatars"
 cp -a "${REPO_ROOT}/avatars/." "${OUTPUT_DIR}/avatars/"
 
 # Shared markdown artifacts
-for file in AGENTS.md INSTRUCTIONS.md README.md SPECIFICATION.md; do
-  copy_file "${REPO_ROOT}/${file}" "${OUTPUT_DIR}/${file}"
+copy_file "${REPO_ROOT}/AGENTS.md" "${OUTPUT_DIR}/AGENTS.md"
+for file in INSTRUCTIONS.md README.md SPECIFICATION.md; do
+  copy_file "${DOCS_DIR}/${file}" "${OUTPUT_DIR}/${file}"
 done
 
 # Pages configuration
 copy_file "${REPO_ROOT}/static.json" "${OUTPUT_DIR}/static.json"
 
 # Bootstrap entry points
+mkdir -p "${OUTPUT_DIR}/scripts"
 for script in init-container.sh init-ephemeral-container.sh pre-task.sh repo-setup.sh; do
-  copy_executable "${REPO_ROOT}/${script}" "${OUTPUT_DIR}/${script}"
+  copy_executable "${REPO_ROOT}/scripts/${script}" "${OUTPUT_DIR}/scripts/${script}"
 done
 
 # Bootstrap helpers
@@ -85,7 +88,7 @@ copy_file "${OUTPUT_DIR}/avatars/catalog.json" "${OUTPUT_DIR}/avatars.json"
     echo "- [${avatar_name%.*}](avatars/${avatar_name})"
   done
   echo
-  cat "${REPO_ROOT}/INSTRUCTIONS.md"
+  cat "${DOCS_DIR}/INSTRUCTIONS.md"
 } > "${OUTPUT_DIR}/index.md"
 
 # Disable Jekyll processing

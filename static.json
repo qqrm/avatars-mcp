@@ -1,7 +1,7 @@
 {
   "headers": [
     {
-      "source": "/init-container.sh",
+      "source": "/scripts/init-container.sh",
       "headers": [
         {
           "key": "Cache-Control",
@@ -14,7 +14,7 @@
       ]
     },
     {
-      "source": "/init-ephemeral-container.sh",
+      "source": "/scripts/init-ephemeral-container.sh",
       "headers": [
         {
           "key": "Cache-Control",
@@ -27,7 +27,7 @@
       ]
     },
     {
-      "source": "/pre-task.sh",
+      "source": "/scripts/pre-task.sh",
       "headers": [
         {
           "key": "Cache-Control",
@@ -40,7 +40,7 @@
       ]
     },
     {
-      "source": "/repo-setup.sh",
+      "source": "/scripts/repo-setup.sh",
       "headers": [
         {
           "key": "Cache-Control",
@@ -121,22 +121,22 @@
   "redirects": [
     {
       "source": "/init-container.sh",
-      "destination": "https://raw.githubusercontent.com/qqrm/codex-tools/main/init-container.sh",
+      "destination": "https://qqrm.github.io/codex-tools/scripts/init-container.sh",
       "type": 302
     },
     {
       "source": "/init-ephemeral-container.sh",
-      "destination": "https://raw.githubusercontent.com/qqrm/codex-tools/main/init-ephemeral-container.sh",
+      "destination": "https://qqrm.github.io/codex-tools/scripts/init-ephemeral-container.sh",
       "type": 302
     },
     {
       "source": "/pre-task.sh",
-      "destination": "https://raw.githubusercontent.com/qqrm/codex-tools/main/pre-task.sh",
+      "destination": "https://qqrm.github.io/codex-tools/scripts/pre-task.sh",
       "type": 302
     },
     {
       "source": "/repo-setup.sh",
-      "destination": "https://raw.githubusercontent.com/qqrm/codex-tools/main/repo-setup.sh",
+      "destination": "https://qqrm.github.io/codex-tools/scripts/repo-setup.sh",
       "type": 302
     },
     {
