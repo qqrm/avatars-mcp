@@ -23,6 +23,8 @@ Three published entry points cover the common Codex container workflows. Each sn
 
 > **Note:** The wrappers always download the bootstrap helper bundle from GitHub Pages before running. Override the download origin by exporting `CODEX_TOOLS_BOOTSTRAP_BASE_URL` when testing mirrors or forks.
 
+> **Fallback:** When the published GitHub Pages bundle is temporarily unavailable, the wrappers retry against `https://raw.githubusercontent.com/qqrm/codex-tools/main` automatically so container bootstrap continues to work.
+
 #### Cached container — full initialization
 - Installs GitHub CLI, Rust, cargo-binstall, and helper tooling
 - Persists GitHub authentication for later reuse inside the cached image
