@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
-# Wrapper for refreshing cached containers before each task. Always
-# downloads the bootstrap helpers from the configured location and runs
-# them from a temporary directory.
+# Entry point for bootstrapping non-cached containers. Always downloads
+# the bootstrap helpers from the configured location and runs them from
+# a temporary directory.
 
 set -Eeuo pipefail
 
 REMOTE_BASE_URL="${CODEX_TOOLS_BOOTSTRAP_BASE_URL:-https://qqrm.github.io/codex-tools}"
 
-script_name="refresh-cached-container.sh"
+script_name="bootstrap-ephemeral-container.sh"
 tmp_dir=""
 
 cleanup_tmp() {
