@@ -17,16 +17,36 @@ git remote add origin https://github.com/qqrm/codex-tools.git
 git fetch origin
 ```
 
-Initialize a fresh container once:
+### Container bootstrap commands
+
+Three published entry points cover the common Codex container workflows. Each snippet downloads the wrapper from the GitHub Pages deployment and executes it directly:
+
+> **Note:** The wrappers always download the bootstrap helper bundle from GitHub Pages before running. Override the download origin by exporting `CODEX_TOOLS_BOOTSTRAP_BASE_URL` when testing mirrors or forks.
+
+#### Cached container — full initialization
+- Installs GitHub CLI, Rust, cargo-binstall, and helper tooling
+- Persists GitHub authentication for later reuse inside the cached image
+- Verifies repository access and installs the Codex cleanup workflow once
 
 ```bash
-curl -fsSL "https://raw.githubusercontent.com/qqrm/codex-tools/refs/heads/main/init-container.sh" | bash -s --
+curl -fsSL "https://qqrm.github.io/codex-tools/init-container.sh" | bash -s --
 ```
 
-Before starting each task, refresh the workspace:
+#### Non-cached container — fresh provisioning
+- Performs the same tooling setup as the cached workflow on a brand new container
+- Stores GitHub authentication, validates repository access, and installs the cleanup workflow
+- Downloads the latest `AGENTS.md` from GitHub Pages and runs `repo-setup.sh` for a complete project bootstrap
 
 ```bash
-curl -fsSL "https://raw.githubusercontent.com/qqrm/codex-tools/refs/heads/main/pre-task.sh" | bash -s --
+curl -fsSL "https://qqrm.github.io/codex-tools/init-ephemeral-container.sh" | bash -s --
+```
+
+#### Cached container — lightweight refresh before a task
+- Updates the workspace copy of `AGENTS.md` from GitHub Pages
+- Invokes `repo-setup.sh` to pull in repository-specific updates without reinstalling global tooling
+
+```bash
+curl -fsSL "https://qqrm.github.io/codex-tools/pre-task.sh" | bash -s --
 ```
 
 ## Documentation
