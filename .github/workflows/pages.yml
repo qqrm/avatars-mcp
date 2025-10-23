@@ -29,33 +29,8 @@ jobs:
         with:
           components: clippy rustfmt
       - run: cargo test -p avatars-core
-      - run: |
-          mkdir -p public/avatars
-          cp -r avatars/* public/avatars/
-          cp AGENTS.md INSTRUCTIONS.md README.md public/
-          cp init-container.sh init-ephemeral-container.sh pre-task.sh public/
-          mkdir -p public/scripts/lib
-          cp scripts/bootstrap-cached-container.sh \
-             scripts/bootstrap-ephemeral-container.sh \
-             scripts/refresh-cached-container.sh \
-             public/scripts/
-          cp scripts/lib/container-bootstrap-common.sh public/scripts/lib/
-          mkdir -p public/workflows
-          cp .github/workflows/codex-cleanup.yml public/workflows/
-          cp avatars/catalog.json public/index.json
-          cp avatars/catalog.json public/avatars.json
-          {
-            cat AGENTS.md
-            echo
-            echo "## Avatars"
-            for f in avatars/*.md; do
-              name=$(basename "$f")
-              echo "- [${name%.*}](avatars/$name)"
-            done
-            echo
-            cat INSTRUCTIONS.md
-          } > public/index.md
-          touch public/.nojekyll
+      - run: ./scripts/build-pages.sh
+      - run: ./scripts/validate-pages.sh
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
@@ -85,10 +60,12 @@ jobs:
             "AGENTS.md"
             "INSTRUCTIONS.md"
             "README.md"
+            "SPECIFICATION.md"
             "workflows/codex-cleanup.yml"
             "init-container.sh"
             "init-ephemeral-container.sh"
             "pre-task.sh"
+            "repo-setup.sh"
             "scripts/bootstrap-cached-container.sh"
             "scripts/bootstrap-ephemeral-container.sh"
             "scripts/refresh-cached-container.sh"
