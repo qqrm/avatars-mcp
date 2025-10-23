@@ -1,5 +1,5 @@
 [package]
-name = "codex-tools-core"
+name = "avatars-core"
 version = "0.1.0"
 edition = "2024"
 default-run = "generate-catalog"
