@@ -21,7 +21,7 @@ fn run() -> Result<(), Box<dyn Error>> {
         return Err(format!("AGENTS.md missing: {}", display(&agents_path)).into());
     }
 
-    codex_tools_core::generate_index(&avatars_dir, &agents_path)?;
+    avatars_core::generate_index(&avatars_dir, &agents_path)?;
     println!("wrote {}", display(&avatars_dir.join("catalog.json")));
 
     Ok(())
