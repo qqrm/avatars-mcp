@@ -51,6 +51,9 @@ for file in AGENTS.md INSTRUCTIONS.md README.md SPECIFICATION.md; do
   copy_file "${REPO_ROOT}/${file}" "${OUTPUT_DIR}/${file}"
 done
 
+# Pages configuration
+copy_file "${REPO_ROOT}/static.json" "${OUTPUT_DIR}/static.json"
+
 # Bootstrap entry points
 for script in init-container.sh init-ephemeral-container.sh pre-task.sh repo-setup.sh; do
   copy_executable "${REPO_ROOT}/${script}" "${OUTPUT_DIR}/${script}"
@@ -61,6 +64,7 @@ mkdir -p "${OUTPUT_DIR}/scripts/lib"
 copy_executable "${REPO_ROOT}/scripts/bootstrap-cached-container.sh" "${OUTPUT_DIR}/scripts/bootstrap-cached-container.sh"
 copy_executable "${REPO_ROOT}/scripts/bootstrap-ephemeral-container.sh" "${OUTPUT_DIR}/scripts/bootstrap-ephemeral-container.sh"
 copy_executable "${REPO_ROOT}/scripts/refresh-cached-container.sh" "${OUTPUT_DIR}/scripts/refresh-cached-container.sh"
+copy_executable "${REPO_ROOT}/scripts/agent-sync.sh" "${OUTPUT_DIR}/scripts/agent-sync.sh"
 copy_file "${REPO_ROOT}/scripts/lib/container-bootstrap-common.sh" "${OUTPUT_DIR}/scripts/lib/container-bootstrap-common.sh"
 
 # Workflows

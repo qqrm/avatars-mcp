@@ -65,6 +65,7 @@ jobs:
             "INSTRUCTIONS.md"
             "README.md"
             "SPECIFICATION.md"
+            "static.json"
             "workflows/codex-cleanup.yml"
             "init-container.sh"
             "init-ephemeral-container.sh"
@@ -73,13 +74,14 @@ jobs:
             "scripts/bootstrap-cached-container.sh"
             "scripts/bootstrap-ephemeral-container.sh"
             "scripts/refresh-cached-container.sh"
+            "scripts/agent-sync.sh"
             "scripts/lib/container-bootstrap-common.sh"
           )
           sleep 10
           for path in "${paths[@]}"; do
             echo "Validating ${base_url}/${path}"
             for attempt in $(seq 1 5); do
-              if curl --fail --silent --show-error "${base_url}/${path}" > /dev/null; then
+              if curl --fail --silent --show-error --location "${base_url}/${path}" > /dev/null; then
                 echo "  OK on attempt ${attempt}"
                 break
               fi
