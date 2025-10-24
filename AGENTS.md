@@ -54,6 +54,7 @@ These guidelines apply to every avatar in this repository.
 - Use the published site at `https://qqrm.github.io/codex-tools/` to fetch avatars and base instructions.
 - Use the REST API to inspect the latest avatar catalog (`/avatars.json`) and README information as needed. Record HTTP errors (excluding the expected `/catalog.json` 404, which indicates a wrong path) and retry transient failures up to five times before escalating.
 - Select a non-default avatar that matches the task context, document why it fits, and include this rationale in the final response to the user and in maintainer notes when requested.
+- Provide the full HTTPS URL for every avatar you used in both the final user summary and any maintainer notes.
 - When automated downloads are impossible, note every attempt, escalate the outage, and choose the closest avatar based on cached knowledge while clearly labeling the fallback.
 - Switch avatars as needed for sub-tasks (e.g., Senior, Architect, Tester, Analyst) and list every avatar used when summarising work.
 
