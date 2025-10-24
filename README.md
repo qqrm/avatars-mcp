@@ -74,6 +74,12 @@ Repository tooling keeps these artifacts in sync for local use:
 
 Every repository in this ecosystem can ship its own local setup helper tailored to its automation requirements under the shared name `repo-setup.sh`. The [`init-container.sh`](init-container.sh) script runs once to provision GitHub CLI authentication and install the Rust tooling used across tasks. The [`pre-task.sh`](pre-task.sh) helper reruns before each assignment to refresh the published site assets and invoke `repo-setup.sh` when present. When working in other repositories, expect their `repo-setup.sh` contents to diverge—each project documents and automates only the dependencies it needs while keeping the filename consistent.
 
+For this repository, `repo-setup.sh` also:
+
+- Configures the canonical `origin` remote when missing.
+- Prefetches Rust dependencies and runs `cargo fmt`, `cargo check`, `cargo clippy`, `cargo test`, and `cargo machete` (when installed).
+- Builds and validates the GitHub Pages artifact to mirror CI packaging.
+
 ## Tooling
 
 A Rust workspace under [`/crates/`](crates/) regenerates the catalog stored at [`avatars/catalog.json`](avatars/catalog.json) by parsing the avatar front matter and bundling both the base instructions and avatar metadata. The GitHub Pages deployment exposes this catalog as `avatars.json` (the legacy `/catalog.json` alias is intentionally unavailable; clients must request `/avatars.json`). The deployment pipeline rebuilds the index automatically whenever `main` changes, so running the generator locally is only necessary for debugging or previewing changes. Build the index with:

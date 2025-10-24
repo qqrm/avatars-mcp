@@ -197,10 +197,23 @@ EOF_AUTH
 }
 
 bootstrap_validate_saved_auth() {
+  local gh_host cfg_root hosts_file
+  gh_host="${GH_HOST:-github.com}"
+  cfg_root="${XDG_CONFIG_HOME:-$HOME/.config}"
+  hosts_file="$cfg_root/gh/hosts.yml"
+
+  if [[ ! -f "$hosts_file" ]]; then
+    bootstrap_die "saved auth failed: ${hosts_file} is missing"
+  fi
+
+  if ! env -u GH_TOKEN gh auth status -h "$gh_host"; then
+    bootstrap_die "GitHub CLI could not use the persisted token; provide a valid GH_TOKEN"
+  fi
+
   if env -u GH_TOKEN gh api -H "Accept: application/vnd.github+json" /rate_limit >/dev/null 2>&1; then
     bootstrap_log "rate_limit ok"
   else
-    bootstrap_die "saved auth failed, hosts.yml not picked up"
+    bootstrap_die "GitHub API validation failed after persisting auth; verify network access and GH_TOKEN scopes"
   fi
 }
 
