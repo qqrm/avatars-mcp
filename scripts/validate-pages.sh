@@ -23,6 +23,10 @@ check_file() {
   fi
 }
 
+check_file "init-container.sh"
+check_file "init-ephemeral-container.sh"
+check_file "pre-task.sh"
+check_file "repo-setup.sh"
 check_file "scripts/init-container.sh"
 check_file "scripts/init-ephemeral-container.sh"
 check_file "scripts/pre-task.sh"
