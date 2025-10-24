@@ -25,30 +25,32 @@ Three published entry points cover the common Codex container workflows. Each sn
 
 > **Fallback:** When the published GitHub Pages bundle is temporarily unavailable, the wrappers retry against `https://raw.githubusercontent.com/qqrm/codex-tools/main` automatically so container bootstrap continues to work.
 
+> **Compatibility:** Legacy URLs such as `/init-container.sh` continue to redirect to the new `/scripts/…` paths so existing automation keeps working without changes.
+
 #### Cached container — full initialization
 - Installs GitHub CLI, Rust, cargo-binstall, and helper tooling
 - Persists GitHub authentication for later reuse inside the cached image
 - Verifies repository access and installs the Codex cleanup workflow once
 
 ```bash
-curl -fsSL "https://qqrm.github.io/codex-tools/init-container.sh" | bash -s --
+curl -fsSL "https://qqrm.github.io/codex-tools/scripts/init-container.sh" | bash -s --
 ```
 
 #### Non-cached container — fresh provisioning
 - Performs the same tooling setup as the cached workflow on a brand new container
 - Stores GitHub authentication, validates repository access, and installs the cleanup workflow
-- Downloads the latest `AGENTS.md` from GitHub Pages and runs `repo-setup.sh` for a complete project bootstrap
+- Downloads the latest `AGENTS.md` from GitHub Pages and runs `scripts/repo-setup.sh` for a complete project bootstrap
 
 ```bash
-curl -fsSL "https://qqrm.github.io/codex-tools/init-ephemeral-container.sh" | bash -s --
+curl -fsSL "https://qqrm.github.io/codex-tools/scripts/init-ephemeral-container.sh" | bash -s --
 ```
 
 #### Cached container — lightweight refresh before a task
 - Updates the workspace copy of `AGENTS.md` from GitHub Pages
-- Invokes `repo-setup.sh` to pull in repository-specific updates without reinstalling global tooling
+- Invokes `scripts/repo-setup.sh` to pull in repository-specific updates without reinstalling global tooling
 
 ```bash
-curl -fsSL "https://qqrm.github.io/codex-tools/pre-task.sh" | bash -s --
+curl -fsSL "https://qqrm.github.io/codex-tools/scripts/pre-task.sh" | bash -s --
 ```
 
 ## Documentation
@@ -67,14 +69,14 @@ External clients rely on a small set of shared files published alongside the ava
 
 Repository tooling keeps these artifacts in sync for local use:
 
-- [`init-container.sh`](init-container.sh) — installs the required tooling and persists GitHub CLI authentication for the container.
-- [`pre-task.sh`](pre-task.sh) — refreshes the published assets and executes repository-specific setup helpers before each task.
+- [`scripts/init-container.sh`](scripts/init-container.sh) — installs the required tooling and persists GitHub CLI authentication for the container.
+- [`scripts/pre-task.sh`](scripts/pre-task.sh) — refreshes the published assets and executes repository-specific setup helpers before each task.
 
 ## Repository-Specific Setup Script
 
-Every repository in this ecosystem can ship its own local setup helper tailored to its automation requirements under the shared name `repo-setup.sh`. The [`init-container.sh`](init-container.sh) script runs once to provision GitHub CLI authentication and install the Rust tooling used across tasks. The [`pre-task.sh`](pre-task.sh) helper reruns before each assignment to refresh the published site assets and invoke `repo-setup.sh` when present. When working in other repositories, expect their `repo-setup.sh` contents to diverge—each project documents and automates only the dependencies it needs while keeping the filename consistent.
+Every repository in this ecosystem can ship its own local setup helper tailored to its automation requirements under the shared name `repo-setup.sh`. The [`scripts/init-container.sh`](scripts/init-container.sh) script runs once to provision GitHub CLI authentication and install the Rust tooling used across tasks. The [`scripts/pre-task.sh`](scripts/pre-task.sh) helper reruns before each assignment to refresh the published site assets and invoke [`scripts/repo-setup.sh`](scripts/repo-setup.sh) when present. When working in other repositories, expect their `repo-setup.sh` contents to diverge—each project documents and automates only the dependencies it needs while keeping the filename consistent.
 
-For this repository, `repo-setup.sh` also:
+For this repository, [`scripts/repo-setup.sh`](scripts/repo-setup.sh) also:
 
 - Configures the canonical `origin` remote when missing.
 - Prefetches Rust dependencies and runs `cargo fmt`, `cargo check`, `cargo clippy`, `cargo test`, and `cargo machete` (when installed).
