@@ -73,7 +73,7 @@ Repository tooling keeps these artifacts in sync for local use:
 
 ## Repository-Specific Setup Script
 
-Every repository in this ecosystem can ship its own local setup helper tailored to its automation requirements under the shared name `repo-setup.sh`. The [`scripts/split-initialization-cached-base.sh`](scripts/split-initialization-cached-base.sh) script runs once to provision GitHub CLI authentication and install the Rust tooling used across tasks. The [`scripts/full-initialization.sh`](scripts/full-initialization.sh) wrapper performs the same steps when the container lacks any cached state. The [`scripts/split-initialization-pretask.sh`](scripts/split-initialization-pretask.sh) helper reruns before each assignment to refresh the published site assets and invoke [`scripts/repo-setup.sh`](scripts/repo-setup.sh) when present. When working in other repositories, expect their `repo-setup.sh` contents to diverge—each project documents and automates only the dependencies it needs while keeping the filename consistent.
+Every repository in this ecosystem can ship its own local setup helper tailored to its automation requirements under the shared name `repo-setup.sh`. The [`scripts/split-initialization-cached-base.sh`](scripts/split-initialization-cached-base.sh) script runs once to provision GitHub CLI authentication and install the Rust tooling used across tasks. The [`scripts/full-initialization.sh`](scripts/full-initialization.sh) script performs the same steps when the container lacks any cached state. The [`scripts/split-initialization-pretask.sh`](scripts/split-initialization-pretask.sh) helper reruns before each assignment to refresh the published site assets and invoke [`scripts/repo-setup.sh`](scripts/repo-setup.sh) when present. When working in other repositories, expect their `repo-setup.sh` contents to diverge—each project documents and automates only the dependencies it needs while keeping the filename consistent.
 
 For this repository, [`scripts/repo-setup.sh`](scripts/repo-setup.sh) also:
 
@@ -85,10 +85,8 @@ For this repository, [`scripts/repo-setup.sh`](scripts/repo-setup.sh) also:
 
 Codex repositories rely on a consistent bootstrap bundle to provision development containers. This repository publishes the entire bundle to GitHub Pages so automation can curl a single entry point and receive every dependency from the same source.
 
-- **Entry points:** `scripts/split-initialization-cached-base.sh`, `scripts/full-initialization.sh`, and `scripts/split-initialization-pretask.sh` are the only public URLs automation should call. They download the helper scripts into a temporary directory and execute them locally.
-- **Helper scripts:** The entry points invoke `scripts/bootstrap-*.sh` and `scripts/repo-setup.sh` to perform the actual provisioning steps.
-- **Shared library:** `scripts/lib/container-bootstrap-common.sh` centralizes common functions and is always downloaded alongside the entry point.
-- **Mirroring strategy:** The wrappers default to `https://qqrm.github.io/codex-tools` for every download, keeping the GitHub repository out of the execution path unless you override the base URL explicitly.
+- **Entry points:** `scripts/split-initialization-cached-base.sh`, `scripts/full-initialization.sh`, and `scripts/split-initialization-pretask.sh` are the only public URLs automation should call. Each script executes its workflow directly without sourcing additional helpers.
+- **Mirroring strategy:** The scripts default to `https://qqrm.github.io/codex-tools` for every remote fetch, keeping the GitHub repository out of the execution path unless you override the base URL explicitly.
 
 The published bundle initializes Codex-compatible containers by installing shared tooling, syncing repository assets, and verifying workflow prerequisites. Downstream repositories copy this pattern to keep container setup reproducible.
 

@@ -1,48 +1,51 @@
 #!/usr/bin/env bash
-# Wrapper for refreshing cached containers before each task. Always
-# downloads the bootstrap helpers from the configured GitHub Pages mirror
-# and executes them from a temporary directory.
+# Refresh lightweight state on a cached container before starting a task.
+#
+# The helper downloads updated instructions and runs repository-specific setup
+# without sourcing external libraries.
 
 set -Eeuo pipefail
+trap 'rc=$?; echo -e "\n!! split-initialization-pretask failed at line $LINENO while running: $BASH_COMMAND (exit $rc)" >&2; exit $rc' ERR
 
-DEFAULT_REMOTE_BASE_URL="https://qqrm.github.io/codex-tools"
-REMOTE_BASE_URL="${CODEX_TOOLS_BOOTSTRAP_BASE_URL:-$DEFAULT_REMOTE_BASE_URL}"
-DOWNLOAD_BASE="${REMOTE_BASE_URL%/}"
+bootstrap_log() {
+  printf '>> %s\n' "$*"
+}
 
-script_name="bootstrap-split-initialization-pretask.sh"
-tmp_dir=""
+bootstrap_refresh_pages_asset() {
+  local url="$1"
+  local dest="$2"
+  local tmp
 
-cleanup_tmp() {
-  if [[ -n "$tmp_dir" && -d "$tmp_dir" ]]; then
-    rm -rf "$tmp_dir"
+  tmp="${dest}.tmp"
+  if curl -fsSL "$url" -o "$tmp"; then
+    mv "$tmp" "$dest"
+    bootstrap_log "Updated $(basename "$dest") from $url"
+  else
+    rm -f "$tmp"
+    bootstrap_log "Unable to refresh $(basename "$dest") from $url"
   fi
 }
 
-download_from_pages() {
-  local relative_path="$1"
-  local destination="$2"
-  local tmp_file
-  tmp_file="$(mktemp)"
+bootstrap_run_repo_setup() {
+  local script_path="scripts/repo-setup.sh"
 
-  local url="${DOWNLOAD_BASE}/${relative_path}"
-  if curl -fsSL "$url" -o "$tmp_file"; then
-    mv "$tmp_file" "$destination"
-    return 0
+  if [[ -f "$script_path" ]]; then
+    bootstrap_log "Executing ${script_path}"
+    bash "$script_path"
+  else
+    bootstrap_log "Skipping repository setup (scripts/repo-setup.sh not found)"
   fi
-
-  rm -f "$tmp_file"
-  echo "Error: failed to download ${relative_path} from ${DOWNLOAD_BASE}." >&2
-  return 1
 }
 
-trap cleanup_tmp EXIT
-tmp_dir="$(mktemp -d)"
+if ! git rev-parse --git-dir >/dev/null 2>&1; then
+  printf 'split-initialization-pretask: must run inside a Git repository.\n' >&2
+  exit 1
+fi
 
-download_from_pages "scripts/${script_name}" "$tmp_dir/${script_name}"
-download_from_pages "scripts/lib/container-bootstrap-common.sh" \
-  "$tmp_dir/container-bootstrap-common.sh"
+PAGES_BASE_URL="${PAGES_BASE_URL:-https://qqrm.github.io/codex-tools}"
+AGENTS_URL="${PAGES_BASE_URL%/}/AGENTS.md"
 
-chmod +x "$tmp_dir/${script_name}"
-
-CODEX_TOOLS_BOOTSTRAP_LIB="$tmp_dir/container-bootstrap-common.sh" \
-  bash "$tmp_dir/${script_name}" "$@"
+bootstrap_log "Refreshing pretask state for cached containers"
+bootstrap_refresh_pages_asset "$AGENTS_URL" "AGENTS.md"
+bootstrap_run_repo_setup
+bootstrap_log "Pretask refresh complete."
