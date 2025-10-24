@@ -120,3 +120,14 @@ GitHub Pages exposes the repository at `https://qqrm.github.io/codex-tools/`. Cl
 ## 7. Relationship to README
 
 `README.md` provides a high-level overview and onboarding notes. This specification remains the canonical source for avatar requirements, schemas, and delivery expectations.
+
+## 8. Bootstrap Bundle Expectations
+
+Repositories that rely on Codex automation publish their container bootstrap scripts through GitHub Pages. The bundle must adhere to the following rules so entry points behave consistently across environments:
+
+- **Published location:** Serve every script—including entry points, helpers, and shared libraries—under the `/scripts/` prefix. Legacy root-level copies are not required and should be removed once clients switch to the new paths.
+- **Entry points:** Ship the three wrappers (`init-container.sh`, `init-ephemeral-container.sh`, and `pre-task.sh`) as the only public interfaces. They download helper scripts such as `bootstrap-*.sh` and `repo-setup.sh` into a temporary directory before execution.
+- **Shared helpers:** Include `scripts/lib/container-bootstrap-common.sh` in the published bundle so wrappers can source shared functions without additional requests.
+- **Mirrors:** When providing fallbacks (for example, `raw.githubusercontent.com`), mirror the same `/scripts/` structure at every origin to guarantee deterministic downloads.
+
+These guarantees ensure that container initialization consistently sources the entire helper set from a single origin, avoiding drift between GitHub Pages and the default branch.
