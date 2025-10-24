@@ -70,12 +70,7 @@ for script in split-initialization-cached-base.sh full-initialization.sh split-i
 done
 
 # Bootstrap helpers
-mkdir -p "${OUTPUT_DIR}/scripts/lib"
-copy_executable "${REPO_ROOT}/scripts/bootstrap-split-initialization-cached-base.sh" "${OUTPUT_DIR}/scripts/bootstrap-split-initialization-cached-base.sh"
-copy_executable "${REPO_ROOT}/scripts/bootstrap-full-initialization.sh" "${OUTPUT_DIR}/scripts/bootstrap-full-initialization.sh"
-copy_executable "${REPO_ROOT}/scripts/bootstrap-split-initialization-pretask.sh" "${OUTPUT_DIR}/scripts/bootstrap-split-initialization-pretask.sh"
 copy_executable "${REPO_ROOT}/scripts/agent-sync.sh" "${OUTPUT_DIR}/scripts/agent-sync.sh"
-copy_file "${REPO_ROOT}/scripts/lib/container-bootstrap-common.sh" "${OUTPUT_DIR}/scripts/lib/container-bootstrap-common.sh"
 
 # Workflows
 mkdir -p "${OUTPUT_DIR}/workflows"
