@@ -55,8 +55,9 @@ done
 copy_file "${REPO_ROOT}/static.json" "${OUTPUT_DIR}/static.json"
 
 # Bootstrap entry points
+mkdir -p "${OUTPUT_DIR}/scripts"
 for script in init-container.sh init-ephemeral-container.sh pre-task.sh repo-setup.sh; do
-  copy_executable "${REPO_ROOT}/${script}" "${OUTPUT_DIR}/${script}"
+  copy_executable "${REPO_ROOT}/scripts/${script}" "${OUTPUT_DIR}/scripts/${script}"
 done
 
 # Bootstrap helpers

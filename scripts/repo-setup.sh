@@ -2,7 +2,8 @@
 set -Eeuo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-cd "$SCRIPT_DIR"
+REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+cd "$REPO_ROOT"
 
 log() {
   printf '>> %s\n' "$*"
@@ -109,7 +110,7 @@ run_pages_checks() {
 }
 
 log "Running repository setup for codex-tools"
-log "Repository root: $SCRIPT_DIR"
+log "Repository root: $REPO_ROOT"
 
 ensure_git_repo
 ensure_origin_remote
