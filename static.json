@@ -190,31 +190,6 @@
       "source": "/repo-setup.sh",
       "destination": "/scripts/repo-setup.sh",
       "type": 302
-    },
-    {
-      "source": "/scripts/bootstrap-split-initialization-cached-base.sh",
-      "destination": "/scripts/bootstrap-split-initialization-cached-base.sh",
-      "type": 302
-    },
-    {
-      "source": "/scripts/bootstrap-full-initialization.sh",
-      "destination": "/scripts/bootstrap-full-initialization.sh",
-      "type": 302
-    },
-    {
-      "source": "/scripts/bootstrap-split-initialization-pretask.sh",
-      "destination": "/scripts/bootstrap-split-initialization-pretask.sh",
-      "type": 302
-    },
-    {
-      "source": "/scripts/agent-sync.sh",
-      "destination": "/scripts/agent-sync.sh",
-      "type": 302
-    },
-    {
-      "source": "/scripts/lib/container-bootstrap-common.sh",
-      "destination": "/scripts/lib/container-bootstrap-common.sh",
-      "type": 302
     }
   ]
 }
