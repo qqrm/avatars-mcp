@@ -27,6 +27,15 @@ Three published entry points cover the common Codex container workflows. Each sn
 
 > **Bundle layout:** The published artifact serves every bootstrap script under `/scripts/`. Each wrapper downloads its helper scripts from the same base URL so the entire bundle comes from one source.
 
+#### Non-cached container — full initialization
+- Downloads the latest `AGENTS.md` from GitHub Pages and runs `scripts/repo-setup.sh` for a complete project bootstrap
+- Performs the same tooling setup as the cached workflow on a brand new container
+- Stores GitHub authentication, validates repository access, and installs the cleanup workflow
+
+```bash
+curl -fsSL "https://qqrm.github.io/codex-tools/scripts/init-ephemeral-container.sh" | bash -s --
+```
+
 #### Cached container — full initialization
 - Installs GitHub CLI, Rust, cargo-binstall, and helper tooling
 - Persists GitHub authentication for later reuse inside the cached image
@@ -34,15 +43,6 @@ Three published entry points cover the common Codex container workflows. Each sn
 
 ```bash
 curl -fsSL "https://qqrm.github.io/codex-tools/scripts/init-container.sh" | bash -s --
-```
-
-#### Non-cached container — fresh provisioning
-- Performs the same tooling setup as the cached workflow on a brand new container
-- Stores GitHub authentication, validates repository access, and installs the cleanup workflow
-- Downloads the latest `AGENTS.md` from GitHub Pages and runs `scripts/repo-setup.sh` for a complete project bootstrap
-
-```bash
-curl -fsSL "https://qqrm.github.io/codex-tools/scripts/init-ephemeral-container.sh" | bash -s --
 ```
 
 #### Cached container — lightweight refresh before a task
