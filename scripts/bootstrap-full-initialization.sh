@@ -11,7 +11,7 @@
 # 7. Refresh AGENTS.md from GitHub Pages and run the repository-specific setup script.
 
 set -Eeuo pipefail
-trap 'rc=$?; echo -e "\n!! bootstrap-ephemeral-container failed at line $LINENO while running: $BASH_COMMAND (exit $rc)" >&2; exit $rc' ERR
+trap 'rc=$?; echo -e "\n!! bootstrap-full-initialization failed at line $LINENO while running: $BASH_COMMAND (exit $rc)" >&2; exit $rc' ERR
 
 SCRIPT_PATH="${BASH_SOURCE[0]-}"
 if [[ -n "$SCRIPT_PATH" && "$SCRIPT_PATH" != "-" ]]; then
@@ -28,7 +28,7 @@ else
   source "scripts/lib/container-bootstrap-common.sh"
 fi
 
-bootstrap_log "Bootstrapping ephemeral container"
+bootstrap_log "Performing full container initialization"
 bootstrap_require_env GH_TOKEN
 : "${GH_HOST:=github.com}"
 CHECK_REPO="${CHECK_REPO:-}"
@@ -49,4 +49,4 @@ bootstrap_ensure_codex_cleanup_workflow
 bootstrap_refresh_pages_asset "$AGENTS_URL" "AGENTS.md"
 bootstrap_run_repo_setup
 
-bootstrap_log "Ephemeral container bootstrap complete."
+bootstrap_log "Full initialization complete."

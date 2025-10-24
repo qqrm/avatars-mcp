@@ -23,13 +23,16 @@ check_file() {
   fi
 }
 
-check_file "scripts/init-container.sh"
-check_file "scripts/init-ephemeral-container.sh"
-check_file "scripts/pre-task.sh"
+check_file "scripts/split-initialization-cached-base.sh"
+check_file "scripts/full-initialization.sh"
+check_file "scripts/split-initialization-pretask.sh"
 check_file "scripts/repo-setup.sh"
-check_file "scripts/bootstrap-cached-container.sh"
-check_file "scripts/bootstrap-ephemeral-container.sh"
-check_file "scripts/refresh-cached-container.sh"
+check_file "full-initialization.sh"
+check_file "split-initialization-cached-base.sh"
+check_file "split-initialization-pretask.sh"
+check_file "scripts/bootstrap-split-initialization-cached-base.sh"
+check_file "scripts/bootstrap-full-initialization.sh"
+check_file "scripts/bootstrap-split-initialization-pretask.sh"
 check_file "scripts/agent-sync.sh"
 check_file "scripts/lib/container-bootstrap-common.sh"
 check_file "workflows/codex-cleanup.yml"

@@ -1,7 +1,7 @@
 {
   "headers": [
     {
-      "source": "/init-container.sh",
+      "source": "/split-initialization-cached-base.sh",
       "headers": [
         {
           "key": "Cache-Control",
@@ -14,7 +14,7 @@
       ]
     },
     {
-      "source": "/scripts/init-container.sh",
+      "source": "/scripts/split-initialization-cached-base.sh",
       "headers": [
         {
           "key": "Cache-Control",
@@ -27,7 +27,7 @@
       ]
     },
     {
-      "source": "/init-ephemeral-container.sh",
+      "source": "/full-initialization.sh",
       "headers": [
         {
           "key": "Cache-Control",
@@ -40,7 +40,7 @@
       ]
     },
     {
-      "source": "/scripts/init-ephemeral-container.sh",
+      "source": "/scripts/full-initialization.sh",
       "headers": [
         {
           "key": "Cache-Control",
@@ -53,7 +53,7 @@
       ]
     },
     {
-      "source": "/pre-task.sh",
+      "source": "/split-initialization-pretask.sh",
       "headers": [
         {
           "key": "Cache-Control",
@@ -66,7 +66,7 @@
       ]
     },
     {
-      "source": "/scripts/pre-task.sh",
+      "source": "/scripts/split-initialization-pretask.sh",
       "headers": [
         {
           "key": "Cache-Control",
@@ -105,7 +105,7 @@
       ]
     },
     {
-      "source": "/scripts/bootstrap-cached-container.sh",
+      "source": "/scripts/bootstrap-split-initialization-cached-base.sh",
       "headers": [
         {
           "key": "Cache-Control",
@@ -118,7 +118,7 @@
       ]
     },
     {
-      "source": "/scripts/bootstrap-ephemeral-container.sh",
+      "source": "/scripts/bootstrap-full-initialization.sh",
       "headers": [
         {
           "key": "Cache-Control",
@@ -131,7 +131,7 @@
       ]
     },
     {
-      "source": "/scripts/refresh-cached-container.sh",
+      "source": "/scripts/bootstrap-split-initialization-pretask.sh",
       "headers": [
         {
           "key": "Cache-Control",
@@ -172,68 +172,48 @@
   ],
   "redirects": [
     {
-      "source": "/init-container.sh",
-      "destination": "https://raw.githubusercontent.com/qqrm/codex-tools/main/scripts/init-container.sh",
+      "source": "/split-initialization-cached-base.sh",
+      "destination": "/scripts/split-initialization-cached-base.sh",
       "type": 302
     },
     {
-      "source": "/scripts/init-container.sh",
-      "destination": "https://raw.githubusercontent.com/qqrm/codex-tools/main/scripts/init-container.sh",
+      "source": "/full-initialization.sh",
+      "destination": "/scripts/full-initialization.sh",
       "type": 302
     },
     {
-      "source": "/init-ephemeral-container.sh",
-      "destination": "https://raw.githubusercontent.com/qqrm/codex-tools/main/scripts/init-ephemeral-container.sh",
-      "type": 302
-    },
-    {
-      "source": "/scripts/init-ephemeral-container.sh",
-      "destination": "https://raw.githubusercontent.com/qqrm/codex-tools/main/scripts/init-ephemeral-container.sh",
-      "type": 302
-    },
-    {
-      "source": "/pre-task.sh",
-      "destination": "https://raw.githubusercontent.com/qqrm/codex-tools/main/scripts/pre-task.sh",
-      "type": 302
-    },
-    {
-      "source": "/scripts/pre-task.sh",
-      "destination": "https://raw.githubusercontent.com/qqrm/codex-tools/main/scripts/pre-task.sh",
+      "source": "/split-initialization-pretask.sh",
+      "destination": "/scripts/split-initialization-pretask.sh",
       "type": 302
     },
     {
       "source": "/repo-setup.sh",
-      "destination": "https://raw.githubusercontent.com/qqrm/codex-tools/main/scripts/repo-setup.sh",
+      "destination": "/scripts/repo-setup.sh",
       "type": 302
     },
     {
-      "source": "/scripts/repo-setup.sh",
-      "destination": "https://raw.githubusercontent.com/qqrm/codex-tools/main/scripts/repo-setup.sh",
+      "source": "/scripts/bootstrap-split-initialization-cached-base.sh",
+      "destination": "/scripts/bootstrap-split-initialization-cached-base.sh",
       "type": 302
     },
     {
-      "source": "/scripts/bootstrap-cached-container.sh",
-      "destination": "https://raw.githubusercontent.com/qqrm/codex-tools/main/scripts/bootstrap-cached-container.sh",
+      "source": "/scripts/bootstrap-full-initialization.sh",
+      "destination": "/scripts/bootstrap-full-initialization.sh",
       "type": 302
     },
     {
-      "source": "/scripts/bootstrap-ephemeral-container.sh",
-      "destination": "https://raw.githubusercontent.com/qqrm/codex-tools/main/scripts/bootstrap-ephemeral-container.sh",
-      "type": 302
-    },
-    {
-      "source": "/scripts/refresh-cached-container.sh",
-      "destination": "https://raw.githubusercontent.com/qqrm/codex-tools/main/scripts/refresh-cached-container.sh",
+      "source": "/scripts/bootstrap-split-initialization-pretask.sh",
+      "destination": "/scripts/bootstrap-split-initialization-pretask.sh",
       "type": 302
     },
     {
       "source": "/scripts/agent-sync.sh",
-      "destination": "https://raw.githubusercontent.com/qqrm/codex-tools/main/scripts/agent-sync.sh",
+      "destination": "/scripts/agent-sync.sh",
       "type": 302
     },
     {
       "source": "/scripts/lib/container-bootstrap-common.sh",
-      "destination": "https://raw.githubusercontent.com/qqrm/codex-tools/main/scripts/lib/container-bootstrap-common.sh",
+      "destination": "/scripts/lib/container-bootstrap-common.sh",
       "type": 302
     }
   ]
