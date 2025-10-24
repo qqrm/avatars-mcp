@@ -51,44 +51,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Smoke test published endpoints
-        run: |
-          set -euo pipefail
-          owner="${{ github.event.workflow_run.repository.owner.login }}"
-          repo="${{ github.event.workflow_run.repository.name }}"
-          owner="$(printf '%s' "${owner}" | tr '[:upper:]' '[:lower:]')"
-          repo="$(printf '%s' "${repo}" | tr '[:upper:]' '[:lower:]')"
-          base_url="https://${owner}.github.io/${repo}"
-          paths=(
-            "index.json"
-            "avatars.json"
-            "AGENTS.md"
-            "INSTRUCTIONS.md"
-            "README.md"
-            "SPECIFICATION.md"
-            "static.json"
-            "workflows/codex-cleanup.yml"
-            "init-container.sh"
-            "init-ephemeral-container.sh"
-            "pre-task.sh"
-            "repo-setup.sh"
-            "scripts/bootstrap-cached-container.sh"
-            "scripts/bootstrap-ephemeral-container.sh"
-            "scripts/refresh-cached-container.sh"
-            "scripts/agent-sync.sh"
-            "scripts/lib/container-bootstrap-common.sh"
-          )
-          sleep 10
-          for path in "${paths[@]}"; do
-            echo "Validating ${base_url}/${path}"
-            for attempt in $(seq 1 5); do
-              if curl --fail --silent --show-error --location "${base_url}/${path}" > /dev/null; then
-                echo "  OK on attempt ${attempt}"
-                break
-              fi
-              if [[ $attempt -eq 5 ]]; then
-                echo "  Failed after ${attempt} attempts" >&2
-                exit 1
-              fi
-              sleep 5
-            done
-          done
+        run: >
+          bash -euo pipefail -c 'repo_ref="${GITHUB_REPOSITORY}"; owner="${repo_ref%%/*}"; repo="${repo_ref#*/}"; owner="${owner,,}"; repo="${repo,,}"; base_url="https://${owner}.github.io/${repo}"; sleep 10; for path in index.json avatars.json AGENTS.md docs/INSTRUCTIONS.md README.md docs/SPECIFICATION.md static.json workflows/codex-cleanup.yml init-container.sh init-ephemeral-container.sh pre-task.sh repo-setup.sh scripts/bootstrap-cached-container.sh scripts/bootstrap-ephemeral-container.sh scripts/refresh-cached-container.sh scripts/agent-sync.sh scripts/lib/container-bootstrap-common.sh; do echo "Validating ${base_url}/${path}"; for attempt in 1 2 3 4 5; do if curl --fail --silent --show-error --location "${base_url}/${path}" > /dev/null; then echo "  OK on attempt ${attempt}"; break; fi; if [ "${attempt}" -eq 5 ]; then echo "  Failed after ${attempt} attempts" >&2; exit 1; fi; sleep 5; done; done'

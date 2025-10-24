@@ -55,17 +55,17 @@ curl -fsSL "https://qqrm.github.io/codex-tools/scripts/pre-task.sh" | bash -s --
 
 ## Documentation
 
-- **Specification:** See [`SPECIFICATION.md`](SPECIFICATION.md) for the canonical directory layout, avatar schema, and delivery expectations.
+- **Specification:** See [`SPECIFICATION.md`](docs/SPECIFICATION.md) for the canonical directory layout, avatar schema, and delivery expectations.
 - **Avatars:** Individual prompts live in [`/avatars/`](avatars/); each file targets a single role.
 - **Base instructions:** Shared guidance for all avatars resides in [`AGENTS.md`](AGENTS.md).
-- **HTTP quick reference:** [`INSTRUCTIONS.md`](INSTRUCTIONS.md) summarizes the published endpoints external clients call.
+- **HTTP quick reference:** [`INSTRUCTIONS.md`](docs/INSTRUCTIONS.md) summarizes the published endpoints external clients call.
 
 ## Shared Files for External Consumers
 
 External clients rely on a small set of shared files published alongside the avatars:
 
 - [`AGENTS.md`](AGENTS.md) — the baseline instructions served to external agents, embedded in and linked from the published `avatars.json` catalog.
-- [`INSTRUCTIONS.md`](INSTRUCTIONS.md) — a condensed description of the HTTP API exposed via GitHub Pages.
+- [`INSTRUCTIONS.md`](docs/INSTRUCTIONS.md) — a condensed description of the HTTP API exposed via GitHub Pages.
 
 Repository tooling keeps these artifacts in sync for local use:
 

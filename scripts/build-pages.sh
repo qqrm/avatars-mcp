@@ -47,9 +47,12 @@ mkdir -p "${OUTPUT_DIR}/avatars"
 cp -a "${REPO_ROOT}/avatars/." "${OUTPUT_DIR}/avatars/"
 
 # Shared markdown artifacts
-for file in AGENTS.md INSTRUCTIONS.md README.md SPECIFICATION.md; do
-  copy_file "${REPO_ROOT}/${file}" "${OUTPUT_DIR}/${file}"
-done
+copy_file "${REPO_ROOT}/AGENTS.md" "${OUTPUT_DIR}/AGENTS.md"
+copy_file "${REPO_ROOT}/README.md" "${OUTPUT_DIR}/README.md"
+
+mkdir -p "${OUTPUT_DIR}/docs"
+copy_file "${REPO_ROOT}/docs/INSTRUCTIONS.md" "${OUTPUT_DIR}/docs/INSTRUCTIONS.md"
+copy_file "${REPO_ROOT}/docs/SPECIFICATION.md" "${OUTPUT_DIR}/docs/SPECIFICATION.md"
 
 # Pages configuration
 copy_file "${REPO_ROOT}/static.json" "${OUTPUT_DIR}/static.json"
@@ -86,7 +89,7 @@ copy_file "${OUTPUT_DIR}/avatars/catalog.json" "${OUTPUT_DIR}/avatars.json"
     echo "- [${avatar_name%.*}](avatars/${avatar_name})"
   done
   echo
-  cat "${REPO_ROOT}/INSTRUCTIONS.md"
+  cat "${REPO_ROOT}/docs/INSTRUCTIONS.md"
 } > "${OUTPUT_DIR}/index.md"
 
 # Disable Jekyll processing
