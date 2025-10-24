@@ -25,7 +25,7 @@ Three published entry points cover the common Codex container workflows. Each sn
 
 > **Fallback:** When the published GitHub Pages bundle is temporarily unavailable, the wrappers retry against `https://raw.githubusercontent.com/qqrm/codex-tools/main` automatically so container bootstrap continues to work.
 
-> **Compatibility:** Legacy URLs such as `/init-container.sh` continue to redirect to the new `/scripts/…` paths so existing automation keeps working without changes.
+> **Bundle layout:** The published artifact serves every bootstrap script under `/scripts/`. Each wrapper downloads its helper scripts from the same base URL so the entire bundle comes from one source.
 
 #### Cached container — full initialization
 - Installs GitHub CLI, Rust, cargo-binstall, and helper tooling
@@ -81,6 +81,17 @@ For this repository, [`scripts/repo-setup.sh`](scripts/repo-setup.sh) also:
 - Configures the canonical `origin` remote when missing.
 - Prefetches Rust dependencies and runs `cargo fmt`, `cargo check`, `cargo clippy`, `cargo test`, and `cargo machete` (when installed).
 - Builds and validates the GitHub Pages artifact to mirror CI packaging.
+
+## Bootstrap Script Architecture
+
+Codex repositories rely on a consistent bootstrap bundle to provision development containers. This repository publishes the entire bundle to GitHub Pages so automation can curl a single entry point and receive every dependency from the same source.
+
+- **Entry points:** `scripts/init-container.sh`, `scripts/init-ephemeral-container.sh`, and `scripts/pre-task.sh` are the only public URLs automation should call. They download the helper scripts into a temporary directory and execute them locally.
+- **Helper scripts:** The entry points invoke `scripts/bootstrap-*.sh`, `scripts/refresh-cached-container.sh`, and `scripts/repo-setup.sh` to perform the actual provisioning steps.
+- **Shared library:** `scripts/lib/container-bootstrap-common.sh` centralizes common functions and is always downloaded alongside the entry point.
+- **Mirroring strategy:** The wrappers default to `https://qqrm.github.io/codex-tools` and fall back to `https://raw.githubusercontent.com/qqrm/codex-tools/main` if the Pages deployment is unavailable. Both sources expose the same `/scripts/` layout so every helper resolves consistently.
+
+The published bundle initializes Codex-compatible containers by installing shared tooling, syncing repository assets, and verifying workflow prerequisites. Downstream repositories copy this pattern to keep container setup reproducible.
 
 ## Tooling
 
