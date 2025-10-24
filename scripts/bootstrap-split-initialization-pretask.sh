@@ -9,7 +9,7 @@
 # 5. Emit status messages once the refresh finishes.
 
 set -Eeuo pipefail
-trap 'rc=$?; echo -e "\n!! refresh-cached-container failed at line $LINENO while running: $BASH_COMMAND (exit $rc)" >&2; exit $rc' ERR
+trap 'rc=$?; echo -e "\n!! bootstrap-split-initialization-pretask failed at line $LINENO while running: $BASH_COMMAND (exit $rc)" >&2; exit $rc' ERR
 
 SCRIPT_PATH="${BASH_SOURCE[0]-}"
 if [[ -n "$SCRIPT_PATH" && "$SCRIPT_PATH" != "-" ]]; then
@@ -27,14 +27,14 @@ else
 fi
 
 if ! git rev-parse --git-dir >/dev/null 2>&1; then
-  printf 'refresh-cached-container: must run inside a Git repository.\n' >&2
+  printf 'bootstrap-split-initialization-pretask: must run inside a Git repository.\n' >&2
   exit 1
 fi
 
 PAGES_BASE_URL="${PAGES_BASE_URL:-https://qqrm.github.io/codex-tools}"
 AGENTS_URL="${PAGES_BASE_URL%/}/AGENTS.md"
 
-bootstrap_log "Refreshing cached container state"
+bootstrap_log "Refreshing pretask state for cached containers"
 bootstrap_refresh_pages_asset "$AGENTS_URL" "AGENTS.md"
 bootstrap_run_repo_setup
-bootstrap_log "Refresh complete."
+bootstrap_log "Pretask refresh complete."

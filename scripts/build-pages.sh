@@ -59,15 +59,21 @@ copy_file "${REPO_ROOT}/static.json" "${OUTPUT_DIR}/static.json"
 
 # Bootstrap entry points
 mkdir -p "${OUTPUT_DIR}/scripts"
-for script in init-container.sh init-ephemeral-container.sh pre-task.sh repo-setup.sh; do
+# Copy wrappers into scripts directory
+for script in split-initialization-cached-base.sh full-initialization.sh split-initialization-pretask.sh repo-setup.sh; do
   copy_executable "${REPO_ROOT}/scripts/${script}" "${OUTPUT_DIR}/scripts/${script}"
+done
+
+# Provide top-level copies for convenience URLs
+for script in split-initialization-cached-base.sh full-initialization.sh split-initialization-pretask.sh repo-setup.sh; do
+  copy_executable "${REPO_ROOT}/scripts/${script}" "${OUTPUT_DIR}/${script}"
 done
 
 # Bootstrap helpers
 mkdir -p "${OUTPUT_DIR}/scripts/lib"
-copy_executable "${REPO_ROOT}/scripts/bootstrap-cached-container.sh" "${OUTPUT_DIR}/scripts/bootstrap-cached-container.sh"
-copy_executable "${REPO_ROOT}/scripts/bootstrap-ephemeral-container.sh" "${OUTPUT_DIR}/scripts/bootstrap-ephemeral-container.sh"
-copy_executable "${REPO_ROOT}/scripts/refresh-cached-container.sh" "${OUTPUT_DIR}/scripts/refresh-cached-container.sh"
+copy_executable "${REPO_ROOT}/scripts/bootstrap-split-initialization-cached-base.sh" "${OUTPUT_DIR}/scripts/bootstrap-split-initialization-cached-base.sh"
+copy_executable "${REPO_ROOT}/scripts/bootstrap-full-initialization.sh" "${OUTPUT_DIR}/scripts/bootstrap-full-initialization.sh"
+copy_executable "${REPO_ROOT}/scripts/bootstrap-split-initialization-pretask.sh" "${OUTPUT_DIR}/scripts/bootstrap-split-initialization-pretask.sh"
 copy_executable "${REPO_ROOT}/scripts/agent-sync.sh" "${OUTPUT_DIR}/scripts/agent-sync.sh"
 copy_file "${REPO_ROOT}/scripts/lib/container-bootstrap-common.sh" "${OUTPUT_DIR}/scripts/lib/container-bootstrap-common.sh"
 

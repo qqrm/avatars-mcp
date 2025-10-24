@@ -11,7 +11,7 @@
 # 7. Print example commands that rely on the cached auth and remind about the refresh script.
 
 set -Eeuo pipefail
-trap 'rc=$?; echo -e "\n!! bootstrap-cached-container failed at line $LINENO while running: $BASH_COMMAND (exit $rc)" >&2; exit $rc' ERR
+trap 'rc=$?; echo -e "\n!! bootstrap-split-initialization-cached-base failed at line $LINENO while running: $BASH_COMMAND (exit $rc)" >&2; exit $rc' ERR
 
 SCRIPT_PATH="${BASH_SOURCE[0]-}"
 if [[ -n "$SCRIPT_PATH" && "$SCRIPT_PATH" != "-" ]]; then
@@ -28,7 +28,7 @@ else
   source "scripts/lib/container-bootstrap-common.sh"
 fi
 
-bootstrap_log "Bootstrapping cached container"
+bootstrap_log "Bootstrapping cached base initialization"
 bootstrap_require_env GH_TOKEN
 : "${GH_HOST:=github.com}"
 CHECK_REPO="${CHECK_REPO:-}"
@@ -48,4 +48,4 @@ bootstrap_log "Auth persisted. Example checks without GH_TOKEN:"
 bootstrap_log "  env -u GH_TOKEN gh repo view cli/cli --json name,description | jq"
 bootstrap_log "  env -u GH_TOKEN gh run list -R ${CHECK_REPO:-owner/repo} -L 5 || true"
 
-bootstrap_log "Cached container bootstrap complete. Run scripts/refresh-cached-container.sh before each task."
+bootstrap_log "Cached base initialization complete. Run scripts/split-initialization-pretask.sh before each task."
