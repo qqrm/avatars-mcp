@@ -1,33 +1,7 @@
 {
   "headers": [
     {
-      "source": "/split-initialization-cached-base.sh",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "no-cache"
-        },
-        {
-          "key": "Content-Type",
-          "value": "text/plain; charset=utf-8"
-        }
-      ]
-    },
-    {
       "source": "/scripts/split-initialization-cached-base.sh",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "no-cache"
-        },
-        {
-          "key": "Content-Type",
-          "value": "text/plain; charset=utf-8"
-        }
-      ]
-    },
-    {
-      "source": "/full-initialization.sh",
       "headers": [
         {
           "key": "Cache-Control",
@@ -53,59 +27,7 @@
       ]
     },
     {
-      "source": "/split-initialization-pretask.sh",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "no-cache"
-        },
-        {
-          "key": "Content-Type",
-          "value": "text/plain; charset=utf-8"
-        }
-      ]
-    },
-    {
       "source": "/scripts/split-initialization-pretask.sh",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "no-cache"
-        },
-        {
-          "key": "Content-Type",
-          "value": "text/plain; charset=utf-8"
-        }
-      ]
-    },
-    {
-      "source": "/repo-setup.sh",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "no-cache"
-        },
-        {
-          "key": "Content-Type",
-          "value": "text/plain; charset=utf-8"
-        }
-      ]
-    },
-    {
-      "source": "/scripts/repo-setup.sh",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "no-cache"
-        },
-        {
-          "key": "Content-Type",
-          "value": "text/plain; charset=utf-8"
-        }
-      ]
-    },
-    {
-      "source": "/scripts/agent-sync.sh",
       "headers": [
         {
           "key": "Cache-Control",
@@ -118,26 +40,5 @@
       ]
     }
   ],
-  "redirects": [
-    {
-      "source": "/split-initialization-cached-base.sh",
-      "destination": "/scripts/split-initialization-cached-base.sh",
-      "type": 302
-    },
-    {
-      "source": "/full-initialization.sh",
-      "destination": "/scripts/full-initialization.sh",
-      "type": 302
-    },
-    {
-      "source": "/split-initialization-pretask.sh",
-      "destination": "/scripts/split-initialization-pretask.sh",
-      "type": 302
-    },
-    {
-      "source": "/repo-setup.sh",
-      "destination": "/scripts/repo-setup.sh",
-      "type": 302
-    }
-  ]
+  "redirects": []
 }

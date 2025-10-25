@@ -19,11 +19,11 @@ git fetch origin
 
 ### Container bootstrap commands
 
-Three published entry points cover the common Codex container workflows. Each snippet downloads the wrapper from the GitHub Pages deployment and executes it directly:
+Three published entry points cover the common Codex container workflows. Each snippet downloads the script from the GitHub Pages deployment and executes it directly:
 
-> **Note:** The wrappers always download the bootstrap helper bundle from GitHub Pages before running. Override the download origin by exporting `CODEX_TOOLS_BOOTSTRAP_BASE_URL` when testing mirrors or forks.
+> **Note:** The scripts refresh shared instructions from GitHub Pages before running. Override the download origin by exporting `PAGES_BASE_URL` when testing mirrors or forks.
 
-> **Bundle layout:** The published artifact serves every bootstrap script under `/scripts/`. Each wrapper downloads its helper scripts from the same base URL so the entire bundle comes from one source without touching the GitHub repository directly.
+> **Bundle layout:** The published artifact exposes only the three entry-point scripts under `/scripts/`. Each helper is self-contained and interacts with repository-local tooling when available.
 
 #### Non-cached container — full initialization
 - Downloads the latest `AGENTS.md` from GitHub Pages and runs `scripts/repo-setup.sh` for a complete project bootstrap
@@ -70,6 +70,8 @@ Repository tooling keeps these artifacts in sync for local use:
 - [`scripts/split-initialization-cached-base.sh`](scripts/split-initialization-cached-base.sh) — installs the required tooling and persists GitHub CLI authentication for cached containers.
 - [`scripts/full-initialization.sh`](scripts/full-initialization.sh) — performs the full bootstrap on a fresh, non-cached container.
 - [`scripts/split-initialization-pretask.sh`](scripts/split-initialization-pretask.sh) — refreshes the published assets and executes repository-specific setup helpers before each task.
+
+Only these entry points are published on GitHub Pages; repository-specific helper scripts remain private to each repository.
 
 ## Repository-Specific Setup Script
 

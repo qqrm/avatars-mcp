@@ -59,18 +59,15 @@ copy_file "${REPO_ROOT}/static.json" "${OUTPUT_DIR}/static.json"
 
 # Bootstrap entry points
 mkdir -p "${OUTPUT_DIR}/scripts"
-# Copy wrappers into scripts directory
-for script in split-initialization-cached-base.sh full-initialization.sh split-initialization-pretask.sh repo-setup.sh; do
+entry_points=(
+  split-initialization-cached-base.sh
+  full-initialization.sh
+  split-initialization-pretask.sh
+)
+
+for script in "${entry_points[@]}"; do
   copy_executable "${REPO_ROOT}/scripts/${script}" "${OUTPUT_DIR}/scripts/${script}"
 done
-
-# Provide top-level copies for convenience URLs
-for script in split-initialization-cached-base.sh full-initialization.sh split-initialization-pretask.sh repo-setup.sh; do
-  copy_executable "${REPO_ROOT}/scripts/${script}" "${OUTPUT_DIR}/${script}"
-done
-
-# Bootstrap helpers
-copy_executable "${REPO_ROOT}/scripts/agent-sync.sh" "${OUTPUT_DIR}/scripts/agent-sync.sh"
 
 # Workflows
 mkdir -p "${OUTPUT_DIR}/workflows"
