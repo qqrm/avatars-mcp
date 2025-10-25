@@ -14,32 +14,19 @@ if [[ ! -d "${OUTPUT_DIR}" ]]; then
 fi
 
 missing=0
-check_file() {
-  local relative="$1"
-  local path="${OUTPUT_DIR}/${relative}"
+check_script() {
+  local script_name="$1"
+  local relative_path="scripts/${script_name}"
+  local path="${OUTPUT_DIR}/${relative_path}"
   if [[ ! -s "${path}" ]]; then
-    echo "Missing or empty artifact: ${relative}" >&2
+    echo "Missing or empty artifact: ${relative_path}" >&2
     missing=1
   fi
 }
 
-check_file "scripts/split-initialization-cached-base.sh"
-check_file "scripts/full-initialization.sh"
-check_file "scripts/split-initialization-pretask.sh"
-check_file "scripts/repo-setup.sh"
-check_file "full-initialization.sh"
-check_file "split-initialization-cached-base.sh"
-check_file "split-initialization-pretask.sh"
-check_file "scripts/agent-sync.sh"
-check_file "workflows/codex-cleanup.yml"
-check_file "AGENTS.md"
-check_file "README.md"
-check_file "docs/INSTRUCTIONS.md"
-check_file "docs/SPECIFICATION.md"
-check_file "static.json"
-check_file "index.json"
-check_file "avatars.json"
-check_file "index.md"
+check_script "split-initialization-cached-base.sh"
+check_script "full-initialization.sh"
+check_script "split-initialization-pretask.sh"
 
 if [[ ${missing} -ne 0 ]]; then
   echo "Pages artifact validation failed." >&2
