@@ -5,7 +5,7 @@
 # download a single entry point without sourcing auxiliary libraries.
 
 set -Eeuo pipefail
-trap 'rc=$?; echo -e "\n!! full-initialization failed at line $LINENO while running: $BASH_COMMAND (exit $rc)" >&2; exit $rc' ERR
+trap 'rc=$?; echo -e "\n!! bootstrap-ephemeral-container failed at line $LINENO while running: $BASH_COMMAND (exit $rc)" >&2; exit $rc' ERR
 
 bootstrap_log() {
   printf '>> %s\n' "$*"
@@ -292,4 +292,4 @@ bootstrap_ensure_codex_cleanup_workflow
 bootstrap_refresh_pages_asset "$AGENTS_URL" "AGENTS.md"
 bootstrap_run_repo_setup
 
-bootstrap_log "Full initialization complete."
+bootstrap_log "Ephemeral container bootstrap complete."

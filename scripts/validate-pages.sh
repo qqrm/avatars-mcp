@@ -14,9 +14,8 @@ if [[ ! -d "${OUTPUT_DIR}" ]]; then
 fi
 
 missing=0
-check_script() {
-  local script_name="$1"
-  local relative_path="scripts/${script_name}"
+check_path() {
+  local relative_path="$1"
   local path="${OUTPUT_DIR}/${relative_path}"
   if [[ ! -s "${path}" ]]; then
     echo "Missing or empty artifact: ${relative_path}" >&2
@@ -24,9 +23,34 @@ check_script() {
   fi
 }
 
-check_script "split-initialization-cached-base.sh"
-check_script "full-initialization.sh"
-check_script "split-initialization-pretask.sh"
+required_paths=(
+  scripts/bootstrap-cached-container.sh
+  scripts/bootstrap-ephemeral-container.sh
+  scripts/refresh-cached-container.sh
+)
+
+for relative_path in "${required_paths[@]}"; do
+  check_path "${relative_path}"
+done
+
+legacy_paths=(
+  scripts/split-initialization-cached-base.sh
+  scripts/full-initialization.sh
+  scripts/split-initialization-pretask.sh
+  scripts/init-container.sh
+  scripts/init-ephemeral-container.sh
+  scripts/pre-task.sh
+  scripts/lib/container-bootstrap-common.sh
+  scripts/agent-sync.sh
+  scripts/repo-setup.sh
+)
+
+for relative_path in "${legacy_paths[@]}"; do
+  if [[ -e "${OUTPUT_DIR}/${relative_path}" ]]; then
+    echo "Legacy artifact should not be published: ${relative_path}" >&2
+    missing=1
+  fi
+done
 
 if [[ ${missing} -ne 0 ]]; then
   echo "Pages artifact validation failed." >&2

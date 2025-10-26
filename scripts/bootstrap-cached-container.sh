@@ -5,7 +5,7 @@
 # auxiliary libraries.
 
 set -Eeuo pipefail
-trap 'rc=$?; echo -e "\n!! split-initialization-cached-base failed at line $LINENO while running: $BASH_COMMAND (exit $rc)" >&2; exit $rc' ERR
+trap 'rc=$?; echo -e "\n!! bootstrap-cached-container failed at line $LINENO while running: $BASH_COMMAND (exit $rc)" >&2; exit $rc' ERR
 
 bootstrap_log() {
   printf '>> %s\n' "$*"
@@ -245,10 +245,38 @@ bootstrap_ensure_codex_cleanup_workflow() {
   fi
 }
 
-bootstrap_log "Bootstrapping cached base initialization"
+bootstrap_refresh_pages_asset() {
+  local url="$1"
+  local dest="$2"
+  local tmp
+
+  tmp="${dest}.tmp"
+  if curl -fsSL "$url" -o "$tmp"; then
+    mv "$tmp" "$dest"
+    bootstrap_log "Updated $(basename "$dest") from $url"
+  else
+    rm -f "$tmp"
+    bootstrap_log "Unable to refresh $(basename "$dest") from $url"
+  fi
+}
+
+bootstrap_run_repo_setup() {
+  local script_path="scripts/repo-setup.sh"
+
+  if [[ -f "$script_path" ]]; then
+    bootstrap_log "Executing ${script_path}"
+    bash "$script_path"
+  else
+    bootstrap_log "Skipping repository setup (scripts/repo-setup.sh not found)"
+  fi
+}
+
+bootstrap_log "Performing cached container bootstrap"
 bootstrap_require_env GH_TOKEN
 : "${GH_HOST:=github.com}"
 CHECK_REPO="${CHECK_REPO:-}"
+PAGES_BASE_URL="${PAGES_BASE_URL:-https://qqrm.github.io/codex-tools}"
+AGENTS_URL="${PAGES_BASE_URL%/}/AGENTS.md"
 
 bootstrap_prepare_paths
 bootstrap_ensure_gh_cli
@@ -259,10 +287,9 @@ bootstrap_persist_gh_auth
 bootstrap_validate_saved_auth
 bootstrap_validate_repo_access "$CHECK_REPO"
 unset GH_TOKEN
+
 bootstrap_ensure_codex_cleanup_workflow
+bootstrap_refresh_pages_asset "$AGENTS_URL" "AGENTS.md"
+bootstrap_run_repo_setup
 
-bootstrap_log "Auth persisted. Example checks without GH_TOKEN:"
-bootstrap_log "  env -u GH_TOKEN gh repo view cli/cli --json name,description | jq"
-bootstrap_log "  env -u GH_TOKEN gh run list -R ${CHECK_REPO:-owner/repo} -L 5 || true"
-
-bootstrap_log "Cached base initialization complete. Run scripts/split-initialization-pretask.sh before each task."
+bootstrap_log "Cached container bootstrap complete."
