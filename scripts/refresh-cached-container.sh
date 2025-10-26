@@ -5,7 +5,7 @@
 # without sourcing external libraries.
 
 set -Eeuo pipefail
-trap 'rc=$?; echo -e "\n!! split-initialization-pretask failed at line $LINENO while running: $BASH_COMMAND (exit $rc)" >&2; exit $rc' ERR
+trap 'rc=$?; echo -e "\n!! refresh-cached-container failed at line $LINENO while running: $BASH_COMMAND (exit $rc)" >&2; exit $rc' ERR
 
 bootstrap_log() {
   printf '>> %s\n' "$*"
@@ -38,7 +38,7 @@ bootstrap_run_repo_setup() {
 }
 
 if ! git rev-parse --git-dir >/dev/null 2>&1; then
-  printf 'split-initialization-pretask: must run inside a Git repository.\n' >&2
+  printf 'refresh-cached-container: must run inside a Git repository.\n' >&2
   exit 1
 fi
 

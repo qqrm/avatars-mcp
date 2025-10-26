@@ -31,7 +31,7 @@ Three published entry points cover the common Codex container workflows. Each sn
 - Stores GitHub authentication, validates repository access, and installs the cleanup workflow
 
 ```bash
-curl -fsSL "https://qqrm.github.io/codex-tools/scripts/full-initialization.sh" | bash -s --
+curl -fsSL "https://qqrm.github.io/codex-tools/scripts/bootstrap-ephemeral-container.sh" | bash -s --
 ```
 
 #### Cached container — full initialization
@@ -40,7 +40,7 @@ curl -fsSL "https://qqrm.github.io/codex-tools/scripts/full-initialization.sh" |
 - Verifies repository access and installs the Codex cleanup workflow once
 
 ```bash
-curl -fsSL "https://qqrm.github.io/codex-tools/scripts/split-initialization-cached-base.sh" | bash -s --
+curl -fsSL "https://qqrm.github.io/codex-tools/scripts/bootstrap-cached-container.sh" | bash -s --
 ```
 
 #### Cached container — lightweight refresh before a task
@@ -48,7 +48,7 @@ curl -fsSL "https://qqrm.github.io/codex-tools/scripts/split-initialization-cach
 - Invokes `scripts/repo-setup.sh` to pull in repository-specific updates without reinstalling global tooling
 
 ```bash
-curl -fsSL "https://qqrm.github.io/codex-tools/scripts/split-initialization-pretask.sh" | bash -s --
+curl -fsSL "https://qqrm.github.io/codex-tools/scripts/refresh-cached-container.sh" | bash -s --
 ```
 
 ## Documentation
@@ -67,15 +67,15 @@ External clients rely on a small set of shared files published alongside the ava
 
 Repository tooling keeps these artifacts in sync for local use:
 
-- [`scripts/split-initialization-cached-base.sh`](scripts/split-initialization-cached-base.sh) — installs the required tooling and persists GitHub CLI authentication for cached containers.
-- [`scripts/full-initialization.sh`](scripts/full-initialization.sh) — performs the full bootstrap on a fresh, non-cached container.
-- [`scripts/split-initialization-pretask.sh`](scripts/split-initialization-pretask.sh) — refreshes the published assets and executes repository-specific setup helpers before each task.
+- [`scripts/bootstrap-cached-container.sh`](scripts/bootstrap-cached-container.sh) — installs the required tooling and persists GitHub CLI authentication for cached containers.
+- [`scripts/bootstrap-ephemeral-container.sh`](scripts/bootstrap-ephemeral-container.sh) — performs the full bootstrap on a fresh, non-cached container.
+- [`scripts/refresh-cached-container.sh`](scripts/refresh-cached-container.sh) — refreshes the published assets and executes repository-specific setup helpers before each task.
 
 Only these entry points are published on GitHub Pages; repository-specific helper scripts remain private to each repository.
 
 ## Repository-Specific Setup Script
 
-Every repository in this ecosystem can ship its own local setup helper tailored to its automation requirements under the shared name `repo-setup.sh`. The [`scripts/split-initialization-cached-base.sh`](scripts/split-initialization-cached-base.sh) script runs once to provision GitHub CLI authentication and install the Rust tooling used across tasks. The [`scripts/full-initialization.sh`](scripts/full-initialization.sh) script performs the same steps when the container lacks any cached state. The [`scripts/split-initialization-pretask.sh`](scripts/split-initialization-pretask.sh) helper reruns before each assignment to refresh the published site assets and invoke [`scripts/repo-setup.sh`](scripts/repo-setup.sh) when present. When working in other repositories, expect their `repo-setup.sh` contents to diverge—each project documents and automates only the dependencies it needs while keeping the filename consistent.
+Every repository in this ecosystem can ship its own local setup helper tailored to its automation requirements under the shared name `repo-setup.sh`. The [`scripts/bootstrap-cached-container.sh`](scripts/bootstrap-cached-container.sh) script runs once to provision GitHub CLI authentication and install the Rust tooling used across tasks. The [`scripts/bootstrap-ephemeral-container.sh`](scripts/bootstrap-ephemeral-container.sh) script performs the same steps when the container lacks any cached state. The [`scripts/refresh-cached-container.sh`](scripts/refresh-cached-container.sh) helper reruns before each assignment to refresh the published site assets and invoke [`scripts/repo-setup.sh`](scripts/repo-setup.sh) when present.
 
 For this repository, [`scripts/repo-setup.sh`](scripts/repo-setup.sh) also:
 
@@ -87,7 +87,7 @@ For this repository, [`scripts/repo-setup.sh`](scripts/repo-setup.sh) also:
 
 Codex repositories rely on a consistent bootstrap bundle to provision development containers. This repository publishes the entire bundle to GitHub Pages so automation can curl a single entry point and receive every dependency from the same source.
 
-- **Entry points:** `scripts/split-initialization-cached-base.sh`, `scripts/full-initialization.sh`, and `scripts/split-initialization-pretask.sh` are the only public URLs automation should call. Each script executes its workflow directly without sourcing additional helpers.
+- **Entry points:** `scripts/bootstrap-cached-container.sh`, `scripts/bootstrap-ephemeral-container.sh`, and `scripts/refresh-cached-container.sh` are the only public URLs automation should call. Each script executes its workflow directly without sourcing additional helpers.
 - **Mirroring strategy:** The scripts default to `https://qqrm.github.io/codex-tools` for every remote fetch, keeping the GitHub repository out of the execution path unless you override the base URL explicitly.
 
 The published bundle initializes Codex-compatible containers by installing shared tooling, syncing repository assets, and verifying workflow prerequisites. Downstream repositories copy this pattern to keep container setup reproducible.
