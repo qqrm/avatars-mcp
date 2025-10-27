@@ -34,23 +34,28 @@ impl Error for FrontMatterError {}
 
 pub fn parse_front_matter(content: &str) -> Result<(String, String), FrontMatterError> {
     let content = content.replace("\r\n", "\n");
-    let after_first = content
+    let remainder = content
         .strip_prefix("---\n")
         .ok_or(FrontMatterError::Missing)?;
-    if let Some(rest) = after_first.strip_prefix("---\n") {
-        return Ok((String::new(), rest.to_string()));
+
+    let mut cursor = 0usize;
+    while let Some(rel_newline) = remainder[cursor..].find('\n') {
+        let line_end = cursor + rel_newline;
+        let line = &remainder[cursor..line_end];
+        if line.trim_end() == "---" {
+            let front_matter = remainder[..cursor].trim().to_string();
+            let rest = remainder[line_end + 1..].to_string();
+            return Ok((front_matter, rest));
+        }
+        cursor = line_end + 1;
     }
-    if after_first == "---" {
-        return Ok((String::new(), String::new()));
+
+    let trailing_line = &remainder[cursor..];
+    if trailing_line.trim_end() == "---" {
+        let front_matter = remainder[..cursor].trim().to_string();
+        return Ok((front_matter, String::new()));
     }
-    if let Some(end) = after_first.find("\n---\n") {
-        let fm = &after_first[..end];
-        let rest = &after_first[end + 5..];
-        return Ok((fm.trim().to_string(), rest.to_string()));
-    }
-    if let Some(fm) = after_first.strip_suffix("\n---") {
-        return Ok((fm.trim().to_string(), String::new()));
-    }
+
     Err(FrontMatterError::Malformed)
 }
 
@@ -157,6 +162,14 @@ mod tests {
     #[test]
     fn parses_windows_line_endings() {
         let content = "---\r\nid: 1\r\n---\r\nbody\r\n";
+        let (fm, rest) = parse_front_matter(content).expect("should parse");
+        assert_eq!(fm, "id: 1");
+        assert_eq!(rest, "body\n");
+    }
+
+    #[test]
+    fn parses_closing_delimiter_with_trailing_spaces() {
+        let content = "---\nid: 1\n---   \nbody\n";
         let (fm, rest) = parse_front_matter(content).expect("should parse");
         assert_eq!(fm, "id: 1");
         assert_eq!(rest, "body\n");
