@@ -26,7 +26,7 @@ Three published entry points cover the common Codex container workflows. Each sn
 > **Bundle layout:** The published artifact exposes only the three entry-point scripts under `/scripts/`. Each helper is self-contained and interacts with repository-local tooling when available.
 
 #### Non-cached container — full initialization
-- Downloads the latest `AGENTS.md` from GitHub Pages and runs `scripts/repo-setup.sh` for a complete project bootstrap
+- Downloads the latest `AGENTS.md` from GitHub Pages to prime the workspace
 - Performs the same tooling setup as the cached workflow on a brand new container
 - Stores GitHub authentication, validates repository access, and installs the cleanup workflow
 
@@ -45,7 +45,6 @@ curl -fsSL "https://qqrm.github.io/codex-tools/scripts/bootstrap-cached-containe
 
 #### Cached container — lightweight refresh before a task
 - Updates the workspace copy of `AGENTS.md` from GitHub Pages
-- Invokes `scripts/repo-setup.sh` to pull in repository-specific updates without reinstalling global tooling
 
 ```bash
 curl -fsSL "https://qqrm.github.io/codex-tools/scripts/refresh-cached-container.sh" | bash -s --
@@ -69,19 +68,9 @@ Repository tooling keeps these artifacts in sync for local use:
 
 - [`scripts/bootstrap-cached-container.sh`](scripts/bootstrap-cached-container.sh) — installs the required tooling and persists GitHub CLI authentication for cached containers.
 - [`scripts/bootstrap-ephemeral-container.sh`](scripts/bootstrap-ephemeral-container.sh) — performs the full bootstrap on a fresh, non-cached container.
-- [`scripts/refresh-cached-container.sh`](scripts/refresh-cached-container.sh) — refreshes the published assets and executes repository-specific setup helpers before each task.
+- [`scripts/refresh-cached-container.sh`](scripts/refresh-cached-container.sh) — refreshes the published assets before each task.
 
-Only these entry points are published on GitHub Pages; repository-specific helper scripts remain private to each repository.
-
-## Repository-Specific Setup Script
-
-Every repository in this ecosystem can ship its own local setup helper tailored to its automation requirements under the shared name `repo-setup.sh`. The [`scripts/bootstrap-cached-container.sh`](scripts/bootstrap-cached-container.sh) script runs once to provision GitHub CLI authentication and install the Rust tooling used across tasks. The [`scripts/bootstrap-ephemeral-container.sh`](scripts/bootstrap-ephemeral-container.sh) script performs the same steps when the container lacks any cached state. The [`scripts/refresh-cached-container.sh`](scripts/refresh-cached-container.sh) helper reruns before each assignment to refresh the published site assets and invoke [`scripts/repo-setup.sh`](scripts/repo-setup.sh) when present.
-
-For this repository, [`scripts/repo-setup.sh`](scripts/repo-setup.sh) also:
-
-- Configures the canonical `origin` remote when missing.
-- Prefetches Rust dependencies and runs `cargo fmt`, `cargo check`, `cargo clippy`, `cargo test`, and `cargo machete` (when installed).
-- Builds and validates the GitHub Pages artifact to mirror CI packaging.
+Only these entry points are published on GitHub Pages.
 
 ## Bootstrap Script Architecture
 

@@ -260,17 +260,6 @@ bootstrap_refresh_pages_asset() {
   fi
 }
 
-bootstrap_run_repo_setup() {
-  local script_path="scripts/repo-setup.sh"
-
-  if [[ -f "$script_path" ]]; then
-    bootstrap_log "Executing ${script_path}"
-    bash "$script_path"
-  else
-    bootstrap_log "Skipping repository setup (scripts/repo-setup.sh not found)"
-  fi
-}
-
 bootstrap_log "Performing full container initialization"
 bootstrap_require_env GH_TOKEN
 : "${GH_HOST:=github.com}"
@@ -290,6 +279,4 @@ unset GH_TOKEN
 
 bootstrap_ensure_codex_cleanup_workflow
 bootstrap_refresh_pages_asset "$AGENTS_URL" "AGENTS.md"
-bootstrap_run_repo_setup
-
 bootstrap_log "Ephemeral container bootstrap complete."

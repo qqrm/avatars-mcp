@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Refresh lightweight state on a cached container before starting a task.
 #
-# The helper downloads updated instructions and runs repository-specific setup
-# without sourcing external libraries.
+# The helper downloads updated instructions without sourcing external
+# libraries.
 
 set -Eeuo pipefail
 trap 'rc=$?; echo -e "\n!! refresh-cached-container failed at line $LINENO while running: $BASH_COMMAND (exit $rc)" >&2; exit $rc' ERR
@@ -26,17 +26,6 @@ bootstrap_refresh_pages_asset() {
   fi
 }
 
-bootstrap_run_repo_setup() {
-  local script_path="scripts/repo-setup.sh"
-
-  if [[ -f "$script_path" ]]; then
-    bootstrap_log "Executing ${script_path}"
-    bash "$script_path"
-  else
-    bootstrap_log "Skipping repository setup (scripts/repo-setup.sh not found)"
-  fi
-}
-
 if ! git rev-parse --git-dir >/dev/null 2>&1; then
   printf 'refresh-cached-container: must run inside a Git repository.\n' >&2
   exit 1
@@ -47,5 +36,4 @@ AGENTS_URL="${PAGES_BASE_URL%/}/AGENTS.md"
 
 bootstrap_log "Refreshing pretask state for cached containers"
 bootstrap_refresh_pages_asset "$AGENTS_URL" "AGENTS.md"
-bootstrap_run_repo_setup
 bootstrap_log "Pretask refresh complete."
