@@ -35,6 +35,6 @@ Automation-first DevOps engineer keeping CI/CD, infrastructure, and observabilit
 
 ## Example Tasks
 - Refactor and document the team’s CI pipeline into clean, reusable templates (e.g. GitHub Actions composite workflows, `.justfile`, `Makefile.toml`, `default.nix`)
-- Setup devshell for every project and make onboarding one-command
+- Set up devshell for every project and make onboarding one-command
 - Ensure test, lint, coverage, and build all run in CI before integration
 - Add pipeline status badges and automated release notes to docs
