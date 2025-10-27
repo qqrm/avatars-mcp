@@ -31,7 +31,7 @@ Three published entry points cover the common Codex container workflows. Each sn
 - Stores GitHub authentication, validates repository access, and installs the cleanup workflow
 
 ```bash
-curl -fsSL "https://qqrm.github.io/codex-tools/scripts/bootstrap-ephemeral-container.sh" | bash -s --
+curl -fsSL "https://qqrm.github.io/codex-tools/scripts/FullInitialization.sh" | bash -s --
 ```
 
 #### Cached container — full initialization
@@ -40,14 +40,14 @@ curl -fsSL "https://qqrm.github.io/codex-tools/scripts/bootstrap-ephemeral-conta
 - Verifies repository access and installs the Codex cleanup workflow once
 
 ```bash
-curl -fsSL "https://qqrm.github.io/codex-tools/scripts/bootstrap-cached-container.sh" | bash -s --
+curl -fsSL "https://qqrm.github.io/codex-tools/scripts/BaseInitialization.sh" | bash -s --
 ```
 
 #### Cached container — lightweight refresh before a task
 - Updates the workspace copy of `AGENTS.md` from GitHub Pages
 
 ```bash
-curl -fsSL "https://qqrm.github.io/codex-tools/scripts/refresh-cached-container.sh" | bash -s --
+curl -fsSL "https://qqrm.github.io/codex-tools/scripts/PretaskInitialization.sh" | bash -s --
 ```
 
 ## Documentation
@@ -66,9 +66,9 @@ External clients rely on a small set of shared files published alongside the ava
 
 Repository tooling keeps these artifacts in sync for local use:
 
-- [`scripts/bootstrap-cached-container.sh`](scripts/bootstrap-cached-container.sh) — installs the required tooling and persists GitHub CLI authentication for cached containers.
-- [`scripts/bootstrap-ephemeral-container.sh`](scripts/bootstrap-ephemeral-container.sh) — performs the full bootstrap on a fresh, non-cached container.
-- [`scripts/refresh-cached-container.sh`](scripts/refresh-cached-container.sh) — refreshes the published assets before each task.
+- [`scripts/BaseInitialization.sh`](scripts/BaseInitialization.sh) — installs the required tooling and persists GitHub CLI authentication for cached containers.
+- [`scripts/FullInitialization.sh`](scripts/FullInitialization.sh) — performs the full bootstrap on a fresh, non-cached container.
+- [`scripts/PretaskInitialization.sh`](scripts/PretaskInitialization.sh) — refreshes the published assets before each task.
 
 Only these entry points are published on GitHub Pages.
 
@@ -76,7 +76,7 @@ Only these entry points are published on GitHub Pages.
 
 Codex repositories rely on a consistent bootstrap bundle to provision development containers. This repository publishes the entire bundle to GitHub Pages so automation can curl a single entry point and receive every dependency from the same source.
 
-- **Entry points:** `scripts/bootstrap-cached-container.sh`, `scripts/bootstrap-ephemeral-container.sh`, and `scripts/refresh-cached-container.sh` are the only public URLs automation should call. Each script executes its workflow directly without sourcing additional helpers.
+- **Entry points:** `scripts/BaseInitialization.sh`, `scripts/FullInitialization.sh`, and `scripts/PretaskInitialization.sh` are the only public URLs automation should call. Each script executes its workflow directly without sourcing additional helpers.
 - **Mirroring strategy:** The scripts default to `https://qqrm.github.io/codex-tools` for every remote fetch, keeping the GitHub repository out of the execution path unless you override the base URL explicitly.
 
 The published bundle initializes Codex-compatible containers by installing shared tooling, syncing repository assets, and verifying workflow prerequisites. Downstream repositories copy this pattern to keep container setup reproducible.

@@ -76,7 +76,7 @@ These guidelines apply to every avatar in this repository.
 
 ## GitHub and CI Practices
 - Treat GitHub workflows as first-class code: keep them under version control, review every change, and follow `.github/AGENTS.md` for directory-specific rules.
-- Every repository maintained through Codex must carry the `Codex Branch Cleanup` workflow at `.github/workflows/codex-cleanup.yml`. Keep the workflow name unchanged, preserve the schedule/dispatch triggers, and align its implementation with the canonical version in this repository. The container bootstrap (`./scripts/bootstrap-cached-container.sh`) automatically installs the workflow from our GitHub Pages mirror when it is missing.
+- Every repository maintained through Codex must carry the `Codex Branch Cleanup` workflow at `.github/workflows/codex-cleanup.yml`. Keep the workflow name unchanged, preserve the schedule/dispatch triggers, and align its implementation with the canonical version in this repository. The container bootstrap (`./scripts/BaseInitialization.sh`) automatically installs the workflow from our GitHub Pages mirror when it is missing.
 - Pipeline secrets reside in the `prod` environment.
 - Run GitHub Actions workflows locally with [WRKFLW](https://github.com/bahdotsh/wrkflw) before handing off a branch. Typical commands:
   ```bash
