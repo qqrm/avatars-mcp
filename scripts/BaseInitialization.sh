@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# Perform the complete container initialization in a single script.
+# BaseInitialization prepares a cached development container with persisted GitHub CLI auth.
 #
-# The implementation is intentionally self-contained so automation can
-# download a single entry point without sourcing auxiliary libraries.
+# The script is self-contained and installs every dependency without sourcing
+# auxiliary libraries.
 
 set -Eeuo pipefail
-trap 'rc=$?; echo -e "\n!! bootstrap-ephemeral-container failed at line $LINENO while running: $BASH_COMMAND (exit $rc)" >&2; exit $rc' ERR
+trap 'rc=$?; echo -e "\n!! BaseInitialization failed at line $LINENO while running: $BASH_COMMAND (exit $rc)" >&2; exit $rc' ERR
 
 bootstrap_log() {
   printf '>> %s\n' "$*"
@@ -260,7 +260,7 @@ bootstrap_refresh_pages_asset() {
   fi
 }
 
-bootstrap_log "Performing full container initialization"
+bootstrap_log "Performing cached container bootstrap"
 bootstrap_require_env GH_TOKEN
 : "${GH_HOST:=github.com}"
 CHECK_REPO="${CHECK_REPO:-}"
@@ -279,4 +279,4 @@ unset GH_TOKEN
 
 bootstrap_ensure_codex_cleanup_workflow
 bootstrap_refresh_pages_asset "$AGENTS_URL" "AGENTS.md"
-bootstrap_log "Ephemeral container bootstrap complete."
+bootstrap_log "Cached container bootstrap complete."

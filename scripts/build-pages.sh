@@ -60,9 +60,9 @@ copy_file "${REPO_ROOT}/static.json" "${OUTPUT_DIR}/static.json"
 # Bootstrap entry points
 mkdir -p "${OUTPUT_DIR}/scripts"
 bootstrap_scripts=(
-  bootstrap-cached-container.sh
-  bootstrap-ephemeral-container.sh
-  refresh-cached-container.sh
+  BaseInitialization.sh
+  FullInitialization.sh
+  PretaskInitialization.sh
 )
 
 for script in "${bootstrap_scripts[@]}"; do

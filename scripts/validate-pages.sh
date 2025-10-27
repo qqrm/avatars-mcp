@@ -24,9 +24,9 @@ check_path() {
 }
 
 required_paths=(
-  scripts/bootstrap-cached-container.sh
-  scripts/bootstrap-ephemeral-container.sh
-  scripts/refresh-cached-container.sh
+  scripts/BaseInitialization.sh
+  scripts/FullInitialization.sh
+  scripts/PretaskInitialization.sh
 )
 
 for relative_path in "${required_paths[@]}"; do

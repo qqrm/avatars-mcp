@@ -126,7 +126,7 @@ GitHub Pages exposes the repository at `https://qqrm.github.io/codex-tools/`. Cl
 Repositories that rely on Codex automation publish their container bootstrap scripts through GitHub Pages. The bundle must adhere to the following rules so entry points behave consistently across environments:
 
 - **Published location:** Serve every script—including entry points, helpers, and shared libraries—under the `/scripts/` prefix. Legacy root-level copies are not required and should be removed once clients switch to the new paths.
-- **Entry points:** Ship the three scripts (`bootstrap-cached-container.sh`, `bootstrap-ephemeral-container.sh`, and `refresh-cached-container.sh`) as the only public interfaces. Each entry point executes the full workflow directly while relying only on files in the published bundle.
+- **Entry points:** Ship the three scripts (`BaseInitialization.sh`, `FullInitialization.sh`, and `PretaskInitialization.sh`) as the only public interfaces. Each entry point executes the full workflow directly while relying only on files in the published bundle.
 - **Self-contained scripts:** Publish each bootstrap script exactly as checked in. A direct `curl` invocation must succeed without sourcing additional helpers beyond the files included in the `/scripts/` bundle.
 - **Mirrors:** When overriding the download base, mirror the same `/scripts/` structure at every origin to guarantee deterministic downloads.
 

@@ -1,7 +1,7 @@
 {
   "headers": [
     {
-      "source": "/scripts/bootstrap-cached-container.sh",
+      "source": "/scripts/BaseInitialization.sh",
       "headers": [
         {
           "key": "Cache-Control",
@@ -14,7 +14,7 @@
       ]
     },
     {
-      "source": "/scripts/bootstrap-ephemeral-container.sh",
+      "source": "/scripts/FullInitialization.sh",
       "headers": [
         {
           "key": "Cache-Control",
@@ -27,7 +27,7 @@
       ]
     },
     {
-      "source": "/scripts/refresh-cached-container.sh",
+      "source": "/scripts/PretaskInitialization.sh",
       "headers": [
         {
           "key": "Cache-Control",
