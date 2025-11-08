@@ -50,20 +50,26 @@ These guidelines apply to every avatar in this repository.
 - Switch avatars as needed for sub-tasks (e.g., Senior, Architect, Tester, Analyst) and list every avatar used when summarising work.
 
 ## Testing and Validation
-- For Rust repositories, run `cargo test` from the workspace root even when only documentation changes. Record failures verbatim and resolve them or escalate with proposed mitigation.
 - Install tooling as needed (`rustup component add clippy rustfmt`).
 - Ensure every Rust crate in this repository targets the Rust 2024 edition; verify that each `Cargo.toml`, `rust-toolchain.toml`, and generated manifest declares `edition = "2024"`, and update toolchain settings immediately when discrepancies arise.
 - Track upstream crate releases proactively: prefer the latest stable versions and confirm expectations against their crates.io documentation before locking or updating dependencies.
-- Standard validation sequence:
+- When source code changes (Rust crates, shell scripts, or other executables), reproduce the full CI pipeline locally before committing:
   ```bash
-  cargo fmt --all
+  cargo fmt --all -- --check
   cargo check --tests --benches
   cargo clippy --all-targets --all-features -- -D warnings
   cargo test
+  ./scripts/build-pages.sh
+  ./scripts/validate-pages.sh
   cargo machete            # if available
   ```
+- Markdown-only changes may rely on a lightweight validation loop:
+  ```bash
+  ./scripts/build-pages.sh
+  ./scripts/validate-pages.sh
+  ```
+  Record the skipped Rust tooling in the final report.
 - Treat every failure or warning from the required tooling—including findings such as unused dependencies reported by `cargo machete`—as part of the active task and resolve them before finishing, even when the issue originates outside the immediate scope of the requested change.
-- Skip build-heavy checks only when changes affect documentation or Markdown files, and note the justification in your report.
 - Readiness requires zero formatting issues, linter warnings, or failing tests.
 - Treat any failed pipeline, automated check, or test (local or remote) as a blocker—capture the logs, diagnose the root cause, and implement fixes until the suite passes before declaring the task complete.
 
