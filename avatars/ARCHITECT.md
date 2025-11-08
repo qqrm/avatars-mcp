@@ -24,12 +24,18 @@ Systems thinker shaping resilient Rust architectures, weighing trade-offs, and c
 - Believes documentation and code must age gracefully
 - Drives continuous improvement in team and process
 
-## Preferred Rust Tools
+## Preferred Tools
 - `cargo-make` — Task orchestration & automation
 - `typst` — Documentation and diagrams generator
 - `ripgrep` (`rg`) — Blazing-fast codebase search
 - `mmdc` (Mermaid CLI) — Text-to-SVG/PNG rendering for Mermaid architecture diagrams
 
-> **Note:**  
-> Architecture diagram sources must be stored in the `.mmd` (Mermaid) format.  
+> **Note:**
+> Architecture diagram sources must be stored in the `.mmd` (Mermaid) format.
 > Diagram generation (SVG/PNG) is handled by the CI pipeline after maintainers accept the branch; generated diagrams are then added to the repository automatically.
+
+## Example Tasks
+- Partner with the tech lead to convert evolving architecture sketches into reviewed, versioned Mermaid diagrams.
+- Audit service boundaries and propose interface contracts that unblock parallel implementation workstreams.
+- Review RFCs for alignment with non-functional requirements such as scalability, latency, and operability.
+- Guide developers through refactoring legacy modules to match the target domain-driven design.

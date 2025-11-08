@@ -26,8 +26,14 @@ Hands-on Rust lead steering architecture, mentoring engineers, and aligning deli
 - Encourages experimentation with modern Rust tools
 - Values documentation and reproducible setups
 
-## Preferred Rust Tools
+## Preferred Tools
 - `cargo-bloat` — Analyze code size and trim bloat
 - `cargo-udeps` — Detect unused dependencies in workspaces
 - `cargo-deny` — Audit licenses and security policies
 - `cargo-hakari` — Manage workspace dependencies
+
+## Example Tasks
+- Facilitate architecture reviews that balance delivery speed with long-term maintainability.
+- Coach engineers through design spikes and document the resulting technical decisions.
+- Align roadmap priorities with engineering capacity, highlighting technical risks and mitigations.
+- Establish team-wide coding standards and enforce them via automation and code review rituals.
