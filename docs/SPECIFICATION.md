@@ -8,10 +8,11 @@ This specification defines how behavioral **avatars**, shared tooling, and metad
 
 ```
 /avatars/
-  DEVOPS.md
-  QA.md
   ANALYST.md
-  ...
+  ARCHITECT.md
+  DEVELOPER.md
+  RELIABILITY.md
+  TESTER.md
 README.md
 SPECIFICATION.md
 (optional) crates/
@@ -45,21 +46,32 @@ Additional custom fields are allowed but should remain valid YAML scalars or arr
 
 ```markdown
 ---
-id: devops
-name: DevOps Engineer
-description: Automates CI/CD, ensures infrastructure stability.
-tags: [ci, cd, infrastructure]
-author: Alex Cat
-created_at: 2025-08-01
-version: 1.0
+id: delivery_engineer
+name: Delivery Engineer
+description: Ships production-grade Rust changes with measurable outcomes.
+tags: [rust, implementation, quality]
+author: QQRM
+created_at: 2025-08-13
+version: 0.2
 ---
 
-# DevOps Engineer
+# Delivery Engineer
 
-You are a DevOps engineer. Your job is to:
-- Automate CI/CD processes.
-- Ensure infrastructure security and stability.
-- Recommend best practices to the team.
+## Role Snapshot
+Hands-on implementer converting approved designs into reliable code.
+
+## Responsibilities Checklist
+- Break features into incremental commits with tests and documentation.
+- Maintain clean dependencies and enforce agreed coding standards.
+
+## When to Switch Away
+- Architectural decisions remain open → involve the Solution Architect.
+
+## Required Artifacts
+- Implementation plan, PR checklist, and post-merge monitoring notes.
+
+## Collaboration Signals
+- Share upcoming changes with Quality and Reliability & Security engineers.
 ```
 
 ### 3.3 Content guidelines
@@ -74,11 +86,11 @@ You are a DevOps engineer. Your job is to:
 Every avatar must include the following Markdown structure after the YAML front matter:
 
 - `# <Role Name>` level-one heading matching the `name` field.
-- `## Role Description` section summarizing scope, responsibilities, and the avatar's decision-making lens.
-- `## Key Skills & Focus` bullet list highlighting day-to-day competencies or domains.
-- `## Motivation & Attitude` section capturing mindset, collaboration style, and guardrails.
-- `## Preferred Tools` list calling out languages, frameworks, or platforms the avatar leans on.
-- `## Example Tasks` enumerating representative assignments the avatar should excel at.
+- `## Role Snapshot` summarizing the persona's scope and perspective.
+- `## Responsibilities Checklist` detailing the non-negotiable duties for the avatar.
+- `## When to Switch Away` clarifying triggers for handing the task to another persona.
+- `## Required Artifacts` listing the tangible outputs that must accompany each handoff.
+- `## Collaboration Signals` describing coordination expectations with adjacent roles.
 
 Optional extensions—such as collaboration guidelines, anti-patterns, or playbooks—are encouraged when they improve clarity, but they must appear under clearly labeled headings so automation can parse the required baseline consistently.
 
@@ -95,14 +107,14 @@ The catalog schema is:
   "base_uri": "AGENTS.md",
   "avatars": [
     {
-      "id": "devops",
-      "name": "DevOps Engineer",
-      "description": "Automates CI/CD, ensures infrastructure stability.",
-      "tags": ["ci", "cd", "infrastructure"],
-      "author": "Alex Cat",
-      "created_at": "2025-08-01",
-      "version": "1.0",
-      "uri": "avatars/DEVOPS.md"
+      "id": "reliability_security",
+      "name": "Reliability & Security Engineer",
+      "description": "Protects availability, compliance, and secure delivery pipelines.",
+      "tags": ["operations", "security", "resilience"],
+      "author": "QQRM",
+      "created_at": "2025-08-13",
+      "version": "0.1",
+      "uri": "avatars/RELIABILITY.md"
     }
   ]
 }
