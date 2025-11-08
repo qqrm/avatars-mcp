@@ -33,14 +33,6 @@ These guidelines apply to every avatar in this repository.
 - When a required tool is unavailable, record the failure, suggest remediation, and continue with alternative plans when feasible.
 - Codex bootstrap scripts install shared tooling (including `wrkflw`) automatically; raise an incident only if required commands are missing.
 
-## Source Control and Branching
-- Treat the canonical `origin` remote as writable until a push attempt proves otherwise; do not assume restrictions without evidence.
-- Create a fresh hyphenated English feature branch for every task. When a task spans multiple sessions, stay on the same branch, fetch `origin/main`, and rebase or merge **before every response**.
-- Before reporting completion, confirm that `origin/<branch>` contains the latest commits (compare with `git log HEAD`).
-- When a push or GitHub command fails, quote the full stderr/stdout, diagnose the cause, and propose mitigation steps instead of stopping at the first error.
-- Maintain small, focused commits with clear English messages so reviewers can follow each step.
-- Keep the working tree clean before requesting review or reporting status—stage intentional changes, revert stragglers, and ensure `git status` is empty when you finish.
-
 ## Development Workflow
 - Treat user requests as complete tasks and deliver production-ready branches that maintainers can promote without extra fixes.
 - Run every required check before committing. Default to the full test suite for the components you touched and document any skipped command with justification.
