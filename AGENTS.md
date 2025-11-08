@@ -61,7 +61,7 @@ These guidelines apply to every avatar in this repository.
 ## Testing and Validation
 - For Rust repositories, run `cargo test` from the workspace root even when only documentation changes. Record failures verbatim and resolve them or escalate with proposed mitigation.
 - Install tooling as needed (`rustup component add clippy rustfmt`).
-- Ensure every Rust crate in this repository targets the Rust 2024 edition; update `Cargo.toml` files and toolchain settings accordingly when discrepancies arise.
+- Ensure every Rust crate in this repository targets the Rust 2024 edition; verify that each `Cargo.toml`, `rust-toolchain.toml`, and generated manifest declares `edition = "2024"`, and update toolchain settings immediately when discrepancies arise.
 - Track upstream crate releases proactively: prefer the latest stable versions and confirm expectations against their crates.io documentation before locking or updating dependencies.
 - Standard validation sequence:
   ```bash
