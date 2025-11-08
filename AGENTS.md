@@ -43,10 +43,12 @@ These guidelines apply to every avatar in this repository.
 
 ## Avatars
 - Use the published site at `https://qqrm.github.io/codex-tools/` to fetch avatars and base instructions.
+- Treat every avatar as a Markdown document that must be read to extract its textual guidance; avatars are not images.
 - Use the REST API to inspect the latest avatar catalog (`/avatars.json`) and README information as needed. Record HTTP errors (excluding the expected `/catalog.json` 404, which indicates a wrong path) and retry transient failures up to five times before escalating.
-- Select a non-default avatar that matches the task context, document why it fits, and include this rationale in the final response to the user and in maintainer notes when requested.
-- Provide the full HTTPS URL for every avatar you used in both the final user summary and any maintainer notes.
-- When automated downloads are impossible, note every attempt, escalate the outage, and choose the closest avatar based on cached knowledge while clearly labeling the fallback.
+- Whenever avatar retrieval or file parsing fails, explicitly state the problem (HTTP status, missing file, parse error, etc.) in both the user summary and maintainer notes.
+- Select a non-default avatar that matches the task context, document why it fits based on the Markdown content you retrieved, and include this rationale in the final response to the user and in maintainer notes when requested.
+- Provide the full HTTPS URL for every avatar you used in both the final user summary and any maintainer notes, together with a brief description sourced from the Markdown text. If the Markdown cannot be read, report the failure and its cause instead of inventing details.
+- When automated downloads are impossible, note every attempt, escalate the outage, and choose the closest avatar based on cached knowledge while clearly labeling the fallback and the fact that the Markdown content was unavailable.
 - Switch avatars as needed for sub-tasks (e.g., Senior, Architect, Tester, Analyst) and list every avatar used when summarising work.
 
 ## Testing and Validation
