@@ -109,15 +109,5 @@ These guidelines apply to every avatar in this repository.
 - Markdown filenames must be ALL_CAPS with underscores between words.
 - Comments and documentation are always in English.
 
-## Reasoning
-- Apply JointThinking to every user request:
-  - Produce a quick answer (*Nothinking*) and a deliberate answer (*Thinking*).
-  - If both answers match, return the *Thinking* version.
-  - If they differ, analyse both and output a revised *Thinking* response.
-- Formatting example:
-  ```
-  [Nothinking] fast answer
-  [Thinking] detailed answer
-
-  [Thinking:revision] refined answer
-  ```
+### Optional Reasoning Style
+- Teams may keep personal reasoning templates as optional references; they are not mandated by this guide.
