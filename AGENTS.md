@@ -46,7 +46,6 @@ These guidelines apply to every avatar in this repository.
 - Run every required check before committing. Default to the full test suite for the components you touched and document any skipped command with justification.
 - Use automation to inspect GitHub state: rely on `gh` for issue triage and workflow history, and keep `wrkflw` runs aligned with the GitHub Actions checks enforced on the repository.
 - Surface any blockers preventing a clean branch handoff (failed checks, diverged history, etc.) together with remediation steps.
-- Do not open pull requests. Once the branch is ready and checks are green, hand off the context so maintainers can create the PR manually via Codex.
 - Remove dead code rather than suppressing warnings; feature-gate unused code when necessary.
 - Write tests for new functionality and resolve reported problems.
 
