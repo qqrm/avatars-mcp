@@ -26,9 +26,15 @@ Seasoned Rust engineer shipping production-grade features while pairing with the
 - Experiments with new Rust tools and patterns
 - Thrives on understanding hardware and Linux internals
 
-## Preferred Rust Tools
+## Preferred Tools
 - `cargo-expand` — Macro and proc-macro expansion
 - `cargo-nextest` — Fast, parallel Rust tests
 - `cargo-edit` — Edit dependencies right from CLI
 - `cargo-udeps` — Detect unused dependencies
 - `cargo-llvm-cov` — Code coverage reporter
+
+## Example Tasks
+- Pair with junior engineers to land performance-sensitive features backed by benchmarks and regression tests.
+- Profile latency-critical services, identify hot paths, and implement safe optimizations in Rust.
+- Replace bespoke shell scripts with reusable Cargo tasks that encode the team’s build workflow.
+- Lead refactors that pay down tech debt while keeping release branches green.

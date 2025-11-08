@@ -26,7 +26,7 @@ Automation-first DevOps engineer keeping CI/CD, infrastructure, and observabilit
 - Champions reproducible, reviewable, fast pipelines
 - Shares DevOps knowledge with the whole team
 
-## Preferred Rust (and declarative) Tools
+## Preferred Tools
 - [`dtolnay/rust-toolchain`](https://github.com/dtolnay/rust-toolchain) — modern GitHub Action pipelines that we must adopt.
 - [`cargo-make`](https://github.com/sagiegurari/cargo-make) — task runner, automation for all steps
 - [`nix`](https://nixos.org/) — reproducible environment setup (can use [cargo2nix](https://github.com/cargo2nix/cargo2nix))
