@@ -69,6 +69,19 @@ You are a DevOps engineer. Your job is to:
 - Avoid repository-specific secrets or credentials.
 - Document any required tools or workflows inside the avatar text.
 
+### 3.4 Minimum instruction blocks
+
+Every avatar must include the following Markdown structure after the YAML front matter:
+
+- `# <Role Name>` level-one heading matching the `name` field.
+- `## Role Description` section summarizing scope, responsibilities, and the avatar's decision-making lens.
+- `## Key Skills & Focus` bullet list highlighting day-to-day competencies or domains.
+- `## Motivation & Attitude` section capturing mindset, collaboration style, and guardrails.
+- `## Preferred Tools` list calling out languages, frameworks, or platforms the avatar leans on.
+- `## Example Tasks` enumerating representative assignments the avatar should excel at.
+
+Optional extensions—such as collaboration guidelines, anti-patterns, or playbooks—are encouraged when they improve clarity, but they must appear under clearly labeled headings so automation can parse the required baseline consistently.
+
 ## 4. Catalog Generation
 
 Tooling iterates over `/avatars/`, parses YAML front matter, and produces `avatars/catalog.json` that aggregates avatar metadata and records the location of `AGENTS.md`. The resulting JSON is published on GitHub Pages as `avatars.json`. The checked-in `avatars/catalog.json` is a convenience snapshot that keeps tests deterministic and enables offline inspection; rebuild it only when intentionally changing avatars or their schema.
