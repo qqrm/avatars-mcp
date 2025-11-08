@@ -93,4 +93,8 @@ These instructions extend the base `AGENTS.md` rules for the entire repository.
 ## Environment Checks
 - If `git remote -v` or `gh auth status` show problems, capture the full command output, diagnose the cause, and propose a fix or workaround.
 
+## Testing and Validation
+- Run the full validation suite (formatting, clippy, tests, documentation build scripts, `cargo machete`, etc.) whenever you modify Rust code or GitHub workflow files.
+- Documentation-only updates may use a lightweight loop of `cargo fmt --all`, optionally `cargo check`, and the docs build scripts. Note any skipped steps in your status report.
+
 ## Branch Management and Handoff

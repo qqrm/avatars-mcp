@@ -53,7 +53,7 @@ These guidelines apply to every avatar in this repository.
 - Install tooling as needed (`rustup component add clippy rustfmt`).
 - Ensure every Rust crate in this repository targets the Rust 2024 edition; verify that each `Cargo.toml`, `rust-toolchain.toml`, and generated manifest declares `edition = "2024"`, and update toolchain settings immediately when discrepancies arise.
 - Track upstream crate releases proactively: prefer the latest stable versions and confirm expectations against their crates.io documentation before locking or updating dependencies.
-- When source code changes (Rust crates, shell scripts, or other executables), reproduce the full CI pipeline locally before committing:
+- When Rust source code or GitHub workflow files change, reproduce the full CI pipeline locally before committing:
   ```bash
   cargo fmt --all -- --check
   cargo check --tests --benches
@@ -63,12 +63,14 @@ These guidelines apply to every avatar in this repository.
   ./scripts/validate-pages.sh
   cargo machete            # if available
   ```
-- Markdown-only changes may rely on a lightweight validation loop:
+- Documentation-only changes (Markdown, guides, `AGENTS.md` updates, etc.) may follow a lightweight validation loop:
   ```bash
+  cargo fmt --all
+  # Optional: cargo check
   ./scripts/build-pages.sh
   ./scripts/validate-pages.sh
   ```
-  Record the skipped Rust tooling in the final report.
+  Record any skipped Rust tooling in the final report.
 - Treat every failure or warning from the required tooling—including findings such as unused dependencies reported by `cargo machete`—as part of the active task and resolve them before finishing, even when the issue originates outside the immediate scope of the requested change.
 - Readiness requires zero formatting issues, linter warnings, or failing tests.
 - Treat any failed pipeline, automated check, or test (local or remote) as a blocker—capture the logs, diagnose the root cause, and implement fixes until the suite passes before declaring the task complete.
@@ -98,7 +100,7 @@ These guidelines apply to every avatar in this repository.
 - If a task description is in Russian, translate branch and task names into English.
 - Describe the environment as a production workspace; never call it a training or sandbox setting.
 - Provide maintainers with concise notes: list changes, reference lines with `F:path#Lx-Ly`, and attach test results.
-- In the final summary, list all avatars used and report the status of every mandatory check you reproduced locally.
+- In the final summary, list all avatars used and report the status of every mandatory check you reproduced locally; it is acceptable to skip tests for documentation-only pull requests when you explicitly note the exemption.
 - Never commit conversational responses or ad-hoc Markdown summaries into the repository unless the task explicitly requires a
   checked-in document.
 
