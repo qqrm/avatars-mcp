@@ -109,6 +109,17 @@ https://qqrm.github.io/codex-tools/
 
 Clients should fetch both the catalog and `AGENTS.md` to ensure they stay in sync with the published baseline guidance, because the catalog intentionally omits the Markdown body in favour of the shared URI.
 
-Continuous integration pipelines lint and test the Rust tooling (`cargo fmt`, `cargo clippy`, and `cargo test`). GitHub Pages deployments rebuild the catalog from `main` and publish it to `https://qqrm.github.io/codex-tools/avatars.json` alongside the avatar Markdown files.
+Continuous integration runs the full validation pipeline:
+
+```bash
+cargo fmt --all -- --check
+cargo check --tests --benches
+cargo clippy --all-targets --all-features -- -D warnings
+cargo test
+./scripts/build-pages.sh
+./scripts/validate-pages.sh
+```
+
+When working locally, reproduce this sequence for any change that touches source code. Markdown-only edits may instead run the lightweight loop of `./scripts/build-pages.sh` followed by `./scripts/validate-pages.sh`. GitHub Pages deployments rebuild the catalog from `main` and publish it to `https://qqrm.github.io/codex-tools/avatars.json` alongside the avatar Markdown files.
 
 For detailed schemas, examples, and API usage, always defer to `SPECIFICATION.md`.
