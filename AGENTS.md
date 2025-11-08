@@ -2,6 +2,11 @@
 
 These guidelines apply to every avatar in this repository.
 
+### Read-Only QA Assignments
+- When the system prompt explicitly forbids repository changes, treat the task as a read-only QA review and skip actions that require write access while still following the rest of this document.
+- In that mode you may omit branch creation from [Source Control and Branching](#source-control-and-branching), workflow execution from both the [Critical Checklist](#critical-checklist) and [Development Workflow](#development-workflow) sections, and validation commands from [Testing and Validation](#testing-and-validation).
+- As soon as write access is permitted again, resume the standard requirements outlined in those sections for all engineering work.
+
 ## Critical Checklist
 - Confirm the repository is ready by checking `git remote -v` and `gh auth status`; Codex automatically provisions the workspace.
 - Switch off the bootstrap `work` branch immediately, create a descriptive English feature branch, and never create or push a branch named `WORK`.
