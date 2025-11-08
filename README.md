@@ -8,6 +8,36 @@ This repository hosts behavioral **avatars** for Codex agents. Avatars are Markd
 - Switch avatars explicitly when the task changes focus and document the active persona in status updates.
 - Align tooling and communication with the currently selected avatar to keep expectations consistent for collaborators.
 
+### Catalog Audit Findings
+
+- **Architect vs. Tech Lead** duplicated responsibilities around technical direction, reviews, and mentoring; the Tech Lead avatar was merged into the refreshed Solution Architect profile.
+- **DevOps vs. Security** overlapped on pipeline hardening and controls without a clear separation of duties; the capabilities are now unified in the Reliability & Security Engineer avatar.
+- **Senior Developer vs. Tech Lead** both focused on hands-on delivery with minimal differentiation; the Delivery Engineer avatar now represents the shared implementation scope.
+- **Missing operational continuity** — no single persona previously owned resiliency, compliance, and incident readiness; the new Reliability & Security Engineer fills that scenario.
+
+### Core Avatar Set (2025 Refresh)
+
+| Avatar | When to Use | Key Artifacts |
+| --- | --- | --- |
+| **Discovery Analyst** | Early discovery, backlog clarification, stakeholder alignment | Discovery brief, prioritized backlog, risk register |
+| **Solution Architect** | Translating validated scope into technical plans | Mermaid diagrams, technical decision records, interface checklists |
+| **Delivery Engineer** | Building and shipping production Rust changes | Implementation plan, PR checklist, post-merge notes |
+| **Quality Engineer** | Designing coverage and enforcing release readiness | Test strategy, automation backlog, release quality checklist |
+| **Reliability & Security Engineer** | Hardening operations, compliance, and incident response | Operational readiness checklist, security review log, incident plan |
+
+Each avatar file in [`/avatars/`](avatars/) contains:
+
+1. **Responsibilities checklist** — required activities before the persona considers the task complete.
+2. **Switch triggers** — guidance on when to hand off to another avatar as the work evolves.
+3. **Required artifacts** — tangible outputs to produce and share during handover.
+
+### Switching Playbook
+
+1. Start in the avatar whose responsibilities match the current blocker.
+2. Review the "When to Switch Away" list to proactively identify the next handoff.
+3. Produce the listed artifacts before switching personas to keep context intact.
+4. Announce the avatar change in status updates and share the prepared artifacts with the incoming persona.
+
 ## Remote Setup
 
 Configure the Git remote if it is missing:

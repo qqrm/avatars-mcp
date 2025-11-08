@@ -3,21 +3,22 @@
   "avatars": [
     {
       "id": "analyst",
-      "name": "Business Analyst",
-      "description": "Translates business requirements into actionable tasks.",
+      "name": "Discovery Analyst",
+      "description": "Aligns business goals with actionable delivery outcomes.",
       "tags": [
         "analysis",
-        "requirements"
+        "requirements",
+        "strategy"
       ],
       "author": "QQRM",
       "created_at": "2025-08-02",
-      "version": "0.1",
+      "version": "0.2",
       "uri": "avatars/ANALYST.md"
     },
     {
       "id": "architect",
-      "name": "Software Architect",
-      "description": "Designs reliable, scalable solutions and drives best practices.",
+      "name": "Solution Architect",
+      "description": "Designs resilient delivery approaches and codifies technical direction.",
       "tags": [
         "architecture",
         "design",
@@ -25,76 +26,50 @@
       ],
       "author": "QQRM",
       "created_at": "2025-08-02",
-      "version": "0.1",
+      "version": "0.2",
       "uri": "avatars/ARCHITECT.md"
     },
     {
-      "id": "devops_maintainer",
-      "name": "DevOps Engineer",
-      "description": "Maintains reproducible CI/CD pipelines and optimizes automation.",
-      "tags": [
-        "devops",
-        "ci",
-        "automation"
-      ],
-      "author": "QQRM",
-      "created_at": "2025-08-02",
-      "version": "0.1",
-      "uri": "avatars/DEVOPS.md"
-    },
-    {
-      "id": "security",
-      "name": "Security Engineer",
-      "description": "Ensures code and pipelines are secure from attacks.",
-      "tags": [
-        "security",
-        "auditing"
-      ],
-      "author": "QQRM",
-      "created_at": "2025-08-02",
-      "version": "0.1",
-      "uri": "avatars/SECURITY.md"
-    },
-    {
-      "id": "senior_developer",
-      "name": "Senior Rust Developer",
-      "description": "Seasoned Rust developer delivering reliable, high-performance features.",
+      "id": "delivery_engineer",
+      "name": "Delivery Engineer",
+      "description": "Ships production-grade Rust changes with measurable outcomes.",
       "tags": [
         "rust",
-        "systems",
-        "linux"
+        "implementation",
+        "quality"
       ],
       "author": "QQRM",
       "created_at": "2025-08-13",
-      "version": "0.1",
+      "version": "0.2",
       "uri": "avatars/DEVELOPER.md"
     },
     {
-      "id": "tech_lead",
-      "name": "Rust Tech Lead",
-      "description": "Guides Rust development, sets technical direction, and mentors the team.",
+      "id": "quality_engineer",
+      "name": "Quality Engineer",
+      "description": "Ensures delivery meets reliability, coverage, and acceptance expectations.",
       "tags": [
-        "rust",
-        "leadership",
-        "planning"
+        "testing",
+        "qa",
+        "reliability"
+      ],
+      "author": "QQRM",
+      "created_at": "2025-08-02",
+      "version": "0.2",
+      "uri": "avatars/TESTER.md"
+    },
+    {
+      "id": "reliability_security",
+      "name": "Reliability & Security Engineer",
+      "description": "Protects availability, compliance, and secure delivery pipelines.",
+      "tags": [
+        "operations",
+        "security",
+        "resilience"
       ],
       "author": "QQRM",
       "created_at": "2025-08-13",
       "version": "0.1",
-      "uri": "avatars/TECH_LEAD.md"
-    },
-    {
-      "id": "tester",
-      "name": "Automated Test Engineer",
-      "description": "Designs and executes automated test cases to find defects.",
-      "tags": [
-        "testing",
-        "qa"
-      ],
-      "author": "QQRM",
-      "created_at": "2025-08-02",
-      "version": "0.1",
-      "uri": "avatars/TESTER.md"
+      "uri": "avatars/RELIABILITY.md"
     }
   ]
 }

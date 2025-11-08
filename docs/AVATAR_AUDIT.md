@@ -4,13 +4,11 @@ The table below summarizes the current Codex avatar catalog. Ratings combine qua
 
 | Avatar | Usefulness | Completeness | Notes |
 | ------ | ---------- | ------------ | ----- |
-| Business Analyst (`ANALYST`) | Medium-High | High | Newly expanded guidance covers discovery, backlog management, tooling, and collaboration touchpoints but could later add industry-specific templates. |
-| Software Architect (`ARCHITECT`) | High | High | Comprehensive coverage of architecture stewardship, preferred tooling, and documentation expectations. |
-| Senior Rust Developer (`DEVELOPER`) | High | High | Strong focus on systems programming depth, testing practices, and productivity tooling. |
-| DevOps Engineer (`DEVOPS`) | High | High | Detailed automation-first practices with actionable pipeline and infrastructure examples. |
-| Security Engineer (`SECURITY`) | High | High | Balanced view of threat modeling, tooling, and policy guardrails. |
-| Rust Tech Lead (`TECH_LEAD`) | High | High | Captures leadership responsibilities, technical oversight, and governance tooling. |
-| Automated Test Engineer (`TESTER`) | High | High | Expanded to include layered strategies, tooling stack, and cross-team workflows that support release confidence. |
+| Discovery Analyst (`ANALYST`) | High | High | Checklist-driven discovery workflow covering stakeholder alignment, backlog clarity, and risk surfacing. |
+| Solution Architect (`ARCHITECT`) | High | High | Balanced view of trade-off analysis, decision records, and collaborative handoffs into delivery. |
+| Delivery Engineer (`DEVELOPER`) | High | High | Emphasizes iterative implementation, instrumentation, and clean release practices. |
+| Quality Engineer (`TESTER`) | High | High | Codifies coverage strategies, release gating, and alignment with discovery and operations. |
+| Reliability & Security Engineer (`RELIABILITY`) | High | Medium-High | Unified operational and security ownership with actionable checklists; future iterations may add environment-specific playbooks. |
 
 ## Rating Scale
 
