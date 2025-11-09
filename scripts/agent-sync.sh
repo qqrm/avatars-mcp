@@ -13,7 +13,13 @@ if [[ "${BRANCH}" == "main" ]]; then
 fi
 
 STATUS_FILE=".agent_status"
+
+mark_pending_changes() {
+  echo "SYNC_PENDING_CHANGES=1" > "${STATUS_FILE}"
+}
+
 rm -f "${STATUS_FILE}"
+trap 'mark_pending_changes' ERR
 
 echo "[agent-sync] Fetching origin/main"
 git fetch origin
@@ -21,7 +27,11 @@ git fetch origin
 if ! git rebase origin/main; then
   echo "[agent-sync] Rebase failed, attempting merge fallback"
   git rebase --abort || true
-  git merge --no-ff origin/main || true
+  if ! git merge --no-ff origin/main; then
+    echo "[agent-sync] Merge fallback failed; recorded pending status and aborting" >&2
+    mark_pending_changes
+    exit 1
+  fi
 fi
 
 if git ls-files -u | grep -q "Cargo.lock"; then
@@ -59,5 +69,5 @@ else
 fi
 
 if git status --porcelain | grep -q .; then
-  echo "SYNC_PENDING_CHANGES=1" > "${STATUS_FILE}"
+  mark_pending_changes
 fi
