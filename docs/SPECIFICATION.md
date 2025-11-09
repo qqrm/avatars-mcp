@@ -114,14 +114,14 @@ The catalog schema is:
       "author": "QQRM",
       "created_at": "2025-08-13",
       "version": "0.1",
-      "uri": "avatars/RELIABILITY.md"
+      "uri": "https://qqrm.github.io/codex-tools/avatars/RELIABILITY.md"
     }
   ]
 }
 ```
 
 - `base_uri` exposes the relative location of the shared instructions so clients can issue a follow-up request.
-- `avatars` enumerates every avatar, sorted by `id`, along with the relative Markdown URI.
+- `avatars` enumerates every avatar, sorted by `id`, along with the absolute Markdown URI hosted on GitHub Pages.
 
 ### 4.2 Delivery model
 
