@@ -152,4 +152,6 @@ cargo test
 
 When working locally, reproduce this sequence for any change that touches source code. Markdown-only edits may instead run the lightweight loop of `./scripts/build-pages.sh` followed by `./scripts/validate-pages.sh`. GitHub Pages deployments rebuild the catalog from `main` and publish it to `https://qqrm.github.io/codex-tools/avatars.json` alongside the avatar Markdown files.
 
+The validation script checks that the published artifact keeps the shared documentation and catalog files in sync. It fails if `AGENTS.md`, the docs bundle (`docs/INSTRUCTIONS.md` and `docs/SPECIFICATION.md`), the catalog exports (`avatars/catalog.json`, `avatars.json`, `index.json`), the codex cleanup workflow (`workflows/codex-cleanup.yml`), or the bootstrap entry points (`scripts/BaseInitialization.sh`, `scripts/FullInitialization.sh`, `scripts/PretaskInitialization.sh`) are missing or empty.
+
 For detailed schemas, examples, and API usage, always defer to `SPECIFICATION.md`.
