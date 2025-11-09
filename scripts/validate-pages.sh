@@ -23,10 +23,21 @@ check_path() {
   fi
 }
 
+# Files and JSON artifacts that must remain present and non-empty
 required_paths=(
+  AGENTS.md
+  README.md
+  static.json
+  index.md
+  index.json
+  avatars/catalog.json
+  avatars.json
+  docs/INSTRUCTIONS.md
+  docs/SPECIFICATION.md
   scripts/BaseInitialization.sh
   scripts/FullInitialization.sh
   scripts/PretaskInitialization.sh
+  workflows/codex-cleanup.yml
 )
 
 for relative_path in "${required_paths[@]}"; do
