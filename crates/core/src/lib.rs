@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use std::env;
 use std::error::Error;
 use std::fmt;
 use std::fs;
@@ -109,6 +110,7 @@ fn resolve_base_uri(avatars_dir: &Path, base_path: &Path) -> String {
 }
 
 fn collect_avatar_entries(avatars_dir: &Path) -> Result<Vec<AvatarEntry>, Box<dyn Error>> {
+    let base_url = resolve_pages_base_url();
     let mut entries = Vec::new();
     for entry in fs::read_dir(avatars_dir)? {
         let entry = entry?;
@@ -119,22 +121,36 @@ fn collect_avatar_entries(avatars_dir: &Path) -> Result<Vec<AvatarEntry>, Box<dy
         let content = fs::read_to_string(&path)?;
         let (fm, _) = parse_front_matter(&content)?;
         let meta: AvatarMeta = serde_yaml::from_str(&fm)?;
-        let uri = format!("avatars/{}", file_name(&path));
+        let uri = build_avatar_uri(&path, avatars_dir, &base_url);
         entries.push(AvatarEntry { meta, uri });
     }
     Ok(entries)
 }
 
-fn file_name(path: &Path) -> String {
-    path.file_name()
-        .and_then(|name| name.to_str())
-        .unwrap_or_default()
-        .to_string()
+fn resolve_pages_base_url() -> String {
+    env::var("PAGES_BASE_URL").unwrap_or_else(|_| "https://qqrm.github.io/codex-tools".to_string())
+}
+
+fn build_avatar_uri(path: &Path, avatars_dir: &Path, base_url: &str) -> String {
+    let normalized_base = base_url.trim_end_matches('/');
+    let relative_path = avatars_dir
+        .parent()
+        .and_then(|root| path.strip_prefix(root).ok())
+        .unwrap_or(path);
+
+    let relative = relative_path
+        .components()
+        .map(|component| component.as_os_str().to_string_lossy())
+        .collect::<Vec<_>>()
+        .join("/");
+
+    format!("{}/{}", normalized_base, relative)
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::env;
     use tempfile::tempdir;
 
     #[test]
@@ -199,6 +215,10 @@ mod tests {
         )?;
         fs::write(root.join("AGENTS.md"), "Base instructions\n")?;
 
+        unsafe {
+            env::set_var("PAGES_BASE_URL", "https://example.invalid/base");
+        }
+
         let index = generate_index(&avatars, &root.join("AGENTS.md"))?;
         assert_eq!(index.base_uri, "AGENTS.md");
         assert_eq!(index.avatars.len(), 2);
@@ -210,10 +230,25 @@ mod tests {
                 .collect::<Vec<_>>(),
             vec!["one", "two"]
         );
+        assert_eq!(
+            index
+                .avatars
+                .iter()
+                .map(|entry| entry.uri.as_str())
+                .collect::<Vec<_>>(),
+            vec![
+                "https://example.invalid/base/avatars/ONE.md",
+                "https://example.invalid/base/avatars/TWO.md"
+            ]
+        );
 
         let json = fs::read_to_string(avatars.join("catalog.json"))?;
         let parsed: Index = serde_json::from_str(&json)?;
         assert_eq!(parsed, index);
+
+        unsafe {
+            env::remove_var("PAGES_BASE_URL");
+        }
 
         Ok(())
     }
