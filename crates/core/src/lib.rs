@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use std::borrow::Cow;
 use std::env;
 use std::error::Error;
 use std::fmt;
@@ -33,31 +34,61 @@ impl fmt::Display for FrontMatterError {
 
 impl Error for FrontMatterError {}
 
-pub fn parse_front_matter(content: &str) -> Result<(String, String), FrontMatterError> {
-    let content = content.replace("\r\n", "\n");
-    let remainder = content
-        .strip_prefix("---\n")
-        .ok_or(FrontMatterError::Missing)?;
+#[derive(Debug)]
+pub struct FrontMatter<'a> {
+    pub yaml: Cow<'a, str>,
+    pub body: Cow<'a, str>,
+}
 
-    let mut cursor = 0usize;
-    while let Some(rel_newline) = remainder[cursor..].find('\n') {
-        let line_end = cursor + rel_newline;
-        let line = &remainder[cursor..line_end];
-        if line.trim_end() == "---" {
-            let front_matter = remainder[..cursor].trim().to_string();
-            let rest = remainder[line_end + 1..].to_string();
-            return Ok((front_matter, rest));
-        }
-        cursor = line_end + 1;
+pub fn parse_front_matter(content: &str) -> Result<FrontMatter<'_>, FrontMatterError> {
+    if content.contains("\r\n") {
+        let normalized = content.replace("\r\n", "\n");
+        let (yaml, body) = parse_normalized(&normalized)?;
+        return Ok(FrontMatter {
+            yaml: Cow::Owned(yaml.to_string()),
+            body: Cow::Owned(body.to_string()),
+        });
     }
 
-    let trailing_line = &remainder[cursor..];
-    if trailing_line.trim_end() == "---" {
-        let front_matter = remainder[..cursor].trim().to_string();
-        return Ok((front_matter, String::new()));
-    }
+    let (yaml, body) = parse_normalized(content)?;
+    Ok(FrontMatter {
+        yaml: Cow::Borrowed(yaml),
+        body: Cow::Borrowed(body),
+    })
+}
 
+fn consume_delimiter_suffix(remainder: &str) -> Result<&str, FrontMatterError> {
+    let trimmed = remainder.trim_start_matches([' ', '\t']);
+    if let Some(rest) = trimmed.strip_prefix('\n') {
+        return Ok(rest);
+    }
+    if trimmed.is_empty() {
+        return Ok(trimmed);
+    }
     Err(FrontMatterError::Malformed)
+}
+
+fn parse_normalized(mut source: &str) -> Result<(&str, &str), FrontMatterError> {
+    if let Some(stripped) = source.strip_prefix('\u{FEFF}') {
+        source = stripped;
+    }
+
+    let Some(remainder) = source.strip_prefix("---\n") else {
+        return Err(FrontMatterError::Missing);
+    };
+
+    if let Some(stripped) = remainder.strip_prefix("---") {
+        if let Ok(rest) = consume_delimiter_suffix(stripped) {
+            return Ok(("", rest));
+        }
+    }
+
+    let Some((front_matter, suffix)) = remainder.split_once("\n---") else {
+        return Err(FrontMatterError::Malformed);
+    };
+
+    let rest = consume_delimiter_suffix(suffix)?;
+    Ok((front_matter.trim(), rest))
 }
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
@@ -119,8 +150,8 @@ fn collect_avatar_entries(avatars_dir: &Path) -> Result<Vec<AvatarEntry>, Box<dy
             continue;
         }
         let content = fs::read_to_string(&path)?;
-        let (fm, _) = parse_front_matter(&content)?;
-        let meta: AvatarMeta = serde_yaml::from_str(&fm)?;
+        let fm = parse_front_matter(&content)?;
+        let meta: AvatarMeta = serde_yaml::from_str(&fm.yaml)?;
         let uri = build_avatar_uri(&path, avatars_dir, &base_url);
         entries.push(AvatarEntry { meta, uri });
     }
@@ -156,9 +187,9 @@ mod tests {
     #[test]
     fn parses_with_extra_delimiter() {
         let content = "---\nid: 1\n---\n---\nbody\n";
-        let (fm, rest) = parse_front_matter(content).expect("should parse");
-        assert_eq!(fm, "id: 1");
-        assert_eq!(rest, "---\nbody\n");
+        let parsed = parse_front_matter(content).expect("should parse");
+        assert_eq!(parsed.yaml, "id: 1");
+        assert_eq!(parsed.body.as_ref(), "---\nbody\n");
     }
 
     #[test]
@@ -178,17 +209,41 @@ mod tests {
     #[test]
     fn parses_windows_line_endings() {
         let content = "---\r\nid: 1\r\n---\r\nbody\r\n";
-        let (fm, rest) = parse_front_matter(content).expect("should parse");
-        assert_eq!(fm, "id: 1");
-        assert_eq!(rest, "body\n");
+        let parsed = parse_front_matter(content).expect("should parse");
+        assert_eq!(parsed.yaml, "id: 1");
+        assert_eq!(parsed.body.as_ref(), "body\n");
     }
 
     #[test]
     fn parses_closing_delimiter_with_trailing_spaces() {
         let content = "---\nid: 1\n---   \nbody\n";
-        let (fm, rest) = parse_front_matter(content).expect("should parse");
-        assert_eq!(fm, "id: 1");
-        assert_eq!(rest, "body\n");
+        let parsed = parse_front_matter(content).expect("should parse");
+        assert_eq!(parsed.yaml, "id: 1");
+        assert_eq!(parsed.body.as_ref(), "body\n");
+    }
+
+    #[test]
+    fn parses_with_bom_prefix() {
+        let content = "\u{FEFF}---\nid: 1\n---\nbody\n";
+        let parsed = parse_front_matter(content).expect("should parse");
+        assert_eq!(parsed.yaml, "id: 1");
+        assert_eq!(parsed.body.as_ref(), "body\n");
+    }
+
+    #[test]
+    fn parses_without_trailing_newline_after_delimiter() {
+        let content = "---\nid: 1\n---";
+        let parsed = parse_front_matter(content).expect("should parse");
+        assert_eq!(parsed.yaml, "id: 1");
+        assert_eq!(parsed.body.as_ref(), "");
+    }
+
+    #[test]
+    fn parses_empty_front_matter_block() {
+        let content = "---\n---\nbody\n";
+        let parsed = parse_front_matter(content).expect("should parse");
+        assert_eq!(parsed.yaml, "");
+        assert_eq!(parsed.body.as_ref(), "body\n");
     }
 
     #[test]
