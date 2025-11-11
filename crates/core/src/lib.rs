@@ -1,10 +1,12 @@
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
+use std::collections::HashMap;
 use std::env;
-use std::error::Error;
 use std::fmt;
 use std::fs;
-use std::path::Path;
+use std::io;
+use std::path::{Path, PathBuf};
+use thiserror::Error;
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct AvatarMeta {
@@ -32,12 +34,84 @@ impl fmt::Display for FrontMatterError {
     }
 }
 
-impl Error for FrontMatterError {}
+impl std::error::Error for FrontMatterError {}
 
 #[derive(Debug)]
 pub struct FrontMatter<'a> {
     pub yaml: Cow<'a, str>,
     pub body: Cow<'a, str>,
+}
+
+#[derive(Debug, Error)]
+pub enum CatalogError {
+    #[error("I/O error at {path}: {source}")]
+    Io {
+        path: PathBuf,
+        #[source]
+        source: io::Error,
+    },
+    #[error("invalid front matter in {path}: {source}")]
+    FrontMatter {
+        path: PathBuf,
+        #[source]
+        source: FrontMatterError,
+    },
+    #[error("failed to parse YAML in {path}: {source}")]
+    Yaml {
+        path: PathBuf,
+        #[source]
+        source: serde_yaml_ng::Error,
+    },
+    #[error("failed to process JSON at {path}: {source}")]
+    Json {
+        path: PathBuf,
+        #[source]
+        source: serde_json::Error,
+    },
+    #[error("duplicate avatar id `{id}` found in {duplicate} (already defined in {first})")]
+    Duplicate {
+        id: String,
+        first: PathBuf,
+        duplicate: PathBuf,
+    },
+}
+
+impl CatalogError {
+    fn io(path: &Path, source: io::Error) -> Self {
+        Self::Io {
+            path: path.to_path_buf(),
+            source,
+        }
+    }
+
+    fn front_matter(path: &Path, source: FrontMatterError) -> Self {
+        Self::FrontMatter {
+            path: path.to_path_buf(),
+            source,
+        }
+    }
+
+    fn yaml(path: &Path, source: serde_yaml_ng::Error) -> Self {
+        Self::Yaml {
+            path: path.to_path_buf(),
+            source,
+        }
+    }
+
+    fn json(path: &Path, source: serde_json::Error) -> Self {
+        Self::Json {
+            path: path.to_path_buf(),
+            source,
+        }
+    }
+
+    fn duplicate(id: String, first: PathBuf, duplicate: PathBuf) -> Self {
+        Self::Duplicate {
+            id,
+            first,
+            duplicate,
+        }
+    }
 }
 
 pub fn parse_front_matter(content: &str) -> Result<FrontMatter<'_>, FrontMatterError> {
@@ -110,14 +184,14 @@ impl Index {
     }
 }
 
-pub fn generate_index(avatars_dir: &Path, base_path: &Path) -> Result<Index, Box<dyn Error>> {
+pub fn generate_index(avatars_dir: &Path, base_path: &Path) -> Result<Index, CatalogError> {
     let index = build_index(avatars_dir, base_path)?;
     write_index(avatars_dir, &index)?;
     Ok(index)
 }
 
-fn build_index(avatars_dir: &Path, base_path: &Path) -> Result<Index, Box<dyn Error>> {
-    fs::metadata(base_path)?;
+fn build_index(avatars_dir: &Path, base_path: &Path) -> Result<Index, CatalogError> {
+    fs::metadata(base_path).map_err(|source| CatalogError::io(base_path, source))?;
     let base_uri = resolve_base_uri(avatars_dir, base_path);
     let mut avatars = collect_avatar_entries(avatars_dir)?;
     avatars.sort_by(|a, b| a.meta.id.cmp(&b.meta.id));
@@ -125,9 +199,12 @@ fn build_index(avatars_dir: &Path, base_path: &Path) -> Result<Index, Box<dyn Er
     Ok(Index { base_uri, avatars })
 }
 
-fn write_index(avatars_dir: &Path, index: &Index) -> Result<(), Box<dyn Error>> {
-    let json = serde_json::to_string_pretty(index)?;
-    fs::write(avatars_dir.join("catalog.json"), json + "\n")?;
+fn write_index(avatars_dir: &Path, index: &Index) -> Result<(), CatalogError> {
+    let catalog_path = avatars_dir.join("catalog.json");
+    let mut json = serde_json::to_string_pretty(index)
+        .map_err(|source| CatalogError::json(&catalog_path, source))?;
+    json.push('\n');
+    fs::write(&catalog_path, json).map_err(|source| CatalogError::io(&catalog_path, source))?;
     Ok(())
 }
 
@@ -140,18 +217,28 @@ fn resolve_base_uri(avatars_dir: &Path, base_path: &Path) -> String {
         .replace('\\', "/")
 }
 
-fn collect_avatar_entries(avatars_dir: &Path) -> Result<Vec<AvatarEntry>, Box<dyn Error>> {
+pub fn collect_avatar_entries(avatars_dir: &Path) -> Result<Vec<AvatarEntry>, CatalogError> {
     let base_url = resolve_pages_base_url();
     let mut entries = Vec::new();
-    for entry in fs::read_dir(avatars_dir)? {
-        let entry = entry?;
+    let mut seen_ids: HashMap<String, PathBuf> = HashMap::new();
+    let read_dir =
+        fs::read_dir(avatars_dir).map_err(|source| CatalogError::io(avatars_dir, source))?;
+    for entry in read_dir {
+        let entry = entry.map_err(|source| CatalogError::io(avatars_dir, source))?;
         let path = entry.path();
         if path.extension().and_then(|s| s.to_str()) != Some("md") {
             continue;
         }
-        let content = fs::read_to_string(&path)?;
-        let (fm, _) = parse_front_matter(&content)?;
-        let meta: AvatarMeta = serde_yaml_ng::from_str(&fm)?;
+        let content =
+            fs::read_to_string(&path).map_err(|source| CatalogError::io(&path, source))?;
+        let front_matter = parse_front_matter(&content)
+            .map_err(|source| CatalogError::front_matter(&path, source))?;
+        let meta: AvatarMeta = serde_yaml_ng::from_str(front_matter.yaml.as_ref())
+            .map_err(|source| CatalogError::yaml(&path, source))?;
+        let id = meta.id.clone();
+        if let Some(first) = seen_ids.insert(id.clone(), path.clone()) {
+            return Err(CatalogError::duplicate(id, first, path));
+        }
         let uri = build_avatar_uri(&path, avatars_dir, &base_url);
         entries.push(AvatarEntry { meta, uri });
     }
@@ -182,6 +269,7 @@ fn build_avatar_uri(path: &Path, avatars_dir: &Path, base_url: &str) -> String {
 mod tests {
     use super::*;
     use std::env;
+    use std::error::Error;
     use tempfile::tempdir;
 
     #[test]
