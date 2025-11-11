@@ -150,8 +150,8 @@ fn collect_avatar_entries(avatars_dir: &Path) -> Result<Vec<AvatarEntry>, Box<dy
             continue;
         }
         let content = fs::read_to_string(&path)?;
-        let fm = parse_front_matter(&content)?;
-        let meta: AvatarMeta = serde_yaml::from_str(&fm.yaml)?;
+        let (fm, _) = parse_front_matter(&content)?;
+        let meta: AvatarMeta = serde_yaml_ng::from_str(&fm)?;
         let uri = build_avatar_uri(&path, avatars_dir, &base_url);
         entries.push(AvatarEntry { meta, uri });
     }

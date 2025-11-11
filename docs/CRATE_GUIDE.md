@@ -36,7 +36,7 @@ This document tracks the crates Codex Tools prefers across the workspace. Each e
 ## Serialization and Data Formats
 - **serde** — de facto serialization framework with derive support; use instead of custom codecs.
 - **serde_json** — tuned JSON support for serde; replaces manual parsing.
-- **serde_yaml** — YAML handling for configs and tests.
+- **serde_yaml_ng** — YAML handling for configs and tests.
 - **bincode** — compact binary serialization for internal protocols.
 
 ## Configuration and Settings
