@@ -151,10 +151,11 @@ fn parse_normalized(mut source: &str) -> Result<(&str, &str), FrontMatterError> 
         return Err(FrontMatterError::Missing);
     };
 
-    if let Some(stripped) = remainder.strip_prefix("---") {
-        if let Ok(rest) = consume_delimiter_suffix(stripped) {
-            return Ok(("", rest));
-        }
+    if let Some(rest) = remainder
+        .strip_prefix("---")
+        .and_then(|stripped| consume_delimiter_suffix(stripped).ok())
+    {
+        return Ok(("", rest));
     }
 
     let Some((front_matter, suffix)) = remainder.split_once("\n---") else {
