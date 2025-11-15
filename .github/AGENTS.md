@@ -28,5 +28,4 @@ These rules apply to everything under `.github`.
 - Ensure artifact packaging steps are idempotent and clean up any temporary directories inside the workspace before uploading.
 
 ## Validation
-- Use the [WRKFLW](https://github.com/bahdotsh/wrkflw) CLI to dry-run workflow changes locally when possible (e.g., `wrkflw run .github/workflows/ci.yml`).
 - Document any deliberate deviations from these rules inside the affected workflow file so reviewers understand the exception.

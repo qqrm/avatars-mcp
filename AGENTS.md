@@ -7,7 +7,6 @@ These guidelines apply to every avatar in this repository.
 - Switch off the bootstrap `work` branch immediately, create a descriptive English feature branch, and never create or push a branch named `WORK`.
 - Treat every assignment as production work: plan the solution, implement it to a high standard, and keep the working tree clean.
 - Retrieve the avatar catalog from GitHub Pages (`https://qqrm.github.io/codex-tools/avatars.json`); the deployment does **not** publish `/catalog.json`, so avoid requesting that path. Pick a non-default avatar that fits the task and explain the choice in the final user summary and maintainer notes.
-- Mirror GitHub Actions locally: inspect recent workflow runs with `gh` and execute the required pipelines with `wrkflw` (for example, `wrkflw validate` and `wrkflw run .github/workflows/<workflow>.yml`). Do **not** create pull requests—maintainers open them manually via Codex after review.
 - Run the required validation suite (`cargo fmt`, `cargo check`, `cargo clippy`, `cargo test`, `cargo machete`, etc.) before committing and again before wrapping up. Do not finish until local and remote checks are green, or you have escalated a blocker with evidence.
 
 ## Engineering Mindset
@@ -23,6 +22,7 @@ These guidelines apply to every avatar in this repository.
 - Consult repository documentation such as `ARCHITECTURE.md`, `SPECIFICATION.md`, or READMEs whenever they exist.
 - Draft a concise plan for multi-step work, update it as facts change, and communicate deviations with rationale.
 - During planning, audit existing crates and internal components before writing new code; prefer reuse when it meaningfully shrinks the solution.
+- When a task requires an audit, output the findings as task stubs that describe the follow-up work instead of committing Markdown reports.
 - Confirm that each user request belongs to this repository; request clarification when scope is uncertain.
 - Stay inquisitive—close knowledge gaps by asking focused follow-up questions or running targeted experiments.
 
@@ -31,12 +31,10 @@ These guidelines apply to every avatar in this repository.
 - Prefer command-line tooling and automate repetitive steps to keep workflows reproducible.
 - Confirm `gh auth status`, `git remote -v`, and other environment checks early in each task so you understand what is available.
 - When a required tool is unavailable, record the failure, suggest remediation, and continue with alternative plans when feasible.
-- Codex bootstrap scripts install shared tooling (including `wrkflw`) automatically; raise an incident only if required commands are missing.
 
 ## Development Workflow
 - Treat user requests as complete tasks and deliver production-ready branches that maintainers can promote without extra fixes.
 - Run every required check before committing. Default to the full test suite for the components you touched and document any skipped command with justification.
-- Use automation to inspect GitHub state: rely on `gh` for issue triage and workflow history, and keep `wrkflw` runs aligned with the GitHub Actions checks enforced on the repository.
 - Surface any blockers preventing a clean branch handoff (failed checks, diverged history, etc.) together with remediation steps.
 - Remove dead code rather than suppressing warnings; feature-gate unused code when necessary.
 - Write tests for new functionality and resolve reported problems.
@@ -81,11 +79,6 @@ These guidelines apply to every avatar in this repository.
 - Treat GitHub workflows as first-class code: keep them under version control, review every change, and follow `.github/AGENTS.md` for directory-specific rules.
 - Every repository maintained through Codex must carry the `Codex Branch Cleanup` workflow at `.github/workflows/codex-cleanup.yml`. Keep the workflow name unchanged, preserve the schedule/dispatch triggers, and align its implementation with the canonical version in this repository. The container bootstrap (`./scripts/BaseInitialization.sh`) automatically installs the workflow from our GitHub Pages mirror when it is missing.
 - Pipeline secrets reside in the `prod` environment.
-- Run GitHub Actions workflows locally with [WRKFLW](https://github.com/bahdotsh/wrkflw) before handing off a branch. Typical commands:
-  ```bash
-  wrkflw validate
-  wrkflw run .github/workflows/<workflow>.yml
-  ```
 - Use the GitHub interface to inspect logs from the five most recent pipeline runs.
 - Prefer the [`dtolnay/rust-toolchain`](https://github.com/dtolnay/rust-toolchain) pipelines for Rust projects—they are our required standard.
 - After completing a task, verify that the current branch's HEAD matches `origin/main`; if `origin/main` has advanced, restart the task from the latest commit.
