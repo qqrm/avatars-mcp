@@ -79,6 +79,7 @@ These guidelines apply to every avatar in this repository.
 - This root `AGENTS.md` is fetched from the GitHub Pages deployment during container initialization. Update it only when you intentionally change the global rules.
 - Repository-specific instructions may appear in `REPO_AGENTS.md`. If this file is absent, assume no extra instructions.
 - Additional `AGENTS.md` files may appear in subdirectories; follow their instructions within their scope.
+- When the active repository is named anything other than `codex-tools`, treat every `AGENTS.md` file as read-only—do not modify, extend, or replace it under any circumstance.
 - Keep `AGENTS.md` entries in English.
 
 ## Communication
