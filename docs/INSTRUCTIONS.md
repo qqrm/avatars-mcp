@@ -1,14 +1,14 @@
 # Instructions
 
-The published avatar site is available at:
+The published persona site is available at:
 
 ```text
 https://qqrm.github.io/codex-tools/
 ```
 
-- `GET /avatars.json` — retrieve the avatar catalog with the `base_uri` pointer to the shared instructions. The deployment does **not** expose `/catalog.json`, so avoid requesting that legacy path.
+- `GET /personas.json` — retrieve the persona catalog with the `base_uri` pointer to the shared instructions. The deployment does **not** expose `/catalog.json`, so avoid requesting that legacy path.
 - `GET /AGENTS.md` — fetch the shared baseline instructions referenced by `base_uri`.
-- `GET /avatars/{id}.md` — retrieve the complete descriptor for the avatar with the given `id`.
+- `GET /personas/{id}.md` — retrieve the complete descriptor for the persona with the given `id`.
 
 # Response Guidelines
 

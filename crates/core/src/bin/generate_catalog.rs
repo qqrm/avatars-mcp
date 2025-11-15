@@ -11,19 +11,19 @@ fn main() {
 
 fn run() -> Result<()> {
     let repo_root = env::current_dir().context("determine repository root")?;
-    let avatars_dir = repo_root.join("avatars");
+    let personas_dir = repo_root.join("personas");
     let agents_path = repo_root.join("AGENTS.md");
 
-    if !avatars_dir.is_dir() {
-        bail!("avatars directory missing: {}", display(&avatars_dir));
+    if !personas_dir.is_dir() {
+        bail!("personas directory missing: {}", display(&personas_dir));
     }
     if !agents_path.is_file() {
         bail!("AGENTS.md missing: {}", display(&agents_path));
     }
 
-    avatars_core::generate_index(&avatars_dir, &agents_path)
-        .with_context(|| format!("generate catalog for {}", display(&avatars_dir)))?;
-    println!("wrote {}", display(&avatars_dir.join("catalog.json")));
+    personas_core::generate_index(&personas_dir, &agents_path)
+        .with_context(|| format!("generate catalog for {}", display(&personas_dir)))?;
+    println!("wrote {}", display(&personas_dir.join("catalog.json")));
 
     Ok(())
 }

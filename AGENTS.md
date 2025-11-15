@@ -1,12 +1,12 @@
 # Base Agent Instructions
 
-These guidelines apply to every avatar in this repository.
+These guidelines apply to every persona in this repository.
 
 ## Critical Checklist
 - Confirm the repository is ready by checking `git remote -v` and `gh auth status`; Codex automatically provisions the workspace.
 - Switch off the bootstrap `work` branch immediately, create a descriptive English feature branch, and never create or push a branch named `WORK`.
 - Treat every assignment as production work: plan the solution, implement it to a high standard, and keep the working tree clean.
-- Retrieve the avatar catalog from GitHub Pages (`https://qqrm.github.io/codex-tools/avatars.json`); the deployment does **not** publish `/catalog.json`, so avoid requesting that path. Pick a non-default avatar that fits the task and explain the choice in the final user summary and maintainer notes.
+- Retrieve the persona catalog from GitHub Pages (`https://qqrm.github.io/codex-tools/personas.json`); the deployment does **not** publish `/catalog.json`, so avoid requesting that path. Pick a non-default persona that fits the task and explain the choice in the final user summary and maintainer notes.
 - Run the required validation suite (`cargo fmt`, `cargo check`, `cargo clippy`, `cargo test`, `cargo machete`, etc.) before committing and again before wrapping up. Do not finish until local and remote checks are green, or you have escalated a blocker with evidence. The default Rust command loop is:
   ```bash
   cargo fmt --all -- --check
@@ -46,16 +46,16 @@ These guidelines apply to every avatar in this repository.
 - Remove dead code rather than suppressing warnings; feature-gate unused code when necessary.
 - Write tests for new functionality and resolve reported problems.
 
-## Avatars
-- Use the published site at `https://qqrm.github.io/codex-tools/` to fetch avatars and base instructions.
-- Treat every avatar as a Markdown document that must be fully read to extract its textual guidance; avatars are not images. Document that you consumed the Markdown content and cite the relevant text when explaining your choice.
-- Always read and interpret the Markdown body before selecting an avatar. Summaries, descriptions, and justifications must quote or paraphrase the retrieved text rather than assumptions or prior experience.
-- Use the REST API to inspect the latest avatar catalog (`/avatars.json`) and README information as needed. Record HTTP errors (excluding the expected `/catalog.json` 404, which indicates a wrong path) and retry transient failures up to five times before escalating.
-- Whenever avatar retrieval or file parsing fails, explicitly state the problem (HTTP status, missing file, parse error, etc.) in both the user summary and maintainer notes, including the number of attempts and which step failed (catalog fetch, Markdown download, parsing).
-- Select a non-default avatar that matches the task context, document why it fits based on the Markdown content you retrieved, and include this rationale—grounded in the avatar text—in the final response to the user and in maintainer notes when requested.
-- Provide the full HTTPS URL for every avatar you used in both the final user summary and any maintainer notes, together with a brief description lifted from or paraphrased directly out of the Markdown text. If the Markdown cannot be read, report the failure and its cause instead of inventing details.
-- When operating offline or when automated downloads are impossible, record every failed attempt (command, timestamp, error), explain the outage, and clearly describe the fallback process. Only use cached knowledge to choose the closest avatar, and explicitly state that the Markdown content could not be retrieved.
-- Switch avatars as needed for sub-tasks (e.g., Senior, Architect, Tester, Analyst) and list every avatar used when summarising work.
+## Personas
+- Use the published site at `https://qqrm.github.io/codex-tools/` to fetch personas and base instructions.
+- Treat every persona as a Markdown document that must be fully read to extract its textual guidance; personas are not images. Document that you consumed the Markdown content and cite the relevant text when explaining your choice.
+- Always read and interpret the Markdown body before selecting a persona. Summaries, descriptions, and justifications must quote or paraphrase the retrieved text rather than assumptions or prior experience.
+- Use the REST API to inspect the latest persona catalog (`/personas.json`) and README information as needed. Record HTTP errors (excluding the expected `/catalog.json` 404, which indicates a wrong path) and retry transient failures up to five times before escalating.
+- Whenever persona retrieval or file parsing fails, explicitly state the problem (HTTP status, missing file, parse error, etc.) in both the user summary and maintainer notes, including the number of attempts and which step failed (catalog fetch, Markdown download, parsing).
+- Select a non-default persona that matches the task context, document why it fits based on the Markdown content you retrieved, and include this rationale—grounded in the persona text—in the final response to the user and in maintainer notes when requested.
+- Provide the full HTTPS URL for every persona you used in both the final user summary and any maintainer notes, together with a brief description lifted from or paraphrased directly out of the Markdown text. If the Markdown cannot be read, report the failure and its cause instead of inventing details.
+- When operating offline or when automated downloads are impossible, record every failed attempt (command, timestamp, error), explain the outage, and clearly describe the fallback process. Only use cached knowledge to choose the closest persona, and explicitly state that the Markdown content could not be retrieved.
+- Switch personas as needed for sub-tasks (e.g., Senior, Architect, Tester, Analyst) and list every persona used when summarising work.
 
 ## Testing and Validation
 - Install tooling as needed (`rustup component add clippy rustfmt`).
@@ -88,7 +88,7 @@ These guidelines apply to every avatar in this repository.
 - If a task description is in Russian, translate branch and task names into English.
 - Describe the environment as a production workspace; never call it a training or sandbox setting.
 - Provide maintainers with concise notes: list changes, reference lines with `F:path#Lx-Ly`, and attach test results.
-- In the final summary, list all avatars used and report the status of every mandatory check you reproduced locally; it is acceptable to skip tests for documentation-only pull requests when you explicitly note the exemption.
+- In the final summary, list all personas used and report the status of every mandatory check you reproduced locally; it is acceptable to skip tests for documentation-only pull requests when you explicitly note the exemption.
 - Never commit conversational responses or ad-hoc Markdown summaries into the repository unless the task explicitly requires a
   checked-in document.
 

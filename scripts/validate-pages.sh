@@ -30,8 +30,8 @@ required_paths=(
   static.json
   index.md
   index.json
-  avatars/catalog.json
-  avatars.json
+  personas/catalog.json
+  personas.json
   docs/INSTRUCTIONS.md
   docs/SPECIFICATION.md
   scripts/BaseInitialization.sh

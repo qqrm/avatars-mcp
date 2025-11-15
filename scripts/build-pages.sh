@@ -42,9 +42,9 @@ copy_executable() {
   install -m 0755 "${src}" "${dest}"
 }
 
-# Avatars and catalogs
-mkdir -p "${OUTPUT_DIR}/avatars"
-cp -a "${REPO_ROOT}/avatars/." "${OUTPUT_DIR}/avatars/"
+# Personas and catalogs
+mkdir -p "${OUTPUT_DIR}/personas"
+cp -a "${REPO_ROOT}/personas/." "${OUTPUT_DIR}/personas/"
 
 # Shared markdown artifacts
 copy_file "${REPO_ROOT}/AGENTS.md" "${OUTPUT_DIR}/AGENTS.md"
@@ -74,17 +74,17 @@ mkdir -p "${OUTPUT_DIR}/workflows"
 copy_file "${REPO_ROOT}/.github/workflows/codex-cleanup.yml" "${OUTPUT_DIR}/workflows/codex-cleanup.yml"
 
 # Catalog copies
-copy_file "${OUTPUT_DIR}/avatars/catalog.json" "${OUTPUT_DIR}/index.json"
-copy_file "${OUTPUT_DIR}/avatars/catalog.json" "${OUTPUT_DIR}/avatars.json"
+copy_file "${OUTPUT_DIR}/personas/catalog.json" "${OUTPUT_DIR}/index.json"
+copy_file "${OUTPUT_DIR}/personas/catalog.json" "${OUTPUT_DIR}/personas.json"
 
 # Landing page markdown
 {
   cat "${REPO_ROOT}/AGENTS.md"
   echo
-  echo "## Avatars"
-  for avatar_path in "${REPO_ROOT}"/avatars/*.md; do
-    avatar_name="$(basename "${avatar_path}")"
-    echo "- [${avatar_name%.*}](avatars/${avatar_name})"
+  echo "## Personas"
+  for persona_path in "${REPO_ROOT}"/personas/*.md; do
+    persona_name="$(basename "${persona_path}")"
+    echo "- [${persona_name%.*}](personas/${persona_name})"
   done
   echo
   cat "${REPO_ROOT}/docs/INSTRUCTIONS.md"
