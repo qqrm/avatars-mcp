@@ -15,7 +15,11 @@ Refer to [`docs/CRATE_GUIDE.md`](docs/CRATE_GUIDE.md) for the complete, regularl
 - If `git remote -v` or `gh auth status` show problems, capture the full command output, diagnose the cause, and propose a fix or workaround.
 
 ## Testing and Validation
-- Run the full validation suite (formatting, clippy, tests, documentation build scripts, `cargo machete`, etc.) whenever you modify Rust code or GitHub workflow files.
-- Documentation-only updates may use a lightweight loop of `cargo fmt --all`, optionally `cargo check`, and the docs build scripts. Note any skipped steps in your status report.
+- Run the full Rust validation suite from `AGENTS.md` whenever you modify Rust code or GitHub workflow files. In addition, this repository requires the docs build and Markdown validation scripts:
+  ```bash
+  ./scripts/build-pages.sh
+  ./scripts/validate-pages.sh
+  ```
+- Documentation-only updates (Markdown, guides, `AGENTS.md` updates, etc.) may skip the heavier Rust commands when no Rust code changes, but you must still run the shell scripts above (and `cargo fmt --all` when applicable) and record any skipped tooling in your report.
 
 ## Branch Management and Handoff

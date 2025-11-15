@@ -7,7 +7,14 @@ These guidelines apply to every avatar in this repository.
 - Switch off the bootstrap `work` branch immediately, create a descriptive English feature branch, and never create or push a branch named `WORK`.
 - Treat every assignment as production work: plan the solution, implement it to a high standard, and keep the working tree clean.
 - Retrieve the avatar catalog from GitHub Pages (`https://qqrm.github.io/codex-tools/avatars.json`); the deployment does **not** publish `/catalog.json`, so avoid requesting that path. Pick a non-default avatar that fits the task and explain the choice in the final user summary and maintainer notes.
-- Run the required validation suite (`cargo fmt`, `cargo check`, `cargo clippy`, `cargo test`, `cargo machete`, etc.) before committing and again before wrapping up. Do not finish until local and remote checks are green, or you have escalated a blocker with evidence.
+- Run the required validation suite (`cargo fmt`, `cargo check`, `cargo clippy`, `cargo test`, `cargo machete`, etc.) before committing and again before wrapping up. Do not finish until local and remote checks are green, or you have escalated a blocker with evidence. The default Rust command loop is:
+  ```bash
+  cargo fmt --all -- --check
+  cargo check --tests --benches
+  cargo clippy --all-targets --all-features -- -D warnings
+  cargo test
+  cargo machete            # if installed
+  ```
 
 ## Engineering Mindset
 - Operate like a senior engineer: analyse the problem space, decide on a plan, execute decisively, and justify trade-offs.
@@ -53,24 +60,8 @@ These guidelines apply to every avatar in this repository.
 - Install tooling as needed (`rustup component add clippy rustfmt`).
 - Ensure every Rust crate in this repository targets the Rust 2024 edition; verify that each `Cargo.toml`, `rust-toolchain.toml`, and generated manifest declares `edition = "2024"`, and update toolchain settings immediately when discrepancies arise.
 - Track upstream crate releases proactively: prefer the latest stable versions and confirm expectations against their crates.io documentation before locking or updating dependencies.
-- When Rust source code or GitHub workflow files change, reproduce the full CI pipeline locally before committing:
-  ```bash
-  cargo fmt --all -- --check
-  cargo check --tests --benches
-  cargo clippy --all-targets --all-features -- -D warnings
-  cargo test
-  ./scripts/build-pages.sh
-  ./scripts/validate-pages.sh
-  cargo machete            # if available
-  ```
-- Documentation-only changes (Markdown, guides, `AGENTS.md` updates, etc.) may follow a lightweight validation loop:
-  ```bash
-  cargo fmt --all
-  # Optional: cargo check
-  ./scripts/build-pages.sh
-  ./scripts/validate-pages.sh
-  ```
-  Record any skipped Rust tooling in the final report.
+- When Rust source code or GitHub workflow files change, reproduce the full CI pipeline locally before committing, covering formatters, linters, tests, documentation builders, and any repository-specific scripts.
+- Documentation-only changes (Markdown, guides, `AGENTS.md` updates, etc.) may follow the lightweight validation steps defined by the repository-specific instructions. Record any skipped tooling in the final report.
 - Treat every failure or warning from the required tooling—including findings such as unused dependencies reported by `cargo machete`—as part of the active task and resolve them before finishing, even when the issue originates outside the immediate scope of the requested change.
 - Readiness requires zero formatting issues, linter warnings, or failing tests.
 - Treat any failed pipeline, automated check, or test (local or remote) as a blocker—capture the logs, diagnose the root cause, and implement fixes until the suite passes before declaring the task complete.
