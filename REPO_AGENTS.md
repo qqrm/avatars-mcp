@@ -5,7 +5,7 @@ These instructions extend the base `AGENTS.md` rules for the entire repository.
 ## Critical Checklist
 - Confirm `git remote -v` and `gh auth status` before making changes; Codex bootstrap scripts already configure the workspace.
 - Leave the bootstrap `work` branch immediately, create a descriptive feature branch, and avoid any branch named `WORK`.
-- Treat the GitHub Pages deployment as the source of truth for `avatars.json`: it rebuilds the catalog automatically whenever `main` is published. Run `cargo run --release` only when you need a local preview or to debug generator failures, and avoid committing derived `avatars/catalog.json` output unless the task explicitly changes the generator.
+- Treat the GitHub Pages deployment as the source of truth for `personas.json`: it rebuilds the catalog automatically whenever `main` is published. Run `cargo run --release` only when you need a local preview or to debug generator failures, and avoid committing derived `personas/catalog.json` output unless the task explicitly changes the generator.
 - Enforce the Rust 2024 edition across the workspace: confirm that every crate manifest and shared toolchain configuration specifies `edition = "2024"` and correct any mismatch as part of the task.
 
 ## Preferred Rust Crates

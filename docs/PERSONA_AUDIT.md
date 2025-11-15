@@ -1,8 +1,8 @@
-# Avatar Audit
+# Persona Audit
 
-The table below summarizes the current Codex avatar catalog. Ratings combine qualitative review of real-world applicability ("Usefulness") and whether the file meets the structural expectations introduced in the specification ("Completeness").
+The table below summarizes the current Codex persona catalog. Ratings combine qualitative review of real-world applicability ("Usefulness") and whether the file meets the structural expectations introduced in the specification ("Completeness").
 
-| Avatar | Usefulness | Completeness | Notes |
+| Persona | Usefulness | Completeness | Notes |
 | ------ | ---------- | ------------ | ----- |
 | Discovery Analyst (`ANALYST`) | High | High | Checklist-driven discovery workflow covering stakeholder alignment, backlog clarity, and risk surfacing. |
 | Solution Architect (`ARCHITECT`) | High | High | Balanced view of trade-off analysis, decision records, and collaborative handoffs into delivery. |

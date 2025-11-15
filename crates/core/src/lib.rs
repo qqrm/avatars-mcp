@@ -9,7 +9,7 @@ use std::path::{Path, PathBuf};
 use thiserror::Error;
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
-pub struct AvatarMeta {
+pub struct PersonaMeta {
     pub id: String,
     pub name: String,
     pub description: Option<String>,
@@ -68,7 +68,7 @@ pub enum CatalogError {
         #[source]
         source: serde_json::Error,
     },
-    #[error("duplicate avatar id `{id}` found in {duplicate} (already defined in {first})")]
+    #[error("duplicate persona id `{id}` found in {duplicate} (already defined in {first})")]
     Duplicate {
         id: String,
         first: PathBuf,
@@ -167,41 +167,41 @@ fn parse_normalized(mut source: &str) -> Result<(&str, &str), FrontMatterError> 
 }
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
-pub struct AvatarEntry {
+pub struct PersonaEntry {
     #[serde(flatten)]
-    pub meta: AvatarMeta,
+    pub meta: PersonaMeta,
     pub uri: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct Index {
     pub base_uri: String,
-    pub avatars: Vec<AvatarEntry>,
+    pub personas: Vec<PersonaEntry>,
 }
 
 impl Index {
-    pub fn avatar_uris(&self) -> impl Iterator<Item = &str> {
-        self.avatars.iter().map(|entry| entry.uri.as_str())
+    pub fn persona_uris(&self) -> impl Iterator<Item = &str> {
+        self.personas.iter().map(|entry| entry.uri.as_str())
     }
 }
 
-pub fn generate_index(avatars_dir: &Path, base_path: &Path) -> Result<Index, CatalogError> {
-    let index = build_index(avatars_dir, base_path)?;
-    write_index(avatars_dir, &index)?;
+pub fn generate_index(personas_dir: &Path, base_path: &Path) -> Result<Index, CatalogError> {
+    let index = build_index(personas_dir, base_path)?;
+    write_index(personas_dir, &index)?;
     Ok(index)
 }
 
-fn build_index(avatars_dir: &Path, base_path: &Path) -> Result<Index, CatalogError> {
+fn build_index(personas_dir: &Path, base_path: &Path) -> Result<Index, CatalogError> {
     fs::metadata(base_path).map_err(|source| CatalogError::io(base_path, source))?;
-    let base_uri = resolve_base_uri(avatars_dir, base_path);
-    let mut avatars = collect_avatar_entries(avatars_dir)?;
-    avatars.sort_by(|a, b| a.meta.id.cmp(&b.meta.id));
+    let base_uri = resolve_base_uri(personas_dir, base_path);
+    let mut personas = collect_persona_entries(personas_dir)?;
+    personas.sort_by(|a, b| a.meta.id.cmp(&b.meta.id));
 
-    Ok(Index { base_uri, avatars })
+    Ok(Index { base_uri, personas })
 }
 
-fn write_index(avatars_dir: &Path, index: &Index) -> Result<(), CatalogError> {
-    let catalog_path = avatars_dir.join("catalog.json");
+fn write_index(personas_dir: &Path, index: &Index) -> Result<(), CatalogError> {
+    let catalog_path = personas_dir.join("catalog.json");
     let mut json = serde_json::to_string_pretty(index)
         .map_err(|source| CatalogError::json(&catalog_path, source))?;
     json.push('\n');
@@ -209,8 +209,8 @@ fn write_index(avatars_dir: &Path, index: &Index) -> Result<(), CatalogError> {
     Ok(())
 }
 
-fn resolve_base_uri(avatars_dir: &Path, base_path: &Path) -> String {
-    avatars_dir
+fn resolve_base_uri(personas_dir: &Path, base_path: &Path) -> String {
+    personas_dir
         .parent()
         .and_then(|parent| base_path.strip_prefix(parent).ok())
         .unwrap_or(base_path)
@@ -218,14 +218,14 @@ fn resolve_base_uri(avatars_dir: &Path, base_path: &Path) -> String {
         .replace('\\', "/")
 }
 
-pub fn collect_avatar_entries(avatars_dir: &Path) -> Result<Vec<AvatarEntry>, CatalogError> {
+pub fn collect_persona_entries(personas_dir: &Path) -> Result<Vec<PersonaEntry>, CatalogError> {
     let base_url = resolve_pages_base_url();
     let mut entries = Vec::new();
     let mut seen_ids: HashMap<String, PathBuf> = HashMap::new();
     let read_dir =
-        fs::read_dir(avatars_dir).map_err(|source| CatalogError::io(avatars_dir, source))?;
+        fs::read_dir(personas_dir).map_err(|source| CatalogError::io(personas_dir, source))?;
     for entry in read_dir {
-        let entry = entry.map_err(|source| CatalogError::io(avatars_dir, source))?;
+        let entry = entry.map_err(|source| CatalogError::io(personas_dir, source))?;
         let path = entry.path();
         if path.extension().and_then(|s| s.to_str()) != Some("md") {
             continue;
@@ -234,14 +234,14 @@ pub fn collect_avatar_entries(avatars_dir: &Path) -> Result<Vec<AvatarEntry>, Ca
             fs::read_to_string(&path).map_err(|source| CatalogError::io(&path, source))?;
         let front_matter = parse_front_matter(&content)
             .map_err(|source| CatalogError::front_matter(&path, source))?;
-        let meta: AvatarMeta = serde_yaml_ng::from_str(front_matter.yaml.as_ref())
+        let meta: PersonaMeta = serde_yaml_ng::from_str(front_matter.yaml.as_ref())
             .map_err(|source| CatalogError::yaml(&path, source))?;
         let id = meta.id.clone();
         if let Some(first) = seen_ids.insert(id.clone(), path.clone()) {
             return Err(CatalogError::duplicate(id, first, path));
         }
-        let uri = build_avatar_uri(&path, avatars_dir, &base_url);
-        entries.push(AvatarEntry { meta, uri });
+        let uri = build_persona_uri(&path, personas_dir, &base_url);
+        entries.push(PersonaEntry { meta, uri });
     }
     Ok(entries)
 }
@@ -250,9 +250,9 @@ fn resolve_pages_base_url() -> String {
     env::var("PAGES_BASE_URL").unwrap_or_else(|_| "https://qqrm.github.io/codex-tools".to_string())
 }
 
-fn build_avatar_uri(path: &Path, avatars_dir: &Path, base_url: &str) -> String {
+fn build_persona_uri(path: &Path, personas_dir: &Path, base_url: &str) -> String {
     let normalized_base = base_url.trim_end_matches('/');
-    let relative_path = avatars_dir
+    let relative_path = personas_dir
         .parent()
         .and_then(|root| path.strip_prefix(root).ok())
         .unwrap_or(path);
@@ -346,15 +346,15 @@ mod tests {
     fn generates_index_with_expected_fields() -> Result<(), Box<dyn Error>> {
         let tmp = tempdir()?;
         let root = tmp.path();
-        let avatars = root.join("avatars");
-        fs::create_dir(&avatars)?;
+        let personas = root.join("personas");
+        fs::create_dir(&personas)?;
 
         fs::write(
-            avatars.join("ONE.md"),
+            personas.join("ONE.md"),
             "---\nid: one\nname: One\ndescription: First\n---\nbody\n",
         )?;
         fs::write(
-            avatars.join("TWO.md"),
+            personas.join("TWO.md"),
             "---\nid: two\nname: Two\n---\nbody\n",
         )?;
         fs::write(root.join("AGENTS.md"), "Base instructions\n")?;
@@ -363,12 +363,12 @@ mod tests {
             env::set_var("PAGES_BASE_URL", "https://example.invalid/base");
         }
 
-        let index = generate_index(&avatars, &root.join("AGENTS.md"))?;
+        let index = generate_index(&personas, &root.join("AGENTS.md"))?;
         assert_eq!(index.base_uri, "AGENTS.md");
-        assert_eq!(index.avatars.len(), 2);
+        assert_eq!(index.personas.len(), 2);
         assert_eq!(
             index
-                .avatars
+                .personas
                 .iter()
                 .map(|entry| entry.meta.id.as_str())
                 .collect::<Vec<_>>(),
@@ -376,17 +376,17 @@ mod tests {
         );
         assert_eq!(
             index
-                .avatars
+                .personas
                 .iter()
                 .map(|entry| entry.uri.as_str())
                 .collect::<Vec<_>>(),
             vec![
-                "https://example.invalid/base/avatars/ONE.md",
-                "https://example.invalid/base/avatars/TWO.md"
+                "https://example.invalid/base/personas/ONE.md",
+                "https://example.invalid/base/personas/TWO.md"
             ]
         );
 
-        let json = fs::read_to_string(avatars.join("catalog.json"))?;
+        let json = fs::read_to_string(personas.join("catalog.json"))?;
         let parsed: Index = serde_json::from_str(&json)?;
         assert_eq!(parsed, index);
 
