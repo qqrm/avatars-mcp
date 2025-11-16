@@ -2,7 +2,7 @@ use anyhow::{Context, Result, bail};
 use personas_core::PersonaEntry;
 use std::env;
 use std::fs;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 fn main() {
     if let Err(err) = run() {
@@ -14,36 +14,33 @@ fn main() {
 fn run() -> Result<()> {
     let args = Args::parse()?;
     let repo_root = env::current_dir().context("determine repository root")?;
-    let personas_dir = repo_root.join("personas");
-    let docs_dir = repo_root.join("docs");
-    let audit_path = docs_dir.join("PERSONA_AUDIT.md");
+    run_with_args(&args, &repo_root)
+}
 
-    if !personas_dir.is_dir() {
-        bail!("personas directory missing: {}", display(&personas_dir));
-    }
-    if !docs_dir.is_dir() {
-        bail!("docs directory missing: {}", display(&docs_dir));
-    }
+fn run_with_args(args: &Args, repo_root: &Path) -> Result<()> {
+    let repo_root = repo_root.to_path_buf();
+    let paths = RepoPaths::new(repo_root);
+    paths.validate()?;
 
-    let mut entries = personas_core::collect_persona_entries(&personas_dir)
-        .with_context(|| format!("collect personas from {}", display(&personas_dir)))?;
+    let mut entries = personas_core::collect_persona_entries(&paths.personas_dir)
+        .with_context(|| format!("collect personas from {}", display(&paths.personas_dir)))?;
     entries.sort_by(|a, b| a.meta.name.cmp(&b.meta.name));
 
     let markdown = render_persona_audit(&entries);
 
     if args.check {
-        let current = fs::read_to_string(&audit_path)
-            .with_context(|| format!("read {}", display(&audit_path)))?;
+        let current = fs::read_to_string(&paths.audit_path)
+            .with_context(|| format!("read {}", display(&paths.audit_path)))?;
         if normalize_line_endings(&current) != normalize_line_endings(&markdown) {
             bail!(
                 "{} is out of date. Run `cargo run -p personas-core --bin generate-persona-audit` and commit the changes.",
-                display(&audit_path)
+                display(&paths.audit_path)
             );
         }
     } else {
-        fs::write(&audit_path, markdown)
-            .with_context(|| format!("write {}", display(&audit_path)))?;
-        println!("wrote {}", display(&audit_path));
+        fs::write(&paths.audit_path, markdown)
+            .with_context(|| format!("write {}", display(&paths.audit_path)))?;
+        println!("wrote {}", display(&paths.audit_path));
     }
 
     Ok(())
@@ -107,20 +104,60 @@ fn normalize_line_endings(input: &str) -> String {
     input.replace("\r\n", "\n")
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 struct Args {
     check: bool,
 }
 
 impl Args {
     fn parse() -> Result<Self> {
+        Self::parse_from(env::args().skip(1))
+    }
+
+    fn parse_from<I>(args: I) -> Result<Self>
+    where
+        I: IntoIterator<Item = String>,
+    {
         let mut check = false;
-        for arg in env::args().skip(1) {
+        for arg in args {
             match arg.as_str() {
                 "--check" => check = true,
                 _ => bail!("unknown argument: {arg}"),
             }
         }
         Ok(Self { check })
+    }
+}
+
+struct RepoPaths {
+    personas_dir: PathBuf,
+    docs_dir: PathBuf,
+    audit_path: PathBuf,
+}
+
+impl RepoPaths {
+    fn new(repo_root: PathBuf) -> Self {
+        let personas_dir = repo_root.join("personas");
+        let docs_dir = repo_root.join("docs");
+        let audit_path = docs_dir.join("PERSONA_AUDIT.md");
+        Self {
+            personas_dir,
+            docs_dir,
+            audit_path,
+        }
+    }
+
+    fn validate(&self) -> Result<()> {
+        if !self.personas_dir.is_dir() {
+            bail!(
+                "personas directory missing: {}",
+                display(&self.personas_dir)
+            );
+        }
+        if !self.docs_dir.is_dir() {
+            bail!("docs directory missing: {}", display(&self.docs_dir));
+        }
+        Ok(())
     }
 }
 
@@ -132,6 +169,60 @@ fn display(path: &Path) -> String {
 mod tests {
     use super::*;
     use personas_core::PersonaMeta;
+    use std::fs;
+    use tempfile::tempdir;
+
+    #[test]
+    fn run_with_args_writes_audit() {
+        let tmp = tempdir().expect("tempdir");
+        let repo_root = tmp.path();
+        let personas_dir = repo_root.join("personas");
+        let docs_dir = repo_root.join("docs");
+        fs::create_dir(&personas_dir).expect("personas dir");
+        fs::create_dir(&docs_dir).expect("docs dir");
+        fs::write(
+            personas_dir.join("ONE.md"),
+            "---\nid: one\nname: One\n---\nbody\n",
+        )
+        .expect("persona");
+
+        run_with_args(&Args { check: false }, repo_root).expect("run");
+
+        let audit = fs::read_to_string(docs_dir.join("PERSONA_AUDIT.md")).expect("audit contents");
+        assert!(audit.contains("Persona Audit"));
+        assert!(audit.contains("| One | one"));
+    }
+
+    #[test]
+    fn run_with_args_check_detects_drift() {
+        let tmp = tempdir().expect("tempdir");
+        let repo_root = tmp.path();
+        let personas_dir = repo_root.join("personas");
+        let docs_dir = repo_root.join("docs");
+        fs::create_dir(&personas_dir).expect("personas dir");
+        fs::create_dir(&docs_dir).expect("docs dir");
+        fs::write(
+            personas_dir.join("ONE.md"),
+            "---\nid: one\nname: One\n---\nbody\n",
+        )
+        .expect("persona");
+        fs::write(docs_dir.join("PERSONA_AUDIT.md"), "stale").expect("audit");
+
+        let err = run_with_args(&Args { check: true }, repo_root).unwrap_err();
+        assert!(err.to_string().contains("PERSONA_AUDIT.md is out of date"));
+    }
+
+    #[test]
+    fn args_parse_from_accepts_check_flag() {
+        let parsed = Args::parse_from(vec!["--check".into()]).expect("args");
+        assert!(parsed.check);
+    }
+
+    #[test]
+    fn args_parse_from_rejects_unknown_flag() {
+        let err = Args::parse_from(vec!["--unknown".into()]).unwrap_err();
+        assert!(err.to_string().contains("unknown argument"));
+    }
 
     #[test]
     fn renders_table_with_defaults() {

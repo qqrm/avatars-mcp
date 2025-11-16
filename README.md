@@ -158,6 +158,18 @@ git diff --exit-code personas/catalog.json
 
 When working locally, reproduce this sequence for any change that touches source code. Markdown-only edits may instead run the lightweight loop of `./scripts/build-pages.sh` followed by `./scripts/validate-pages.sh`. GitHub Pages deployments rebuild the catalog from `main` and publish it to `https://qqrm.github.io/codex-tools/personas.json` alongside the persona Markdown files.
 
+### Local validation shortcuts
+
+- `make qa` — executes the formatter, `cargo check`, `cargo clippy` (static analysis), unit tests, and the documentation validation scripts in one pass.
+- `make lint` — runs `cargo clippy --all-targets --all-features -- -D warnings` as the canonical static-analysis command.
+- `make catalog` — rebuilds `personas/catalog.json` to preview the published catalog locally.
+
+### Test coverage highlights
+
+- `crates/core/src/lib.rs` — YAML parsing, catalog generation, and URI resolution logic.
+- `crates/core/src/bin/generate_catalog.rs` — CLI validation of repository layout and catalog generation error handling.
+- `crates/core/src/bin/generate_persona_audit.rs` — persona audit generation, `--check` drift detection, and argument parsing.
+
 The validation script checks that the published artifact keeps the shared documentation and catalog files in sync. It fails if `AGENTS.md`, the docs bundle (`docs/INSTRUCTIONS.md` and `docs/SPECIFICATION.md`), the catalog exports (`personas/catalog.json`, `personas.json`, `index.json`), the codex cleanup workflow (`workflows/codex-cleanup.yml`), or the bootstrap entry points (`scripts/BaseInitialization.sh`, `scripts/FullInitialization.sh`, `scripts/PretaskInitialization.sh`) are missing or empty.
 
 For detailed schemas, examples, and API usage, always defer to `SPECIFICATION.md`.
