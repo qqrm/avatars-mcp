@@ -42,7 +42,27 @@ copy_executable() {
   install -m 0755 "${src}" "${dest}"
 }
 
+refresh_personas_catalog() {
+  local catalog_target="${REPO_ROOT}/personas/catalog.json"
+  if [[ -n "${PERSONAS_CATALOG_SOURCE:-}" ]]; then
+    if [[ ! -f "${PERSONAS_CATALOG_SOURCE}" ]]; then
+      echo "Error: PERSONAS_CATALOG_SOURCE (${PERSONAS_CATALOG_SOURCE}) not found." >&2
+      exit 1
+    fi
+    install -m 0644 "${PERSONAS_CATALOG_SOURCE}" "${catalog_target}"
+    return
+  fi
+
+  if ! command -v cargo >/dev/null 2>&1; then
+    echo "Error: cargo is required to regenerate personas/catalog.json." >&2
+    exit 1
+  fi
+
+  (cd "${REPO_ROOT}" && cargo run --release -p personas-core)
+}
+
 # Personas and catalogs
+refresh_personas_catalog
 mkdir -p "${OUTPUT_DIR}/personas"
 cp -a "${REPO_ROOT}/personas/." "${OUTPUT_DIR}/personas/"
 
