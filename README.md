@@ -104,6 +104,8 @@ Only these entry points are published on GitHub Pages.
 
 ## Bootstrap Script Architecture
 
+This section is the canonical reference for the bootstrap bundle described in Section 8 of `docs/SPECIFICATION.md`.
+
 Codex repositories rely on a consistent bootstrap bundle to provision development containers. This repository publishes the entire bundle to GitHub Pages so automation can curl a single entry point and receive every dependency from the same source.
 
 - **Entry points:** `scripts/BaseInitialization.sh`, `scripts/FullInitialization.sh`, and `scripts/PretaskInitialization.sh` are the only public URLs automation should call. Each script executes its workflow directly without sourcing additional helpers.
@@ -116,10 +118,12 @@ The published bundle initializes Codex-compatible containers by installing share
 A Rust workspace under [`/crates/`](crates/) regenerates the catalog stored at [`personas/catalog.json`](personas/catalog.json) by parsing the persona front matter and bundling both the base instructions and persona metadata. The GitHub Pages deployment exposes this catalog as `personas.json` (the legacy `/catalog.json` alias is intentionally unavailable; clients must request `/personas.json`). The deployment pipeline rebuilds the index automatically whenever `main` changes, so running the generator locally is only necessary for debugging or previewing changes. Build the index with:
 
 ```bash
-cargo run --release
+cargo run --release -p personas-core
 ```
 
 Clients begin with `personas.json` to decide which personas they need, then fetch `AGENTS.md` and the target personas on demand to avoid loading unnecessary Markdown into the working context. Requests to `/catalog.json` return `404 Not Found` by design; update clients rather than adding an alias.
+
+`scripts/build-pages.sh` regenerates the catalog automatically before packaging the Pages artifact. When CI provides a pre-generated catalog, set `PERSONAS_CATALOG_SOURCE` to the artifact path so the script copies it into `personas/catalog.json` instead of invoking `cargo` again.
 
 ### GitHub Pages Publishing
 
@@ -146,6 +150,8 @@ cargo fmt --all -- --check
 cargo check --tests --benches
 cargo clippy --all-targets --all-features -- -D warnings
 cargo test
+cargo run --release -p personas-core
+git diff --exit-code personas/catalog.json
 ./scripts/build-pages.sh
 ./scripts/validate-pages.sh
 ```

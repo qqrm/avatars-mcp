@@ -29,5 +29,9 @@ jobs:
       - run: cargo clippy --all-targets --all-features -- -D warnings
       - run: cargo test
       - run: cargo run -p personas-core --bin generate-persona-audit -- --check
+      - name: Generate personas catalog
+        run: cargo run --release -p personas-core
+      - name: Verify personas catalog committed
+        run: git diff --exit-code personas/catalog.json
       - run: ./scripts/build-pages.sh
       - run: ./scripts/validate-pages.sh
