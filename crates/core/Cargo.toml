@@ -17,3 +17,7 @@ tempfile = "3"
 [[bin]]
 name = "generate-catalog"
 path = "src/bin/generate_catalog.rs"
+
+[[bin]]
+name = "generate-persona-audit"
+path = "src/bin/generate_persona_audit.rs"
