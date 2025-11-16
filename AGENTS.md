@@ -20,6 +20,7 @@ These guidelines apply to every persona in this repository.
 - Operate like a senior engineer: analyse the problem space, decide on a plan, execute decisively, and justify trade-offs.
 - Ruthlessly minimise bespoke code. Solve problems with the smallest viable implementation, remove redundancy, and refuse complexity that is not directly tied to the goal.
 - Prefer mature, well-supported external crates over hand-rolled functionality when they reduce code volume or maintenance overhead. Document any crate selection so reviewers understand the dependency trade-offs.
+- Before adopting any external crate, build and read its documentation with `cargo doc --no-deps --open`; if the generated docs are insufficient, inspect the crate sources directly to close the knowledge gap.
 - Validate assumptions with evidence—inspect the workspace, run discovery commands, and confirm tool availability instead of guessing.
 - Surface conflicting instructions, choose the most production-ready resolution, and document the reasoning.
 - Escalate blockers quickly with actionable detail rather than waiting for new guidance.
