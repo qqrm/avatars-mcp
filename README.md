@@ -102,6 +102,18 @@ Repository tooling keeps these artifacts in sync for local use:
 
 Only these entry points are published on GitHub Pages.
 
+### Published helper scripts
+
+| Script | Purpose |
+| --- | --- |
+| [`scripts/FullInitialization.sh`](scripts/FullInitialization.sh) | Provisions a brand-new container with every required dependency and configuration. |
+| [`scripts/BaseInitialization.sh`](scripts/BaseInitialization.sh) | Replays the tooling installation on cached containers so they stay aligned with the published baseline. |
+| [`scripts/PretaskInitialization.sh`](scripts/PretaskInitialization.sh) | Refreshes `AGENTS.md` and validates workspace access before starting a task. |
+| [`scripts/build-pages.sh`](scripts/build-pages.sh) | Rebuilds the persona catalog and prepares the GitHub Pages artifact. |
+| [`scripts/validate-pages.sh`](scripts/validate-pages.sh) | Ensures the generated artifact exposes only the supported files and omits legacy helpers. |
+
+> **Deprecated helper:** `scripts/agent-sync.sh` has been removed from the repository and the published artifact. Automation must run the repository's validation commands directly instead of relying on this script.
+
 ## Bootstrap Script Architecture
 
 This section is the canonical reference for the bootstrap bundle described in Section 8 of `docs/SPECIFICATION.md`.
