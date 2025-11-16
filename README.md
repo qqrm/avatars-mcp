@@ -104,6 +104,8 @@ Only these entry points are published on GitHub Pages.
 
 ## Bootstrap Script Architecture
 
+This section is the canonical reference for the bootstrap bundle described in Section 8 of `docs/SPECIFICATION.md`.
+
 Codex repositories rely on a consistent bootstrap bundle to provision development containers. This repository publishes the entire bundle to GitHub Pages so automation can curl a single entry point and receive every dependency from the same source.
 
 - **Entry points:** `scripts/BaseInitialization.sh`, `scripts/FullInitialization.sh`, and `scripts/PretaskInitialization.sh` are the only public URLs automation should call. Each script executes its workflow directly without sourcing additional helpers.
