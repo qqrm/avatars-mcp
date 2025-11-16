@@ -28,5 +28,6 @@ jobs:
       - run: cargo check --tests --benches
       - run: cargo clippy --all-targets --all-features -- -D warnings
       - run: cargo test
+      - run: cargo run -p personas-core --bin generate-persona-audit -- --check
       - run: ./scripts/build-pages.sh
       - run: ./scripts/validate-pages.sh
