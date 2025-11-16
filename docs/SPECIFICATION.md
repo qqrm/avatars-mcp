@@ -6,23 +6,37 @@ This specification defines how behavioral **personas**, shared tooling, and meta
 
 ## 2. Directory Layout
 
+Codex Tools repositories expose a small, predictable set of files so that automation can discover personas, shared instructions,
+and supporting documentation without scanning unrelated content.
+
+### 2.1 Required structure
+
 ```
-/personas/
-  ANALYST.md
-  ARCHITECT.md
-  DEVELOPER.md
-  RELIABILITY.md
-  TESTER.md
-README.md
-SPECIFICATION.md
+/
+  AGENTS.md
+  docs/
+    INSTRUCTIONS.md
+    SPECIFICATION.md
+  personas/
+```
+
+- `AGENTS.md` lives at the repository root and defines the shared baseline instructions referenced by the catalog `base_uri`.
+- `docs/` contains public documentation. At minimum it must include this specification and `INSTRUCTIONS.md`, which summarizes
+  the published HTTP endpoints.
+- `/personas/` stores every persona Markdown file described in Section 3.
+
+### 2.2 Optional directories
+
+Repositories may include additional helpers when needed:
+
+```
 (optional) crates/
 (optional) scripts/
 ```
 
-- `/personas/` stores every persona Markdown file.
-- `AGENTS.md` contains shared base instructions bundled into the index.
-- `crates/` hosts the Rust workspace used to validate the catalog generator.
-- `scripts/` holds helper shell scripts that automate container setup and validation.
+- `crates/` hosts the Rust workspace used to validate the persona catalog generator.
+- `scripts/` holds helper shell scripts that automate container setup and validation when repositories choose to publish a
+  bootstrap bundle.
 
 ## 3. Persona File Format
 
@@ -144,15 +158,11 @@ GitHub Pages exposes the repository at `https://qqrm.github.io/codex-tools/`. Cl
 
 ## 7. Relationship to README
 
-`README.md` provides a high-level overview and onboarding notes. This specification remains the canonical source for persona requirements, schemas, and delivery expectations.
+`README.md` provides a high-level overview and onboarding notes, including the detailed bootstrap expectations referenced in Section 8. This specification remains the canonical source for persona requirements, schemas, and delivery expectations.
 
-## 8. Bootstrap Bundle Expectations
+## 8. Bootstrap Bundle Reference
 
-Repositories that rely on Codex automation publish their container bootstrap scripts through GitHub Pages. The bundle must adhere to the following rules so entry points behave consistently across environments:
-
-- **Published location:** Serve every script—including entry points, helpers, and shared libraries—under the `/scripts/` prefix. Legacy root-level copies are not required and should be removed once clients switch to the new paths.
-- **Entry points:** Ship the three scripts (`BaseInitialization.sh`, `FullInitialization.sh`, and `PretaskInitialization.sh`) as the only public interfaces. Each entry point executes the full workflow directly while relying only on files in the published bundle.
-- **Self-contained scripts:** Publish each bootstrap script exactly as checked in. A direct `curl` invocation must succeed without sourcing additional helpers beyond the files included in the `/scripts/` bundle.
-- **Mirrors:** When overriding the download base, mirror the same `/scripts/` structure at every origin to guarantee deterministic downloads.
-
-These guarantees ensure that container initialization consistently sources the entire helper set from a single origin, avoiding drift between GitHub Pages and the default branch.
+The persona specification tracks only the minimum guarantees required for the catalog and documentation. Repositories that ship
+bootstrap tooling must continue to publish it under `/scripts/` as noted in Section 2.2. Detailed bootstrap behavior, script
+descriptions, and mirroring guidance are documented in `README.md` under “Bootstrap Script Architecture,” which now serves as the
+authoritative reference for those workflows.
