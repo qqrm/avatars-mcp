@@ -11,6 +11,8 @@ These instructions extend the base `AGENTS.md` rules for the entire repository.
 ## Preferred Rust Crates
 Refer to [`docs/CRATE_GUIDE.md`](docs/CRATE_GUIDE.md) for the complete, regularly maintained catalog of recommended crates and usage notes. Review it before adding new dependencies and document any intentional deviations in code review.
 
+Whenever you adopt an external crate (new or existing), build its documentation locally via `cargo doc --no-deps --open` (opening the rendered pages is optional in CI-only contexts) and read the relevant sections before writing code. If the documentation proves insufficient, clone or download the source and study it directly to understand semantics and edge cases.
+
 ## Environment Checks
 - If `git remote -v` or `gh auth status` show problems, capture the full command output, diagnose the cause, and propose a fix or workaround.
 
