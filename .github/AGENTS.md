@@ -26,6 +26,7 @@ These rules apply to everything under `.github`.
 - Gate deploy workflows behind successful CI runs using `workflow_run` triggers or explicit `needs:` dependencies.
 - Keep deployment environments declared via the `environment` key and provide human-friendly names (e.g., `github-pages`).
 - Ensure artifact packaging steps are idempotent and clean up any temporary directories inside the workspace before uploading.
+- Documentation and GitHub Pages deployments must re-run the full Rust validation chain (`cargo fmt --all -- --check`, `cargo check --tests --benches`, `cargo clippy --all-targets --all-features -- -D warnings`, `cargo test`) before building site assets so warnings or lint errors cannot slip into published content.
 
 ## Validation
 - Document any deliberate deviations from these rules inside the affected workflow file so reviewers understand the exception.

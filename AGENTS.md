@@ -74,6 +74,7 @@ These guidelines apply to every persona in this repository.
 - Pipeline secrets reside in the `prod` environment.
 - Use the GitHub interface to inspect logs from the five most recent pipeline runs.
 - Prefer the [`dtolnay/rust-toolchain`](https://github.com/dtolnay/rust-toolchain) pipelines for Rust projects—they are our required standard.
+- Gate documentation and GitHub Pages workflows on the same Rust validation sequence used in CI: `cargo fmt --all -- --check`, `cargo check --tests --benches`, `cargo clippy --all-targets --all-features -- -D warnings`, and `cargo test` must all pass before packaging or publishing artifacts.
 - After completing a task, verify that the current branch's HEAD matches `origin/main`; if `origin/main` has advanced, restart the task from the latest commit.
 
 ## Instruction Management
