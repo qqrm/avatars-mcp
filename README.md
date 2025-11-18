@@ -11,7 +11,7 @@ This repository hosts behavioral **personas** for Codex agents. Personas are Mar
 ### Catalog Audit Findings
 
 - **Architect vs. Tech Lead** duplicated responsibilities around technical direction, reviews, and mentoring; the Tech Lead persona was merged into the refreshed Solution Architect profile.
-- **DevOps vs. Security** overlapped on pipeline hardening and controls without a clear separation of duties; the capabilities are now unified in the Reliability & Security Engineer persona.
+- **DevOps vs. Security** overlapped on pipeline hardening and controls without a clear separation of duties; the refreshed DevOps Engineer now focuses on CI/CD efficiency, caching, and supply-chain guardrails, while the Reliability & Security Engineer retains broader operational resilience.
 - **Senior Developer vs. Tech Lead** both focused on hands-on delivery with minimal differentiation; the Delivery Engineer persona now represents the shared implementation scope.
 - **Missing operational continuity** — no single persona previously owned resiliency, compliance, and incident readiness; the new Reliability & Security Engineer fills that scenario.
 
@@ -23,6 +23,7 @@ This repository hosts behavioral **personas** for Codex agents. Personas are Mar
 | **Solution Architect** | Translating validated scope into technical plans | Mermaid diagrams, technical decision records, interface checklists |
 | **Delivery Engineer** | Building and shipping production Rust changes | Implementation plan, PR checklist, post-merge notes |
 | **Quality Engineer** | Designing coverage and enforcing release readiness | Test strategy, automation backlog, release quality checklist |
+| **DevOps Engineer** | Optimizing CI/CD efficiency, caching, and supply-chain security | CI/CD performance baseline, cache strategy, pipeline security checklist |
 | **Reliability & Security Engineer** | Hardening operations, compliance, and incident response | Operational readiness checklist, security review log, incident plan |
 
 Each persona file in [`/personas/`](personas/) contains:
