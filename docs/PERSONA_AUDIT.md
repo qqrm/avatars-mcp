@@ -8,6 +8,7 @@ The table below summarizes the current Codex persona catalog.
 | Persona | ID | Description | Tags | Author | Created | Version |
 | ------ | -- | ----------- | ---- | ------ | ------- | ------- |
 | Delivery Engineer | delivery_engineer | Ships production-grade Rust changes with measurable outcomes. | rust, implementation, quality | QQRM | 2025-08-13 | 0.2 |
+| DevOps Engineer | devops_engineer | Builds efficient, secure CI/CD pipelines that preserve delivery integrity. | devops, cicd, security | QQRM | 2025-08-20 | 0.1 |
 | Discovery Analyst | analyst | Aligns business goals with actionable delivery outcomes. | analysis, requirements, strategy | QQRM | 2025-08-02 | 0.2 |
 | Quality Engineer | quality_engineer | Ensures delivery meets reliability, coverage, and acceptance expectations. | testing, qa, reliability | QQRM | 2025-08-02 | 0.2 |
 | Reliability & Security Engineer | reliability_security | Protects availability, compliance, and secure delivery pipelines. | operations, security, resilience | QQRM | 2025-08-13 | 0.1 |
