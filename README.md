@@ -162,6 +162,7 @@ Continuous integration runs the full validation pipeline:
 cargo fmt --all -- --check
 cargo check --tests --benches
 cargo clippy --all-targets --all-features -- -D warnings
+cargo build --release
 cargo test
 cargo run --release -p personas-core
 git diff --exit-code personas/catalog.json
@@ -173,7 +174,7 @@ When working locally, reproduce this sequence for any change that touches source
 
 ### Local validation shortcuts
 
-- `make qa` — executes the formatter, `cargo check`, `cargo clippy` (static analysis), unit tests, and the documentation validation scripts in one pass.
+- `make qa` — executes the formatter, `cargo check`, `cargo clippy` (static analysis), the release build, unit tests, and the documentation validation scripts in one pass.
 - `make lint` — runs `cargo clippy --all-targets --all-features -- -D warnings` as the canonical static-analysis command.
 - `make catalog` — rebuilds `personas/catalog.json` to preview the published catalog locally.
 

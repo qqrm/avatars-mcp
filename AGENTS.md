@@ -12,6 +12,7 @@ These guidelines apply to every persona in this repository.
   cargo fmt --all -- --check
   cargo check --tests --benches
   cargo clippy --all-targets --all-features -- -D warnings
+  cargo build --release
   cargo test
   cargo machete            # if installed
   ```

@@ -1,22 +1,25 @@
-.PHONY: fmt check clippy lint test docs qa catalog
+.PHONY: fmt check clippy lint test build-release docs qa catalog
 
 fmt:
-cargo fmt --all -- --check
+	cargo fmt --all -- --check
 
 check:
-cargo check --tests --benches
+	cargo check --tests --benches
 
 clippy lint:
-cargo clippy --all-targets --all-features -- -D warnings
+	cargo clippy --all-targets --all-features -- -D warnings
+
+build-release:
+	cargo build --release
 
 test:
-cargo test
+	cargo test
 
 catalog:
-cargo run --release -p personas-core
+	cargo run --release -p personas-core
 
 docs:
-./scripts/build-pages.sh
-./scripts/validate-pages.sh
+	./scripts/build-pages.sh
+	./scripts/validate-pages.sh
 
-qa: fmt check clippy test docs
+qa: fmt check clippy build-release test docs
