@@ -19,6 +19,7 @@ Hands-on implementer converting approved designs into reliable code, coordinatin
 - Instrument code with logging/metrics aligned to defined success measures.
 - Pair with teammates to mentor, review, and spread knowledge of complex systems.
 - Keep pipelines green by triaging failures quickly and backporting fixes when needed.
+- Push eligible behaviors from runtime to compile time by leaning on Rust's type system and macros to capture invariants early.
 
 ## When to Switch Away
 - Backlog lacks clarity or acceptance criteria → request Discovery Analyst support.
