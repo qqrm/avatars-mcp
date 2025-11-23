@@ -1,0 +1,105 @@
+{
+  "base_uri": "AGENTS.md",
+  "scenarios": [
+    {
+      "id": "architecture_audit",
+      "name": "Architecture Audit",
+      "description": "Review modular boundaries, dependencies, and flexibility risks.",
+      "tags": ["architecture", "design", "rust"],
+      "author": "QQRM",
+      "created_at": "2025-09-17",
+      "version": "0.1",
+      "uri": "https://qqrm.github.io/codex-tools/scenarios/ARCHITECTURE_AUDIT.md"
+    },
+    {
+      "id": "build_and_ci_review",
+      "name": "Build and CI/CD Review",
+      "description": "Validate build reproducibility, matrix coverage, and pipeline safety.",
+      "tags": ["ci", "build", "pipelines"],
+      "author": "QQRM",
+      "created_at": "2025-09-17",
+      "version": "0.1",
+      "uri": "https://qqrm.github.io/codex-tools/scenarios/BUILD_AND_CI_REVIEW.md"
+    },
+    {
+      "id": "dependency_refresh",
+      "name": "Dependency and Toolchain Refresh",
+      "description": "Verify Rust toolchain pinning and refresh crate versions with safe updates.",
+      "tags": ["maintenance", "dependencies", "rust"],
+      "author": "QQRM",
+      "created_at": "2025-09-17",
+      "version": "0.1",
+      "uri": "https://qqrm.github.io/codex-tools/scenarios/DEPENDENCY_REFRESH.md"
+    },
+    {
+      "id": "developer_experience",
+      "name": "Developer Experience Review",
+      "description": "Improve onboarding, local workflows, and inner-loop speed.",
+      "tags": ["dx", "productivity", "tooling"],
+      "author": "QQRM",
+      "created_at": "2025-09-17",
+      "version": "0.1",
+      "uri": "https://qqrm.github.io/codex-tools/scenarios/DEVELOPER_EXPERIENCE.md"
+    },
+    {
+      "id": "devsecops_audit",
+      "name": "DevSecOps Audit",
+      "description": "Harden dependencies, secrets, and pipeline security controls.",
+      "tags": ["security", "devsecops", "compliance"],
+      "author": "QQRM",
+      "created_at": "2025-09-17",
+      "version": "0.1",
+      "uri": "https://qqrm.github.io/codex-tools/scenarios/DEVSECOPS_AUDIT.md"
+    },
+    {
+      "id": "documentation_contracts",
+      "name": "Documentation and Contracts Review",
+      "description": "Verify public-facing docs, API contracts, and examples.",
+      "tags": ["documentation", "contracts", "quality"],
+      "author": "QQRM",
+      "created_at": "2025-09-17",
+      "version": "0.1",
+      "uri": "https://qqrm.github.io/codex-tools/scenarios/DOCUMENTATION_CONTRACTS.md"
+    },
+    {
+      "id": "duplication_reuse",
+      "name": "Duplication and Reuse Review",
+      "description": "Find repeated logic and consolidate shared capabilities.",
+      "tags": ["refactoring", "reuse", "quality"],
+      "author": "QQRM",
+      "created_at": "2025-09-17",
+      "version": "0.1",
+      "uri": "https://qqrm.github.io/codex-tools/scenarios/DUPLICATION_REUSE.md"
+    },
+    {
+      "id": "performance_hotspots",
+      "name": "Performance Hotspots Review",
+      "description": "Locate and address CPU, allocation, and IO bottlenecks.",
+      "tags": ["performance", "profiling", "rust"],
+      "author": "QQRM",
+      "created_at": "2025-09-17",
+      "version": "0.1",
+      "uri": "https://qqrm.github.io/codex-tools/scenarios/PERFORMANCE_HOTSPOTS.md"
+    },
+    {
+      "id": "rust_idioms",
+      "name": "Rust Idioms Review",
+      "description": "Enforce idiomatic Rust patterns and modern language features.",
+      "tags": ["rust", "quality", "idioms"],
+      "author": "QQRM",
+      "created_at": "2025-09-17",
+      "version": "0.1",
+      "uri": "https://qqrm.github.io/codex-tools/scenarios/RUST_IDIOMS.md"
+    },
+    {
+      "id": "test_coverage",
+      "name": "Test Coverage Review",
+      "description": "Evaluate test depth, flakiness, and coverage gaps.",
+      "tags": ["testing", "quality", "coverage"],
+      "author": "QQRM",
+      "created_at": "2025-09-17",
+      "version": "0.1",
+      "uri": "https://qqrm.github.io/codex-tools/scenarios/TEST_COVERAGE.md"
+    }
+  ]
+}

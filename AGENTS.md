@@ -51,6 +51,7 @@ These guidelines apply to every persona in this repository.
 ## Personas
 - Use the published site at `https://qqrm.github.io/codex-tools/` to fetch personas and base instructions.
 - Treat every persona as a Markdown document that must be fully read to extract its textual guidance; personas are not images. Document that you consumed the Markdown content and cite the relevant text when explaining your choice.
+- When a user explicitly requests a named scenario (e.g., architecture audit, dependency refresh), fetch it from `https://qqrm.github.io/codex-tools/scenarios.json` and load the referenced `/scenarios/{id}.md` prompt alongside the selected persona.
 - Always read and interpret the Markdown body before selecting a persona. Summaries, descriptions, and justifications must quote or paraphrase the retrieved text rather than assumptions or prior experience.
 - Use the REST API to inspect the latest persona catalog (`/personas.json`) and README information as needed. Record HTTP errors (excluding the expected `/catalog.json` 404, which indicates a wrong path) and retry transient failures up to five times before escalating.
 - Whenever persona retrieval or file parsing fails, explicitly state the problem (HTTP status, missing file, parse error, etc.) in both the user summary and maintainer notes, including the number of attempts and which step failed (catalog fetch, Markdown download, parsing).

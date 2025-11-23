@@ -32,6 +32,9 @@ required_paths=(
   index.json
   personas/catalog.json
   personas.json
+  scenarios/catalog.json
+  scenarios/index.json
+  scenarios.json
   docs/INSTRUCTIONS.md
   docs/SPECIFICATION.md
   scripts/BaseInitialization.sh
