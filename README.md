@@ -39,6 +39,10 @@ Each persona file in [`/personas/`](personas/) contains:
 3. Produce the listed artifacts before switching personas to keep context intact.
 4. Announce the persona change in status updates and share the prepared artifacts with the incoming persona.
 
+## Scenario Library
+
+Reusable task playbooks live in [`/scenarios/`](scenarios/) alongside personas and are published through GitHub Pages as Markdown prompts. Clients can discover them via the catalog at `https://qqrm.github.io/codex-tools/scenarios.json` and retrieve each scenario from `/scenarios/{id}.md`. When a user explicitly asks to run a named scenario—such as an architecture audit or dependency refresh—load the scenario prompt and combine it with the active persona to guide execution.
+
 ## Remote Setup
 
 Configure the Git remote if it is missing:
@@ -117,7 +121,7 @@ Only these entry points are published on GitHub Pages.
 
 ## Bootstrap Script Architecture
 
-This section is the canonical reference for the bootstrap bundle described in Section 8 of `docs/SPECIFICATION.md`.
+This section is the canonical reference for the bootstrap bundle described in Section 9 of `docs/SPECIFICATION.md`.
 
 Codex repositories rely on a consistent bootstrap bundle to provision development containers. This repository publishes the entire bundle to GitHub Pages so automation can curl a single entry point and receive every dependency from the same source.
 

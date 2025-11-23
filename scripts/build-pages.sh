@@ -66,6 +66,10 @@ refresh_personas_catalog
 mkdir -p "${OUTPUT_DIR}/personas"
 cp -a "${REPO_ROOT}/personas/." "${OUTPUT_DIR}/personas/"
 
+# Scenarios
+mkdir -p "${OUTPUT_DIR}/scenarios"
+cp -a "${REPO_ROOT}/scenarios/." "${OUTPUT_DIR}/scenarios/"
+
 # Shared markdown artifacts
 copy_file "${REPO_ROOT}/AGENTS.md" "${OUTPUT_DIR}/AGENTS.md"
 copy_file "${REPO_ROOT}/README.md" "${OUTPUT_DIR}/README.md"
@@ -96,6 +100,8 @@ copy_file "${REPO_ROOT}/.github/workflows/codex-cleanup.yml" "${OUTPUT_DIR}/work
 # Catalog copies
 copy_file "${OUTPUT_DIR}/personas/catalog.json" "${OUTPUT_DIR}/index.json"
 copy_file "${OUTPUT_DIR}/personas/catalog.json" "${OUTPUT_DIR}/personas.json"
+copy_file "${OUTPUT_DIR}/scenarios/catalog.json" "${OUTPUT_DIR}/scenarios/index.json"
+copy_file "${OUTPUT_DIR}/scenarios/catalog.json" "${OUTPUT_DIR}/scenarios.json"
 
 # Landing page markdown
 {
@@ -105,6 +111,12 @@ copy_file "${OUTPUT_DIR}/personas/catalog.json" "${OUTPUT_DIR}/personas.json"
   for persona_path in "${REPO_ROOT}"/personas/*.md; do
     persona_name="$(basename "${persona_path}")"
     echo "- [${persona_name%.*}](personas/${persona_name})"
+  done
+  echo
+  echo "## Scenarios"
+  for scenario_path in "${REPO_ROOT}"/scenarios/*.md; do
+    scenario_name="$(basename "${scenario_path}")"
+    echo "- [${scenario_name%.*}](scenarios/${scenario_name})"
   done
   echo
   cat "${REPO_ROOT}/docs/INSTRUCTIONS.md"

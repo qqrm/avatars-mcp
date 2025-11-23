@@ -2,7 +2,7 @@
 
 ## 1. Purpose
 
-This specification defines how behavioral **personas**, shared tooling, and metadata are organized within the Codex Tools repository. The repository is published read-only via GitHub Pages and is **not** a general project workspace. Only persona definitions, supporting scripts, and configuration required to serve them should be committed.
+This specification defines how behavioral **personas**, reusable **scenarios**, shared tooling, and metadata are organized within the Codex Tools repository. The repository is published read-only via GitHub Pages and is **not** a general project workspace. Only persona definitions, scenario playbooks, supporting scripts, and configuration required to serve them should be committed.
 
 ## 2. Directory Layout
 
@@ -18,12 +18,14 @@ and supporting documentation without scanning unrelated content.
     INSTRUCTIONS.md
     SPECIFICATION.md
   personas/
+  scenarios/
 ```
 
 - `AGENTS.md` lives at the repository root and defines the shared baseline instructions referenced by the catalog `base_uri`.
 - `docs/` contains public documentation. At minimum it must include this specification and `INSTRUCTIONS.md`, which summarizes
   the published HTTP endpoints.
 - `/personas/` stores every persona Markdown file described in Section 3.
+- `/scenarios/` stores reusable task playbooks described in Section 4.
 
 ### 2.2 Optional directories
 
@@ -108,11 +110,74 @@ Every persona must include the following Markdown structure after the YAML front
 
 Optional extensions—such as collaboration guidelines, anti-patterns, or playbooks—are encouraged when they improve clarity, but they must appear under clearly labeled headings so automation can parse the required baseline consistently.
 
-## 4. Catalog Generation
+## 4. Scenario File Format
+
+Each scenario resides in `/scenarios/` as a Markdown (`.md`) file that begins with YAML front matter followed by the playbook body. Scenarios provide reusable prompts for common workflows and should pair with personas when users explicitly request a named scenario.
+
+### 4.1 Front-matter schema
+
+| Field         | Type   | Required | Description                              |
+| ------------- | ------ | -------- | ---------------------------------------- |
+| `id`          | string | yes      | Unique identifier for the scenario       |
+| `name`        | string | yes      | Display name (human-readable)            |
+| `description` | string | no       | Short description for listings           |
+| `tags`        | array  | no       | List of keywords/categories              |
+| `author`      | string | no       | Who created or maintains this scenario   |
+| `created_at`  | date   | no       | Creation date (YYYY-MM-DD)               |
+| `version`     | string | no       | Version number for the scenario          |
+
+### 4.2 Example scenario
+
+```markdown
+---
+id: dependency_refresh
+name: Dependency and Toolchain Refresh
+description: Verify Rust toolchain pinning and refresh crate versions with safe updates.
+tags: [maintenance, dependencies, rust]
+author: QQRM
+created_at: 2025-09-17
+version: 0.1
+---
+
+# Dependency and Toolchain Refresh
+
+## Goal
+Keep the Rust toolchain, crates, and lockfiles on supported, current versions without breaking builds.
+
+## When to Use
+- A user requests dependency or toolchain updates.
+
+## Inputs
+- Location of `rust-toolchain.toml` or `rust-toolchain`.
+- `Cargo.toml` and `Cargo.lock` for every crate.
+
+## Execution Steps
+1. Confirm the pinned Rust channel and compare with the latest stable release.
+2. Enumerate crates with available patch/minor updates and note breaking major jumps.
+3. Apply targeted updates (security first), refreshing the lockfile deterministically.
+4. Re-run the full Rust validation loop (fmt, check, clippy, tests, release build).
+5. Record notable deltas (MSRV shifts, feature flag changes, dependency removals).
+
+## Prompt Template
+Provide a concise instruction block an agent can paste to execute the scenario.
+```
+
+### 4.3 Minimum instruction blocks
+
+Every scenario should include the following structure after the YAML front matter:
+
+- `# <Scenario Name>` level-one heading matching the `name` field.
+- `## Goal` describing the outcome.
+- `## When to Use` listing triggers for this scenario.
+- `## Inputs` enumerating required context or artifacts.
+- `## Execution Steps` detailing the high-level procedure.
+- `## Prompt Template` that can be issued to an agent without additional editing.
+
+## 5. Catalog Generation
 
 Tooling iterates over `/personas/`, parses YAML front matter, and produces `personas/catalog.json` that aggregates persona metadata and records the location of `AGENTS.md`. The resulting JSON is published on GitHub Pages as `personas.json`. The checked-in `personas/catalog.json` is a convenience snapshot that keeps tests deterministic and enables offline inspection; rebuild it only when intentionally changing personas or their schema.
 
-### 4.1 Catalog schema
+### 5.1 Catalog schema
 
 The catalog schema is:
 
@@ -137,11 +202,33 @@ The catalog schema is:
 - `base_uri` exposes the relative location of the shared instructions so clients can issue a follow-up request.
 - `personas` enumerates every persona, sorted by `id`, along with the absolute Markdown URI hosted on GitHub Pages.
 
-### 4.2 Delivery model
+### 5.2 Scenario catalog
 
-Clients begin by fetching `personas.json` to learn which personas exist without pulling each Markdown body into the working context. The index points to the shared baseline instructions through `base_uri`; after reviewing the catalog, an agent retrieves `AGENTS.md` and then issues targeted requests for only the personas it needs. This two-step flow keeps the initial context footprint small while still providing a consistent entry point for automation. Requests to `/catalog.json` should be treated as configuration errors.
+Scenarios are indexed in `scenarios/catalog.json`, which mirrors the persona catalog shape but lists scenario prompts under the `scenarios` key. The file is checked into the repository and published as `scenarios.json` for consumers. Example:
 
-## 5. API Endpoints
+```json
+{
+  "base_uri": "AGENTS.md",
+  "scenarios": [
+    {
+      "id": "architecture_audit",
+      "name": "Architecture Audit",
+      "description": "Review modular boundaries, dependencies, and flexibility risks.",
+      "tags": ["architecture", "design", "rust"],
+      "author": "QQRM",
+      "created_at": "2025-09-17",
+      "version": "0.1",
+      "uri": "https://qqrm.github.io/codex-tools/scenarios/ARCHITECTURE_AUDIT.md"
+    }
+  ]
+}
+```
+
+### 5.3 Delivery model
+
+Clients begin by fetching `personas.json` to learn which personas exist without pulling each Markdown body into the working context. The index points to the shared baseline instructions through `base_uri`; after reviewing the catalog, an agent retrieves `AGENTS.md` and then issues targeted requests for only the personas it needs. When a user explicitly asks for a named scenario, the agent follows the same flow with `scenarios.json` and the matching Markdown under `/scenarios/`. This two-step pattern keeps the initial context footprint small while still providing a consistent entry point for automation. Requests to `/catalog.json` should be treated as configuration errors.
+
+## 6. API Endpoints
 
 GitHub Pages exposes the repository at `https://qqrm.github.io/codex-tools/`. Clients rely on the following endpoints:
 
@@ -150,17 +237,17 @@ GitHub Pages exposes the repository at `https://qqrm.github.io/codex-tools/`. Cl
 - **Baseline instructions only:** `GET /AGENTS.md`.
 - **Full persona:** `GET /personas/{id}.md`.
 
-## 6. Extensibility and Tooling
+## 7. Extensibility and Tooling
 
 - Add new personas by committing additional Markdown files under `/personas/` with the required front matter.
 - Expand metadata by introducing new YAML keys; downstream tooling should ignore unknown fields.
 - The Rust workspace under `crates/` regenerates `personas/catalog.json` via `cargo run --release`; the GitHub Pages deployment publishes the result as `personas.json`.
 
-## 7. Relationship to README
+## 8. Relationship to README
 
-`README.md` provides a high-level overview and onboarding notes, including the detailed bootstrap expectations referenced in Section 8. This specification remains the canonical source for persona requirements, schemas, and delivery expectations.
+`README.md` provides a high-level overview and onboarding notes, including the detailed bootstrap expectations referenced in Section 9. This specification remains the canonical source for persona requirements, schemas, and delivery expectations.
 
-## 8. Bootstrap Bundle Reference
+## 9. Bootstrap Bundle Reference
 
 The persona specification tracks only the minimum guarantees required for the catalog and documentation. Repositories that ship
 bootstrap tooling must continue to publish it under `/scripts/` as noted in Section 2.2. Detailed bootstrap behavior, script
