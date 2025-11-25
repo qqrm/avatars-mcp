@@ -91,6 +91,7 @@ curl -fsSL "https://qqrm.github.io/codex-tools/scripts/PretaskInitialization.sh"
 - **Personas:** Individual prompts live in [`/personas/`](personas/); each file targets a single role.
 - **Base instructions:** Shared guidance for all personas resides in [`AGENTS.md`](AGENTS.md).
 - **HTTP quick reference:** [`INSTRUCTIONS.md`](docs/INSTRUCTIONS.md) summarizes the published endpoints external clients call.
+- **Tooling reference:** [`TOOLS.md`](docs/TOOLS.md) captures the shared CLI toolbelt used across repositories.
 
 ## Shared Files for External Consumers
 
@@ -157,8 +158,39 @@ https://qqrm.github.io/codex-tools/
 - `GET /personas.json` — retrieve the catalog, including the `base_uri` pointer to the shared instructions. The deployment does **not** publish `/catalog.json`.
 - `GET /AGENTS.md` — download the shared baseline instructions referenced by `base_uri`.
 - `GET /personas/{id}.md` — retrieve the complete descriptor for the persona with the given `id`.
+- `GET /scenarios.json` — retrieve the scenario catalog alongside persona metadata.
+- `GET /scenarios/{id}.md` — fetch the scenario Markdown when requested by a catalog entry.
 
 Clients should fetch both the catalog and `AGENTS.md` to ensure they stay in sync with the published baseline guidance, because the catalog intentionally omits the Markdown body in favour of the shared URI.
+
+### Delivery diagrams
+
+```mermaid
+flowchart TD
+  Client[Client agent] -->|fetch catalog| Catalog[GET /personas.json\nbase_uri -> AGENTS.md]
+  Client -->|download baseline| Agents[GET /AGENTS.md]
+  Client -->|request persona| Persona[GET /personas/{id}.md]
+  Client -->|request scenario| Scenario[GET /scenarios/{id}.md]
+
+  subgraph GitHubPages
+    Catalog
+    Agents
+    Persona
+    Scenario
+  end
+```
+
+```mermaid
+flowchart TD
+  Dev[Contributor edits personas, scenarios, and docs]
+  Generator[cargo run --release -p personas-core\nupdates personas/catalog.json]
+  Bundle[scripts/build-pages.sh\npackages published assets]
+  Validate[scripts/validate-pages.sh\nensures only supported files ship]
+  Pages[GitHub Pages artifact\nAGENTS.md + personas.json + Markdown]
+  Consumers[External automation]
+
+  Dev --> Generator --> Bundle --> Validate --> Pages --> Consumers
+```
 
 Continuous integration runs the full validation pipeline:
 
