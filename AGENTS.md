@@ -40,6 +40,7 @@ These guidelines apply to every persona in this repository.
 - Prefer command-line tooling and automate repetitive steps to keep workflows reproducible.
 - Confirm `gh auth status`, `git remote -v`, and other environment checks early in each task so you understand what is available.
 - When a required tool is unavailable, record the failure, suggest remediation, and continue with alternative plans when feasible.
+- Keep a shared CLI toolbelt installed when possible: `cargo-make`, `cargo-watch`, `cargo-edit`, `cargo-nextest`, `cargo-audit`, `proptest`, `cargo-fuzz`, `cargo-tarpaulin`, `mdBook`, `typst`, `zola`, `svgbob`, `gitui`, `delta`, `helix`, `zellij`, `fd`, `bat`, and `ripgrep` support the validation and documentation workflows described in this repository.
 
 ## Development Workflow
 - Treat user requests as complete tasks and deliver production-ready branches that maintainers can promote without extra fixes.
